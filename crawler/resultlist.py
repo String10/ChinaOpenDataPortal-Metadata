@@ -3,15 +3,14 @@ import re
 import time
 import urllib
 import bs4
-
 import requests
-from requests.utils import add_dict_to_cookiejar
-from bs4 import BeautifulSoup
-from constants import REQUEST_MAX_TIME, REQUEST_TIME_OUT
-
 import execjs
 
-from util import log_error, getCookie
+from requests.utils import add_dict_to_cookiejar
+from bs4 import BeautifulSoup
+
+from common.constants import REQUEST_MAX_TIME, REQUEST_TIME_OUT
+from common.util import log_error, getCookie
 
 
 class ResultList:

@@ -1,4 +1,3 @@
-from concurrent.futures import ThreadPoolExecutor
 import json
 import os
 import re
@@ -7,24 +6,18 @@ import copy
 import urllib
 import bs4
 import requests
-import argparse
 
-from constants import (
-    METADATA_SAVE_PATH,
-    PROVINCE_CURL_JSON_PATH,
+from common.constants import (
     REQUEST_TIME_OUT,
     REQUEST_MAX_TIME,
 )
-from detail import Detail
-from resultlist import ResultList
-
-from util import log_error
-
-curls = {}
+from common.util import log_error
+from crawler.detail import Detail
+from crawler.resultlist import ResultList
 
 
 class Crawler:
-    def __init__(self, province, city, output):
+    def __init__(self, province, city, output, curls):
         self.province = province
         self.city = city
         self.result_list = ResultList(self.province, self.city)
@@ -2190,54 +2183,3 @@ class Crawler:
         filename = os.path.join(save_dir, f"{self.province}_{self.city}.json")
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(self.metadata_list, f, ensure_ascii=False)
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--all", action="store_true")
-    parser.add_argument("--province", type=str)
-    parser.add_argument("--city", type=str)
-
-    parser.add_argument("--workers", type=int, default=0)
-
-    parser.add_argument("--resource", type=str, default=PROVINCE_CURL_JSON_PATH)
-    parser.add_argument("--metadata-output", type=str, default=METADATA_SAVE_PATH)
-
-    parser.add_argument("--debug", action="store_true")
-
-    args = parser.parse_args()
-    DEBUG = args.debug
-
-    requests.packages.urllib3.disable_warnings()
-
-    with open(args.resource, "r", encoding="utf-8") as curlFile:
-        curls = json.load(curlFile)
-
-    def crawl_then_save(province, city):
-        crawler = Crawler(province, city, args.metadata_output)
-        for _ in range(REQUEST_MAX_TIME):
-            try:
-                crawler.crawl()
-                break
-            except Exception as e:
-                log_error("global: error at %s - %s", province, city)
-                if DEBUG:
-                    log_error("%s", str(e.args))
-                    break
-                time.sleep(50)
-        crawler.save_metadata_as_json(args.metadata_output)
-
-    if args.all:
-        workers = args.workers
-        if workers > 0:
-            pool = ThreadPoolExecutor(max_workers=workers)
-            for province in curls:
-                for city in curls[province]:
-                    pool.submit(crawl_then_save, province, city)
-            pool.shutdown()
-        else:
-            for province in curls:
-                for city in curls[province]:
-                    crawl_then_save(province, city)
-    elif args.province and args.city:
-        crawl_then_save(args.province, args.city)

@@ -3,8 +3,15 @@ import json
 import os
 
 import pymysql
-from constants import FIELD_MAPPING_PATH, METADATA_SAVE_PATH, NAME_MAPPING_JSON_PATH
-from util import log_error
+from common.constants import METADATA_SAVE_PATH
+from common.util import log_error
+
+FIELD_MAPPING_JSON_PATH = os.path.join(
+    os.path.dirname(__file__), "data/field_mapping.json"
+)
+NAME_MAPPING_JSON_PATH = os.path.join(
+    os.path.dirname(__file__), "data/name_mapping.json"
+)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--db-host", type=str)
@@ -16,7 +23,7 @@ parser.add_argument("--table", type=str)
 parser.add_argument("--ref-table", type=str, default="metadata")
 
 parser.add_argument("--metadata-path", type=str, default=METADATA_SAVE_PATH)
-parser.add_argument("--field-map-path", type=str, default=FIELD_MAPPING_PATH)
+parser.add_argument("--field-map-path", type=str, default=FIELD_MAPPING_JSON_PATH)
 parser.add_argument("--name-map-path", type=str, default=NAME_MAPPING_JSON_PATH)
 
 args = parser.parse_args()
@@ -101,11 +108,12 @@ def write_metadata():
             metadata_list = json.load(json_file)
         dataset_list = []
 
+        ad_hoc_field_mapping = None
         if (
-            province in field_map_path["ad-hoc"]
-            and city in field_map_path["ad-hoc"][province]
+            province in field_mapping["ad-hoc"]
+            and city in field_mapping["ad-hoc"][province]
         ):
-            ad_hoc_field_mapping = field_map_path["ad-hoc"][province][city]
+            ad_hoc_field_mapping = field_mapping["ad-hoc"][province][city]
 
         for dataset in metadata_list:
             metadata = {}
@@ -113,7 +121,7 @@ def write_metadata():
                 if ad_hoc_field_mapping and key in ad_hoc_field_mapping:
                     metadata[ad_hoc_field_mapping[key]] = str(value)
                 else:
-                    metadata[field_mapping[key]] = str(value)
+                    metadata[field_mapping["common"][key]] = str(value)
             di = []
             di.append(None)
             for field in field_names:

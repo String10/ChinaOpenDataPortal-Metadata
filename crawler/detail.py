@@ -5,13 +5,13 @@ import time
 import bs4
 import execjs
 import unicodedata as ucd
-
 import requests
+
 from bs4 import BeautifulSoup
 from requests.utils import add_dict_to_cookiejar
-from constants import REQUEST_MAX_TIME, REQUEST_TIME_OUT
 
-from util import log_error, getCookie
+from common.constants import REQUEST_MAX_TIME, REQUEST_TIME_OUT
+from common.util import log_error, getCookie
 
 
 class Detail:
