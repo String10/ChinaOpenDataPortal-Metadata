@@ -664,13 +664,13 @@ class Detail:
         soup = BeautifulSoup(html, "html.parser")
         dataset_matadata = {}
 
-        try:
-            assert len(soup.find_all("table")) == 4
-        except AssertionError:
-            print(f"{curl['url']}?dmid={curl['params']['dmid']}")
-            return False, None
+        tables = soup.find_all("table", {"class": "tw-table-form tm-table-form"})
 
-        basicInfo, dataItem, fileDownload, dataPreview = soup.find_all("table")
+        try:
+            basicInfo, dataItem, fileDownload, dataPreview = tables
+        except:
+            self.log_request_error(-1, f"{curl['url']}?dmid={curl['params']['dmid']}")
+            return False, None
 
         for th_name in table_fields:
             th = basicInfo.find("th", text=th_name + ":")
