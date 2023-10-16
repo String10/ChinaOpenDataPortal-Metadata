@@ -20,6 +20,7 @@ class Crawler:
     def __init__(self, province, city, output, curls):
         self.province = province
         self.city = city
+        self.curls = curls
         self.result_list = ResultList(self.province, self.city)
         self.detail = Detail(self.province, self.city)
         self.result_list_curl = curls[province][city]["resultList"]
@@ -1609,7 +1610,7 @@ class Crawler:
                 if bool(metadata):
                     metadata["详情页网址"] = "https://data.zg.cn/snww/sjzy/detail.html?" + id
                     # 根据可下载类型获取type
-                    turl = curls[self.province][self.city]["typeList"].copy()
+                    turl = self.curls[self.province][self.city]["typeList"].copy()
                     turl["queries"]["id"] = id
                     response = requests.get(
                         turl["url"],
