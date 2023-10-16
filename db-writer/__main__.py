@@ -54,6 +54,7 @@ c = db.cursor()
 
 def write_metadata():
     field_names = [
+        "dataset_id",
         "title",
         "description",
         "tags",
@@ -69,13 +70,15 @@ def write_metadata():
         "email",
         "data_formats",
         "url",
+        "province",
+        "city",
+        "standard_industry",
     ]
 
     with open(name_map_path, "r", encoding="utf-8") as f:
         name_mapping = json.load(f)
     with open(field_map_path, "r", encoding="utf-8") as f:
         field_mapping = json.load(f)
-    cnt = 0
 
     province_city = {}
     path = metadata_path
@@ -84,7 +87,12 @@ def write_metadata():
     sql = f"CREATE TABLE IF NOT EXISTS {TABLE_NAME} LIKE {REF_TABLE_NAME}"
     c.execute(sql)
 
-    sql = f"INSERT INTO {TABLE_NAME} VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    sql = (
+        f"INSERT INTO {TABLE_NAME} "
+        f"SELECT {', '.join(['%s'] * len(field_names))} FROM DUAL "
+        f"WHERE NOT EXISTS (SELECT * FROM {TABLE_NAME} WHERE url = %s)"
+    )
+
     for file in file_list:
         file_name = file.split(".")[0]
         province, city = file_name.split("_")
@@ -116,32 +124,23 @@ def write_metadata():
             ad_hoc_field_mapping = field_mapping["ad-hoc"][province][city]
 
         for dataset in metadata_list:
-            metadata = {}
+            metadata = {"province": province, "city": city}
             for key, value in dataset.items():
                 if ad_hoc_field_mapping and key in ad_hoc_field_mapping:
                     metadata[ad_hoc_field_mapping[key]] = str(value)
                 else:
                     metadata[field_mapping["common"][key]] = str(value)
-            di = []
-            di.append(None)
-            for field in field_names:
-                di.append(metadata[field]) if field in metadata else di.append(None)
-                if (
-                    field in metadata
-                    and metadata[field] is not None
-                    and metadata[field] not in ["暂无", "无", ""]
-                ):
-                    cnt += 1
-            di.append(province)
-            di.append(city)
-            di.append(None)
-            dataset_list.append(di)
-        # print(len(dataset_list[0]))
-        # print(dataset_list[0])
+
+            di = [
+                metadata[field] if field in metadata else None for field in field_names
+            ]
+
+            if "url" in metadata and metadata["url"]:
+                di.append(metadata["url"])  # for duplicate checking
+                dataset_list.append(di)
+
         c.executemany(sql, dataset_list)
         db.commit()
-        # finished_list.append(file_name)
-        # print(cnt)
 
 
 def stastic():
