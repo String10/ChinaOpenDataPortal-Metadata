@@ -128,7 +128,7 @@ def write_metadata():
             for key, value in dataset.items():
                 if ad_hoc_field_mapping and key in ad_hoc_field_mapping:
                     metadata[ad_hoc_field_mapping[key]] = str(value)
-                else:
+                elif key in field_mapping["common"]:
                     metadata[field_mapping["common"][key]] = str(value)
 
             di = [
