@@ -1,4 +1,6 @@
+import base64
 import copy
+import datetime
 import json
 import re
 import time
@@ -192,6 +194,10 @@ class Detail:
             ):
                 data_formats.append(item.get_text())
             dataset_metadata["data_formats"] = data_formats
+        dataset_metadata["url"] = (
+            f"{curl['url']}?"
+            f"{'&'.join([f'{key}={val}' for key, val in curl['queries'].items()])}"
+        )
         return dataset_metadata
 
     def detail_shanxi_jincheng(self, curl):
@@ -325,6 +331,7 @@ class Detail:
             td_text = td_text.find_next("td").get_text().strip()
             td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
             dataset_metadata[td_name] = td_text
+        dataset_metadata["url"] = curl["url"]
         return dataset_metadata
 
     def detail_liaoning_shenyang(self, curl):
@@ -356,6 +363,7 @@ class Detail:
             td_text = td_text.find_next("td").get_text().strip()
             td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
             dataset_metadata[td_name] = td_text
+        dataset_metadata["url"] = curl["url"]
         return dataset_metadata
 
     def detail_heilongjiang_harbin(self, curl):
@@ -387,6 +395,7 @@ class Detail:
             td_text = td_text.find_next("td").get_text().strip()
             td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
             dataset_metadata[td_name] = td_text
+        dataset_metadata["url"] = curl["url"]
         return dataset_metadata
 
     def detail_shanghai_shanghai(self, curl):
@@ -711,6 +720,10 @@ class Detail:
             dataset_metadata["更新时间"] = dataset_metadata["更新时间"].split(" ")[0]
         if dataset_metadata["发布时间"] is not None:
             dataset_metadata["发布时间"] = dataset_metadata["发布时间"].split(" ")[0]
+        dataset_metadata["url"] = (
+            f"{curl['url']}?"
+            f"{'&'.join([f'{key}={val}' for key, val in curl['params'].items()])}"
+        )
         return dataset_metadata
 
     def detail_jiangsu_yancheng(self, curl):
@@ -1042,6 +1055,13 @@ class Detail:
                 dataset_metadata[value] = detail_json[key]
             except KeyError:
                 dataset_metadata[value] = None
+        dataset_metadata["url"] = (
+            f"{curl['headers']['Origin']}/sjkfptold/#/dataDetails?"
+            f"t={int(time.mktime(datetime.datetime.utcnow().timetuple())) * 1000}"
+            f"&params={base64.b64encode(str.encode(json.dumps(detail_json))).decode()}"
+            f"&uuid={detail_json['uuid']}"
+            "&id=1"
+        )
         return dataset_metadata
 
     def detail_zhejiang_wenzhou(self, curl):

@@ -1,4 +1,5 @@
 import json
+import os
 import re
 import time
 import urllib
@@ -873,6 +874,11 @@ class ResultList:
                 field_text = field.get_text().strip().split("：")[1]
                 dataset_metadata[field_name] = field_text
 
+            dataset_metadata["url"] = (
+                f"{curl['url']}?"
+                f"{'&'.join([f'{key}={val}' for key, val in curl['queries'].items()])}"
+                f"&file={os.path.basename(os.path.splitext(dataset.find('a')['href'])[0])}"
+            )
             metadata_list.append(dataset_metadata)
         return metadata_list
 
