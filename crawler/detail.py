@@ -11,6 +11,7 @@ import requests
 
 from bs4 import BeautifulSoup
 from requests.utils import add_dict_to_cookiejar
+from urllib.parse import quote
 
 from common.constants import REQUEST_MAX_TIME, REQUEST_TIME_OUT
 from common.util import log_error, getCookie
@@ -2440,7 +2441,7 @@ class Detail:
             metadata["文件格式"] = "api"
         if "文件格式" in metadata:
             metadata["文件格式"] = list(metadata["文件格式"].lower().split(","))
-        metadata["详情页网址"] = curl["url"]
+        metadata["详情页网址"] = curl["url"].replace("toDataDetails", "toDataSet")
         return metadata
 
     def detail_hunan_yueyang(self, curl):
@@ -2610,7 +2611,10 @@ class Detail:
                     metadata[name] = metadata[name][:10]
         if "资源格式" in metadata:
             metadata["资源格式"] = list(metadata["资源格式"].lower().split(","))
-        metadata["详情页网址"] = "https://gddata.gd.gov.cn/opdata/index"
+        metadata["详情页网址"] = (
+            f"{curl['headers']['Referer']}?"
+            f"chooseValue=collectForm&id={quote(data['resId'])}"
+        )
         return metadata
 
     def detail_guangdong_guangzhou(self, curl):
