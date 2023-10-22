@@ -1,8 +1,10 @@
 import argparse
 import json
 import os
-
 import pymysql
+
+from hashlib import sha256
+
 from common.constants import METADATA_SAVE_PATH
 from common.util import log_error
 
@@ -26,6 +28,8 @@ parser.add_argument("--metadata-path", type=str, default=METADATA_SAVE_PATH)
 parser.add_argument("--field-map-path", type=str, default=FIELD_MAPPING_JSON_PATH)
 parser.add_argument("--name-map-path", type=str, default=NAME_MAPPING_JSON_PATH)
 
+parser.add_argument("--url-hash", action="store_true")
+
 args = parser.parse_args()
 
 DB_HOST = args.db_host
@@ -39,6 +43,8 @@ REF_TABLE_NAME = args.ref_table
 metadata_path = args.metadata_path
 field_map_path = args.field_map_path
 name_map_path = args.name_map_path
+
+URL_HASH = args.url_hash
 
 db = pymysql.connect(
     host=DB_HOST,
@@ -75,6 +81,9 @@ def write_metadata():
         "standard_industry",
     ]
 
+    if URL_HASH:
+        field_names.append("url_hash")
+
     with open(name_map_path, "r", encoding="utf-8") as f:
         name_mapping = json.load(f)
     with open(field_map_path, "r", encoding="utf-8") as f:
@@ -87,11 +96,14 @@ def write_metadata():
     sql = f"CREATE TABLE IF NOT EXISTS {TABLE_NAME} LIKE {REF_TABLE_NAME}"
     c.execute(sql)
 
-    sql = (
-        f"INSERT INTO {TABLE_NAME} "
-        f"SELECT {', '.join(['%s'] * len(field_names))} FROM DUAL "
-        f"WHERE NOT EXISTS (SELECT * FROM {TABLE_NAME} WHERE url = %s)"
-    )
+    if URL_HASH:
+        sql = (
+            f"INSERT INTO {TABLE_NAME} "
+            f"SELECT {', '.join(['%s'] * len(field_names))} FROM DUAL "
+            f"WHERE NOT EXISTS (SELECT * FROM {TABLE_NAME} WHERE url_hash = %s and url = %s)"
+        )
+    else:
+        sql = f"INSERT INTO {TABLE_NAME} VALUES({', '.join(['%s'] * len(field_names))})"
 
     for file in file_list:
         file_name = file.split(".")[0]
@@ -136,7 +148,10 @@ def write_metadata():
             ]
 
             if "url" in metadata and metadata["url"]:
-                di.append(metadata["url"])  # for duplicate checking
+                if URL_HASH:
+                    url_hash = sha256(metadata["url"].encode()).hexdigest()
+                    di[-1] = url_hash
+                    di.extend([url_hash, metadata["url"]])
                 dataset_list.append(di)
 
         c.executemany(sql, dataset_list)
