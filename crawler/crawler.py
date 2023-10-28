@@ -246,7 +246,7 @@ class Crawler:
             )
             dataset_ids = self.result_list.get_result_list(curl)
             for dataset_id in dataset_ids:
-                curl = self.detail_list_curl.copy()
+                curl = copy.deepcopy(self.detail_list_curl)
                 curl["headers"]["Referer"] = curl["headers"]["Referer"].format(
                     dataset_id["datasetId"],
                     urllib.parse.quote(dataset_id["datasetName"]),
@@ -1855,14 +1855,9 @@ class Crawler:
             links = self.result_list.get_result_list(curl)
             for link in links:
                 curl = self.detail_list_curl.copy()
-                # curl['headers']['Referer'] = "http://data.ms.gov.cn/portal/service_detail?id="+link['id']+"&type=opendata&orgId==#tabLink1"
                 curl["queries"]["id"] = link["id"]
                 metadata = self.detail.get_detail(curl)
                 metadata["标题"] = link["serviceName"]
-                # metadata["提供单位"]=link['orgName']
-                # metadata["发布时间"]=link['publishTime']
-                # metadata["行业名称"]=link['industryName']
-
                 self.metadata_list.append(metadata)
             time.sleep(5)
 

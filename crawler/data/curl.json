@@ -632,7 +632,7 @@
           "Authorization": "",
           "Connection": "keep-alive",
           "Content-Type": "application/x-www-form-urlencoded",
-          "Referer": "https://data.sh.gov.cn/view/detail/index.html?type=cp&&id={}&&dataset_name={}",
+          "Referer": "https://data.sh.gov.cn/view/detail/index.html?type=cp&id={}",
           "Sec-Fetch-Dest": "empty",
           "Sec-Fetch-Mode": "cors",
           "Sec-Fetch-Site": "same-origin",

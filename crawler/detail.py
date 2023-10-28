@@ -3795,46 +3795,13 @@ class Detail:
         return dataset_matadata
 
     def detail_sichuan_meishan(self, curl):
-        # key_map = {
-        #     "title": "标题",
-        #     "department": "来源部门",
-        #     "category": "所属领域",
-        #     "publish_time":"发布时间",
-        #     "update_time": "更新时间",
-        #     "is_open": "是否无条件开放",
-        #     "data_volume": "数据量",
-        #     "industry": "所属行业",
-        #     "update_frequency": "更新频率",
-        #     "telephone": "部门电话",
-        #     "email": "部门邮箱",
-        #     "tags": "标签",
-        #     "description": "描述",
-        #     "data_formats": "数据格式",
-        #     "province": "所属省份",
-        #     "city": "所属城市",
-        #     "url": "详情页网址"
-        # }
-        key_map = {
-            "标题": "title",
-            "提供单位": "department",
-            "数据领域": "category",
-            "发布时间": "publish_time",
-            "开放属性": "is_open",
-            "行业名称": "industry",
-            "更新周期": "update_frequency",
-            "联系电话": "telephone",
-            "关键字": "tags",
-            "描述": "description",
-            "格式类型": "data_formats",
-            "详情页网址": "url",
-        }
         dataset_matadata = {}
-        dataset_matadata["详情页网址"] = curl["url"]
+        dataset_matadata["详情页网址"] = (
+            f"{curl['url']}?"
+            f"{'&'.join([f'{key}={val}' for key, val in curl['queries'].items()])}"
+        )
         list_fields = ["提供单位", "数据领域", "发布时间", "行业名称", "联系电话", "服务描述"]
         table_fields = ["更新周期", "开放属性", "关键字", "格式类型"]
-        # response = requests.post(curl['url'], data=curl['data'], headers=curl['headers'], timeout=REQUEST_TIME_OUT,verify = False)
-        # resultList = json.loads(response.text)
-        # print(resultList)
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -3844,9 +3811,6 @@ class Detail:
         )
         html = response.content
         soup = BeautifulSoup(html, "html.parser")
-        # title = soup.find('div', attrs={'class': 'details-title cf'})
-        # title = title.find('h2', attrs={'class': 'dt-name'}).get_text()
-        # dataset_matadata['标题'] = title
         for li in soup.find("ul", attrs={"class": "desc-list-info clearfix"}).find_all(
             "li", attrs={}
         ):
@@ -3866,7 +3830,6 @@ class Detail:
             td_text = table.find("td", text=td_name).find_next("td").get_text().strip()
             td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
             dataset_matadata[td_name] = td_text
-        # print(dataset_matadata)
         return dataset_matadata
 
     def detail_sichuan_yibin(self, curl):
