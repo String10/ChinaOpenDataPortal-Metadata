@@ -17,12 +17,14 @@ from crawler.resultlist import ResultList
 
 
 class Crawler:
+    download_files = False
+
     def __init__(self, province, city, output, curls):
         self.province = province
         self.city = city
         self.curls = curls
-        self.result_list = ResultList(self.province, self.city)
-        self.detail = Detail(self.province, self.city)
+        self.result_list = ResultList(province, city)
+        self.detail = Detail(province, city)
         self.result_list_curl = curls[province][city]["resultList"]
         self.detail_list_curl = curls[province][city]["detail"]
         self.metadata_list = []
@@ -127,6 +129,7 @@ class Crawler:
                 self.metadata_list.append(metadata)
 
     def crawl_shanxi_datong(self):
+        self.detail.download_files = Crawler.download_files
         for page in range(1, 61):
             curl = self.result_list_curl.copy()
             curl["queries"]["pageNumber"] = str(page)

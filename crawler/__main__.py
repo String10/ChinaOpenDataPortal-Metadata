@@ -6,11 +6,13 @@ import requests
 from concurrent.futures import ThreadPoolExecutor
 
 from common.constants import (
+    FILES_SAVE_PATH,
     METADATA_SAVE_PATH,
     REQUEST_MAX_TIME,
 )
 from common.util import log_error
 from crawler.crawler import Crawler
+from crawler.downloader import Downloader
 
 PROVINCE_CURL_JSON_PATH = os.path.join(os.path.dirname(__file__), "data/curl.json")
 
@@ -23,6 +25,9 @@ parser.add_argument("--workers", type=int, default=0)
 
 parser.add_argument("--resource", type=str, default=PROVINCE_CURL_JSON_PATH)
 parser.add_argument("--metadata-output", type=str, default=METADATA_SAVE_PATH)
+
+parser.add_argument("--download-files", action="store_true")
+parser.add_argument("--files-output", type=str, default=FILES_SAVE_PATH)
 
 parser.add_argument("--debug", action="store_true")
 
@@ -50,10 +55,15 @@ def crawl_then_save(province, city):
     crawler.save_metadata_as_json(args.metadata_output)
 
 
+if args.download_files:
+    Crawler.download_files = True
+    Downloader.file_dir = args.files_output
+
 if args.all:
     workers = args.workers
     if workers > 0:
         pool = ThreadPoolExecutor(max_workers=workers)
+        Downloader.pool = pool
         for province in curls:
             for city in curls[province]:
                 pool.submit(crawl_then_save, province, city)

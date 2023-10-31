@@ -2,6 +2,7 @@ import base64
 import copy
 import datetime
 import json
+import os
 import re
 import time
 import bs4
@@ -11,16 +12,22 @@ import requests
 
 from bs4 import BeautifulSoup
 from requests.utils import add_dict_to_cookiejar
-from urllib.parse import quote
+from urllib.parse import parse_qs, quote, urlparse
 
 from common.constants import REQUEST_MAX_TIME, REQUEST_TIME_OUT
 from common.util import log_error, getCookie
+from crawler.downloader import Downloader
 
 
 class Detail:
-    def __init__(self, province, city) -> None:
+    def __init__(self, province, city, download_files=False) -> None:
         self.province = province
         self.city = city
+        self.download_files = download_files
+        self.downloader = Downloader(province, city)
+        self.downloader.file_dir = os.path.join(
+            Downloader.file_dir, f"{self.province}/{self.city}"
+        )
 
     def log_request_error(self, status_code, link):
         log_error(
@@ -159,13 +166,19 @@ class Detail:
                 value = li.find("div", attrs={"class": "info-body"}).get_text()
                 dataset_metadata[key] = value
         data_formats = []
-        if soup.find("div", attrs={"target": "data-download"}) is not None:
-            for item in (
-                soup.find("div", attrs={"target": "data-download"})
-                .find("ul")
-                .find_all("li")
-            ):
-                data_formats.append(item.get_text())
+        files_div = soup.find("div", attrs={"target": "data-download"})
+        if files_div is not None:
+            for item in files_div.find("tbody").find_all("tr"):
+                data_formats.extend(item["class"])
+
+                if self.download_files:
+                    file_link = item.find("a")["href"]
+                    params = parse_qs(urlparse(file_link).query)
+                    file_name = params["name"][0] if "name" in params else None
+                    if file_name:
+                        self.downloader.start_download(file_link, file_name)
+                        dataset_metadata["file_name"] = file_name
+
             dataset_metadata["data_formats"] = data_formats
         dataset_metadata["url"] = response.url
         return dataset_metadata

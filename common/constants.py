@@ -7,3 +7,4 @@ REQUEST_MAX_TIME = 10
 
 """Constants for Both"""
 METADATA_SAVE_PATH = f"{os.path.dirname(__file__)}/../data/metadata/"
+FILES_SAVE_PATH = f"{os.path.dirname(__file__)}/../data/files/"
