@@ -167,19 +167,24 @@ class Detail:
                 dataset_metadata[key] = value
         data_formats = []
         files_div = soup.find("div", attrs={"target": "data-download"})
-        if files_div is not None:
-            for item in files_div.find("tbody").find_all("tr"):
-                data_formats.extend(item["class"])
+        try:
+            if files_div:
+                for item in files_div.find("tbody").find_all("tr"):
+                    data_formats.extend(item["class"])
 
-                if self.download_files:
-                    file_link = item.find("a")["href"]
-                    params = parse_qs(urlparse(file_link).query)
-                    file_name = params["name"][0] if "name" in params else None
-                    if file_name:
-                        self.downloader.start_download(file_link, file_name)
-                        dataset_metadata["file_name"] = file_name
+                    if self.download_files:
+                        file_link = item.find("a")["href"]
+                        params = parse_qs(urlparse(file_link).query)
+                        file_name = params["name"][0] if "name" in params else None
+                        if file_name:
+                            self.downloader.start_download(file_link, file_name)
+                            if "file_name" not in dataset_metadata:
+                                dataset_metadata["file_name"] = []
+                            dataset_metadata["file_name"].append(file_name)
 
-            dataset_metadata["data_formats"] = data_formats
+                dataset_metadata["data_formats"] = data_formats
+        except:
+            self.log_request_error(-1, response.url)
         dataset_metadata["url"] = response.url
         return dataset_metadata
 
