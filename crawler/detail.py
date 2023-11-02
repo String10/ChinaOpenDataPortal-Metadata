@@ -333,17 +333,19 @@ class Detail:
             for item in file_list.find("table").find("tbody").find_all("tr"):
                 if "资源格式" not in metadata:
                     metadata["资源格式"] = []
-                file_fmt =  item.get("fileformat") or item.get("fileFormat")
+                file_fmt = item.get("fileformat") or item.get("fileFormat")
                 if not file_fmt:
                     continue
                 metadata["资源格式"].append(file_fmt)
                 if self.download_files:
                     file = item.find("input", attrs={"type": "checkbox"})
-                    self.downloader.start_download(file_link_fmt.format(file["file-id"]), file["file-name"])
+                    self.downloader.start_download(
+                        file_link_fmt.format(file["file-id"]), file["file-name"]
+                    )
 
                     if "file_name" not in metadata:
                         metadata["file_name"] = []
-                    metadata['file_name'].append(file["file-name"])
+                    metadata["file_name"].append(file["file-name"])
         return metadata
 
     def detail_liaoning_liaoning(self, curl):
@@ -376,7 +378,9 @@ class Detail:
             td_text = td_text.find_next("td").get_text().strip()
             td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
             dataset_metadata[td_name] = td_text
-        dataset_metadata = self.common_download_dongbei(soup, curl['url'], dataset_metadata)
+        dataset_metadata = self.common_download_dongbei(
+            soup, curl["url"], dataset_metadata
+        )
         dataset_metadata["url"] = curl["url"]
         return dataset_metadata
 
@@ -441,7 +445,9 @@ class Detail:
             td_text = td_text.find_next("td").get_text().strip()
             td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
             dataset_metadata[td_name] = td_text
-        dataset_metadata = self.common_download_dongbei(soup, curl['url'], dataset_metadata)
+        dataset_metadata = self.common_download_dongbei(
+            soup, curl["url"], dataset_metadata
+        )
         dataset_metadata["url"] = curl["url"]
         return dataset_metadata
 
@@ -469,9 +475,23 @@ class Detail:
         detail_json["create_date"] = detail_json["create_date"].split("T")[0]
         detail_json["update_date"] = detail_json["update_date"].split("T")[0]
         data_formats = set()
+        parse_res = urlparse(curl["headers"]["Referer"])
+        file_link_fmt = (
+            f"{parse_res.scheme}://{parse_res.netloc}/zq/api/download_file_pro/"
+            "?path={}&sort={}&file_type={}"
+        )
+        if self.download_files:
+            dataset_metadata["file_name"] = []
         for file in detail_json["docType"]:
             for file_type in file["file_type"]:
                 data_formats.add(file_type)
+                if self.download_files:
+                    file_name = f"{os.path.splitext(file['name'])[0]}.{file_type}"
+                    self.downloader.start_download(
+                        file_link_fmt.format(file["path"], file["sort"], file_type),
+                        file_name,
+                    )
+                    dataset_metadata["file_name"].append(file_name)
         for key, value in key_map.items():
             dataset_metadata[value] = detail_json[key]
         dataset_metadata["数据格式"] = list(data_formats)
