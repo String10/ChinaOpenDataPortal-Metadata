@@ -24,7 +24,7 @@ class Crawler:
         self.city = city
         self.curls = curls
         self.result_list = ResultList(province, city)
-        self.detail = Detail(province, city)
+        self.detail = Detail(province, city, Crawler.download_files)
         self.result_list_curl = curls[province][city]["resultList"]
         self.detail_list_curl = curls[province][city]["detail"]
         self.metadata_list = []
@@ -129,7 +129,6 @@ class Crawler:
                 self.metadata_list.append(metadata)
 
     def crawl_shanxi_datong(self):
-        self.detail.download_files = Crawler.download_files
         for page in range(1, 61):
             curl = self.result_list_curl.copy()
             curl["queries"]["pageNumber"] = str(page)

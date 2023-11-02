@@ -320,6 +320,32 @@ class Detail:
             dataset_metadata[value] = detail_json[key]
         return dataset_metadata
 
+    def common_download_dongbei(self, soup, url, metadata):
+        file_list = soup.find("li", attrs={"name": "file-download"})
+        if file_list:
+            org_url = urlparse(url)
+            file_link_fmt = (
+                f"{org_url.scheme}://{org_url.netloc}{soup.find('input', attrs={'id':'rootPath'})['value']}/catalog/download"
+                f"?cataId={soup.find('input', attrs={'id': 'cata_id'})['value']}"
+                f"&cataName={soup.find('input', attrs={'id': 'cata_name'})['value']}"
+                "&idInRc={}"
+            )
+            for item in file_list.find("table").find("tbody").find_all("tr"):
+                if "资源格式" not in metadata:
+                    metadata["资源格式"] = []
+                file_fmt =  item.get("fileformat") or item.get("fileFormat")
+                if not file_fmt:
+                    continue
+                metadata["资源格式"].append(file_fmt)
+                if self.download_files:
+                    file = item.find("input", attrs={"type": "checkbox"})
+                    self.downloader.start_download(file_link_fmt.format(file["file-id"]), file["file-name"])
+
+                    if "file_name" not in metadata:
+                        metadata["file_name"] = []
+                    metadata['file_name'].append(file["file-name"])
+        return metadata
+
     def detail_liaoning_liaoning(self, curl):
         list_fields = ["来源部门", "重点领域", "数据更新时间", "开放条件"]
         table_fields = ["数据量", "接口量", "所属行业", "更新频率", "部门电话", "部门邮箱", "标签", "描述"]
@@ -350,6 +376,7 @@ class Detail:
             td_text = td_text.find_next("td").get_text().strip()
             td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
             dataset_metadata[td_name] = td_text
+        dataset_metadata = self.common_download_dongbei(soup, curl['url'], dataset_metadata)
         dataset_metadata["url"] = curl["url"]
         return dataset_metadata
 
@@ -414,6 +441,7 @@ class Detail:
             td_text = td_text.find_next("td").get_text().strip()
             td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
             dataset_metadata[td_name] = td_text
+        dataset_metadata = self.common_download_dongbei(soup, curl['url'], dataset_metadata)
         dataset_metadata["url"] = curl["url"]
         return dataset_metadata
 
