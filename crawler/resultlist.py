@@ -2194,7 +2194,7 @@ class ResultList:
         links = [link["mlbh"] for link in resultList]
         return links
 
-    def result_list_guizhou_guizhou(self, curl):
+    def result_list_guizhou_common(self, curl):
         try_cnt = 0
         while True:
             try_cnt += 1
@@ -2216,213 +2216,36 @@ class ResultList:
             {"id": x["id"], "resourceFormats": x["resourceFormats"]} for x in resultList
         ]
         return ids
+
+    def result_list_guizhou_guizhou(self, curl):
+        return self.result_list_guizhou_common(curl)
 
     def result_list_guizhou_guiyang(self, curl):
-        try_cnt = 0
-        while True:
-            try_cnt += 1
-            if try_cnt >= REQUEST_MAX_TIME:
-                return []
-            try:
-                response = requests.post(
-                    curl["url"],
-                    json=curl["data"],
-                    headers=curl["headers"],
-                    verify=False,
-                    timeout=REQUEST_TIME_OUT,
-                )
-                break
-            except:
-                time.sleep(5)
-        resultList = json.loads(response.text)["data"]
-        ids = [
-            {"id": x["id"], "resourceFormats": x["resourceFormats"]} for x in resultList
-        ]
-        return ids
+        return self.result_list_guizhou_common(curl)
 
     def result_list_guizhou_liupanshui(self, curl):
-        try_cnt = 0
-        while True:
-            try_cnt += 1
-            if try_cnt >= REQUEST_MAX_TIME:
-                return []
-            try:
-                response = requests.post(
-                    curl["url"],
-                    json=curl["data"],
-                    headers=curl["headers"],
-                    verify=False,
-                    timeout=REQUEST_TIME_OUT,
-                )
-                break
-            except:
-                time.sleep(5)
-        resultList = json.loads(response.text)["data"]
-        ids = [
-            {"id": x["id"], "resourceFormats": x["resourceFormats"]} for x in resultList
-        ]
-        return ids
+        return self.result_list_guizhou_common(curl)
 
     def result_list_guizhou_zunyi(self, curl):
-        try_cnt = 0
-        while True:
-            try_cnt += 1
-            if try_cnt >= REQUEST_MAX_TIME:
-                return []
-            try:
-                response = requests.post(
-                    curl["url"],
-                    json=curl["data"],
-                    headers=curl["headers"],
-                    verify=False,
-                    timeout=REQUEST_TIME_OUT,
-                )
-                break
-            except:
-                time.sleep(5)
-        resultList = json.loads(response.text)["data"]
-        ids = [
-            {"id": x["id"], "resourceFormats": x["resourceFormats"]} for x in resultList
-        ]
-        return ids
+        return self.result_list_guizhou_common(curl)
 
     def result_list_guizhou_anshun(self, curl):
-        try_cnt = 0
-        while True:
-            try_cnt += 1
-            if try_cnt >= REQUEST_MAX_TIME:
-                return []
-            try:
-                response = requests.post(
-                    curl["url"],
-                    json=curl["data"],
-                    headers=curl["headers"],
-                    verify=False,
-                    timeout=REQUEST_TIME_OUT,
-                )
-                break
-            except:
-                time.sleep(5)
-        resultList = json.loads(response.text)["data"]
-        ids = [
-            {"id": x["id"], "resourceFormats": x["resourceFormats"]} for x in resultList
-        ]
-        return ids
+        return self.result_list_guizhou_common(curl)
 
     def result_list_guizhou_bijie(self, curl):
-        try_cnt = 0
-        while True:
-            try_cnt += 1
-            if try_cnt >= REQUEST_MAX_TIME:
-                return []
-            try:
-                response = requests.post(
-                    curl["url"],
-                    json=curl["data"],
-                    headers=curl["headers"],
-                    verify=False,
-                    timeout=REQUEST_TIME_OUT,
-                )
-                break
-            except:
-                time.sleep(5)
-        resultList = json.loads(response.text)["data"]
-        ids = [
-            {"id": x["id"], "resourceFormats": x["resourceFormats"]} for x in resultList
-        ]
-        return ids
+        return self.result_list_guizhou_common(curl)
 
     def result_list_guizhou_tongren(self, curl):
-        try_cnt = 0
-        while True:
-            try_cnt += 1
-            if try_cnt >= REQUEST_MAX_TIME:
-                return []
-            try:
-                response = requests.post(
-                    curl["url"],
-                    json=curl["data"],
-                    headers=curl["headers"],
-                    verify=False,
-                    timeout=REQUEST_TIME_OUT,
-                )
-                break
-            except:
-                time.sleep(5)
-        resultList = json.loads(response.text)["data"]
-        ids = [
-            {"id": x["id"], "resourceFormats": x["resourceFormats"]} for x in resultList
-        ]
-        return ids
+        return self.result_list_guizhou_common(curl)
 
     def result_list_guizhou_qianxinan(self, curl):
-        try_cnt = 0
-        while True:
-            try_cnt += 1
-            if try_cnt >= REQUEST_MAX_TIME:
-                return []
-            try:
-                response = requests.post(
-                    curl["url"],
-                    json=curl["data"],
-                    headers=curl["headers"],
-                    verify=False,
-                    timeout=REQUEST_TIME_OUT,
-                )
-                break
-            except:
-                time.sleep(5)
-        resultList = json.loads(response.text)["data"]
-        ids = [
-            {"id": x["id"], "resourceFormats": x["resourceFormats"]} for x in resultList
-        ]
-        return ids
+        return self.result_list_guizhou_common(curl)
 
     def result_list_guizhou_qiandongnan(self, curl):
-        try_cnt = 0
-        while True:
-            try_cnt += 1
-            if try_cnt >= REQUEST_MAX_TIME:
-                return []
-            try:
-                response = requests.post(
-                    curl["url"],
-                    json=curl["data"],
-                    headers=curl["headers"],
-                    verify=False,
-                    timeout=REQUEST_TIME_OUT,
-                )
-                break
-            except:
-                time.sleep(5)
-        resultList = json.loads(response.text)["data"]
-        ids = [
-            {"id": x["id"], "resourceFormats": x["resourceFormats"]} for x in resultList
-        ]
-        return ids
+        return self.result_list_guizhou_common(curl)
 
     def result_list_guizhou_qiannan(self, curl):
-        try_cnt = 0
-        while True:
-            try_cnt += 1
-            if try_cnt >= REQUEST_MAX_TIME:
-                return []
-            try:
-                response = requests.post(
-                    curl["url"],
-                    json=curl["data"],
-                    headers=curl["headers"],
-                    verify=False,
-                    timeout=REQUEST_TIME_OUT,
-                )
-                break
-            except:
-                time.sleep(5)
-        resultList = json.loads(response.text)["data"]
-        ids = [
-            {"id": x["id"], "resourceFormats": x["resourceFormats"]} for x in resultList
-        ]
-        return ids
+        return self.result_list_guizhou_common(curl)
 
     def result_list_shaanxi_shaanxi(self, curl):
         response = requests.get(

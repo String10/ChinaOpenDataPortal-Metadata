@@ -2887,7 +2887,7 @@ class Detail:
         )
         return metadata
 
-    def detail_guangxi_guangxi(self, curl):
+    def detail_guangxi_common(self, curl):
         list_fields = ["来源部门", "重点领域", "发布时间", "更新时间", "开放条件"]
         table_fields = ["数据量", "文件数", "所属行业", "更新频率", "部门电话", "部门邮箱", "标签", "描述"]
         try:
@@ -2921,425 +2921,50 @@ class Detail:
                 dataset_matadata[td_name] = td_text
         return dataset_matadata
 
+    def detail_guangxi_guangxi(self, curl):
+        return self.detail_guangxi_common(curl)
+
     def detail_guangxi_nanning(self, curl):
-        list_fields = ["来源部门", "重点领域", "发布时间", "更新时间", "开放条件"]
-        table_fields = ["数据量", "文件数", "所属行业", "更新频率", "部门电话", "部门邮箱", "标签", "描述"]
-        response = requests.get(
-            curl["url"], headers=curl["headers"], timeout=REQUEST_TIME_OUT
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        dataset_matadata = {}
-        title = soup.find("ul", attrs={"class": "d-title pull-left"})
-        title = title.find("h4").get_text()
-        dataset_matadata["标题"] = title
-        for li in soup.find("ul", attrs={"class": "list-inline"}).find_all(
-            "li", attrs={}
-        ):
-            li_name = li.get_text().split("：")[0].strip()
-            if li_name in list_fields:
-                li_text = (
-                    li.find("span", attrs={"class": "text-primary"}).get_text().strip()
-                )
-                dataset_matadata[li_name] = li_text
-        table = soup.find("li", attrs={"name": "basicinfo"})
-        for td_name in table_fields:
-            td_text = table.find("td", text=td_name)
-            if td_text is not None:
-                td_text = td_text.find_next("td").get_text().strip()
-                td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
-                dataset_matadata[td_name] = td_text
-        return dataset_matadata
+        return self.detail_guangxi_common(curl)
 
     def detail_guangxi_liuzhou(self, curl):
-        list_fields = ["来源部门", "重点领域", "发布时间", "更新时间", "开放条件"]
-        table_fields = ["数据量", "文件数", "所属行业", "更新频率", "部门电话", "部门邮箱", "标签", "描述"]
-        response = requests.get(
-            curl["url"], headers=curl["headers"], timeout=REQUEST_TIME_OUT
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        dataset_matadata = {}
-        title = soup.find("ul", attrs={"class": "d-title pull-left"})
-        title = title.find("h4").get_text()
-        dataset_matadata["标题"] = title
-        for li in soup.find("ul", attrs={"class": "list-inline"}).find_all(
-            "li", attrs={}
-        ):
-            li_name = li.get_text().split("：")[0].strip()
-            if li_name in list_fields:
-                li_text = (
-                    li.find("span", attrs={"class": "text-primary"}).get_text().strip()
-                )
-                dataset_matadata[li_name] = li_text
-        table = soup.find("li", attrs={"name": "basicinfo"})
-        for td_name in table_fields:
-            td_text = table.find("td", text=td_name)
-            if td_text is not None:
-                td_text = td_text.find_next("td").get_text().strip()
-                td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
-                dataset_matadata[td_name] = td_text
-        return dataset_matadata
+        return self.detail_guangxi_common(curl)
 
     def detail_guangxi_guilin(self, curl):
-        list_fields = ["来源部门", "重点领域", "发布时间", "更新时间", "开放条件"]
-        table_fields = ["数据量", "文件数", "所属行业", "更新频率", "部门电话", "部门邮箱", "标签", "描述"]
-        response = requests.get(
-            curl["url"], headers=curl["headers"], timeout=REQUEST_TIME_OUT
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        dataset_matadata = {}
-        title = soup.find("ul", attrs={"class": "d-title pull-left"})
-        title = title.find("h4").get_text()
-        dataset_matadata["标题"] = title
-        for li in soup.find("ul", attrs={"class": "list-inline"}).find_all(
-            "li", attrs={}
-        ):
-            li_name = li.get_text().split("：")[0].strip()
-            if li_name in list_fields:
-                li_text = (
-                    li.find("span", attrs={"class": "text-primary"}).get_text().strip()
-                )
-                dataset_matadata[li_name] = li_text
-        table = soup.find("li", attrs={"name": "basicinfo"})
-        for td_name in table_fields:
-            td_text = table.find("td", text=td_name)
-            if td_text is not None:
-                td_text = td_text.find_next("td").get_text().strip()
-                td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
-                dataset_matadata[td_name] = td_text
-        return dataset_matadata
+        return self.detail_guangxi_common(curl)
 
     def detail_guangxi_wuzhou(self, curl):
-        list_fields = ["来源部门", "重点领域", "发布时间", "更新时间", "开放条件"]
-        table_fields = ["数据量", "文件数", "所属行业", "更新频率", "部门电话", "部门邮箱", "标签", "描述"]
-        response = requests.get(
-            curl["url"], headers=curl["headers"], timeout=REQUEST_TIME_OUT
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        dataset_matadata = {}
-        title = soup.find("ul", attrs={"class": "d-title pull-left"})
-        title = title.find("h4").get_text()
-        dataset_matadata["标题"] = title
-        for li in soup.find("ul", attrs={"class": "list-inline"}).find_all(
-            "li", attrs={}
-        ):
-            li_name = li.get_text().split("：")[0].strip()
-            if li_name in list_fields:
-                li_text = (
-                    li.find("span", attrs={"class": "text-primary"}).get_text().strip()
-                )
-                dataset_matadata[li_name] = li_text
-        table = soup.find("li", attrs={"name": "basicinfo"})
-        for td_name in table_fields:
-            td_text = table.find("td", text=td_name)
-            if td_text is not None:
-                td_text = td_text.find_next("td").get_text().strip()
-                td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
-                dataset_matadata[td_name] = td_text
-        return dataset_matadata
+        return self.detail_guangxi_common(curl)
 
     def detail_guangxi_beihai(self, curl):
-        list_fields = ["来源部门", "重点领域", "发布时间", "更新时间", "开放条件"]
-        table_fields = ["数据量", "文件数", "所属行业", "更新频率", "部门电话", "部门邮箱", "标签", "描述"]
-        response = requests.get(
-            curl["url"], headers=curl["headers"], timeout=REQUEST_TIME_OUT
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        dataset_matadata = {}
-        title = soup.find("ul", attrs={"class": "d-title pull-left"})
-        title = title.find("h4").get_text()
-        dataset_matadata["标题"] = title
-        for li in soup.find("ul", attrs={"class": "list-inline"}).find_all(
-            "li", attrs={}
-        ):
-            li_name = li.get_text().split("：")[0].strip()
-            if li_name in list_fields:
-                li_text = (
-                    li.find("span", attrs={"class": "text-primary"}).get_text().strip()
-                )
-                dataset_matadata[li_name] = li_text
-        table = soup.find("li", attrs={"name": "basicinfo"})
-        for td_name in table_fields:
-            td_text = table.find("td", text=td_name)
-            if td_text is not None:
-                td_text = td_text.find_next("td").get_text().strip()
-                td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
-                dataset_matadata[td_name] = td_text
-        return dataset_matadata
+        return self.detail_guangxi_common(curl)
 
     def detail_guangxi_fangchenggang(self, curl):
-        list_fields = ["来源部门", "重点领域", "发布时间", "更新时间", "开放条件"]
-        table_fields = ["数据量", "文件数", "所属行业", "更新频率", "部门电话", "部门邮箱", "标签", "描述"]
-        response = requests.get(
-            curl["url"], headers=curl["headers"], timeout=REQUEST_TIME_OUT
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        dataset_matadata = {}
-        title = soup.find("ul", attrs={"class": "d-title pull-left"})
-        title = title.find("h4").get_text()
-        dataset_matadata["标题"] = title
-        for li in soup.find("ul", attrs={"class": "list-inline"}).find_all(
-            "li", attrs={}
-        ):
-            li_name = li.get_text().split("：")[0].strip()
-            if li_name in list_fields:
-                li_text = (
-                    li.find("span", attrs={"class": "text-primary"}).get_text().strip()
-                )
-                dataset_matadata[li_name] = li_text
-        table = soup.find("li", attrs={"name": "basicinfo"})
-        for td_name in table_fields:
-            td_text = table.find("td", text=td_name)
-            if td_text is not None:
-                td_text = td_text.find_next("td").get_text().strip()
-                td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
-                dataset_matadata[td_name] = td_text
-        return dataset_matadata
+        return self.detail_guangxi_common(curl)
 
     def detail_guangxi_qinzhou(self, curl):
-        list_fields = ["来源部门", "重点领域", "发布时间", "更新时间", "开放条件"]
-        table_fields = ["数据量", "文件数", "所属行业", "更新频率", "部门电话", "部门邮箱", "标签", "描述"]
-        response = requests.get(
-            curl["url"], headers=curl["headers"], timeout=REQUEST_TIME_OUT
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        dataset_matadata = {}
-        title = soup.find("ul", attrs={"class": "d-title pull-left"})
-        title = title.find("h4").get_text()
-        dataset_matadata["标题"] = title
-        for li in soup.find("ul", attrs={"class": "list-inline"}).find_all(
-            "li", attrs={}
-        ):
-            li_name = li.get_text().split("：")[0].strip()
-            if li_name in list_fields:
-                li_text = (
-                    li.find("span", attrs={"class": "text-primary"}).get_text().strip()
-                )
-                dataset_matadata[li_name] = li_text
-        table = soup.find("li", attrs={"name": "basicinfo"})
-        for td_name in table_fields:
-            td_text = table.find("td", text=td_name)
-            if td_text is not None:
-                td_text = td_text.find_next("td").get_text().strip()
-                td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
-                dataset_matadata[td_name] = td_text
-        return dataset_matadata
+        return self.detail_guangxi_common(curl)
 
     def detail_guangxi_guigang(self, curl):
-        list_fields = ["来源部门", "重点领域", "发布时间", "更新时间", "开放条件"]
-        table_fields = ["数据量", "文件数", "所属行业", "更新频率", "部门电话", "部门邮箱", "标签", "描述"]
-        response = requests.get(
-            curl["url"], headers=curl["headers"], timeout=REQUEST_TIME_OUT
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        dataset_matadata = {}
-        title = soup.find("ul", attrs={"class": "d-title pull-left"})
-        title = title.find("h4").get_text()
-        dataset_matadata["标题"] = title
-        for li in soup.find("ul", attrs={"class": "list-inline"}).find_all(
-            "li", attrs={}
-        ):
-            li_name = li.get_text().split("：")[0].strip()
-            if li_name in list_fields:
-                li_text = (
-                    li.find("span", attrs={"class": "text-primary"}).get_text().strip()
-                )
-                dataset_matadata[li_name] = li_text
-        table = soup.find("li", attrs={"name": "basicinfo"})
-        for td_name in table_fields:
-            td_text = table.find("td", text=td_name)
-            if td_text is not None:
-                td_text = td_text.find_next("td").get_text().strip()
-                td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
-                dataset_matadata[td_name] = td_text
-        return dataset_matadata
+        return self.detail_guangxi_common(curl)
 
     def detail_guangxi_yulin(self, curl):
-        list_fields = ["来源部门", "重点领域", "发布时间", "更新时间", "开放条件"]
-        table_fields = ["数据量", "文件数", "所属行业", "更新频率", "部门电话", "部门邮箱", "标签", "描述"]
-        response = requests.get(
-            curl["url"], headers=curl["headers"], timeout=REQUEST_TIME_OUT
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        dataset_matadata = {}
-        title = soup.find("ul", attrs={"class": "d-title pull-left"})
-        title = title.find("h4").get_text()
-        dataset_matadata["标题"] = title
-        for li in soup.find("ul", attrs={"class": "list-inline"}).find_all(
-            "li", attrs={}
-        ):
-            li_name = li.get_text().split("：")[0].strip()
-            if li_name in list_fields:
-                li_text = (
-                    li.find("span", attrs={"class": "text-primary"}).get_text().strip()
-                )
-                dataset_matadata[li_name] = li_text
-        table = soup.find("li", attrs={"name": "basicinfo"})
-        for td_name in table_fields:
-            td_text = table.find("td", text=td_name)
-            if td_text is not None:
-                td_text = td_text.find_next("td").get_text().strip()
-                td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
-                dataset_matadata[td_name] = td_text
-        return dataset_matadata
+        return self.detail_guangxi_common(curl)
 
     def detail_guangxi_baise(self, curl):
-        list_fields = ["来源部门", "重点领域", "发布时间", "更新时间", "开放条件"]
-        table_fields = ["数据量", "文件数", "所属行业", "更新频率", "部门电话", "部门邮箱", "标签", "描述"]
-        response = requests.get(
-            curl["url"], headers=curl["headers"], timeout=REQUEST_TIME_OUT
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        dataset_matadata = {}
-        title = soup.find("ul", attrs={"class": "d-title pull-left"})
-        title = title.find("h4").get_text()
-        dataset_matadata["标题"] = title
-        for li in soup.find("ul", attrs={"class": "list-inline"}).find_all(
-            "li", attrs={}
-        ):
-            li_name = li.get_text().split("：")[0].strip()
-            if li_name in list_fields:
-                li_text = (
-                    li.find("span", attrs={"class": "text-primary"}).get_text().strip()
-                )
-                dataset_matadata[li_name] = li_text
-        table = soup.find("li", attrs={"name": "basicinfo"})
-        for td_name in table_fields:
-            td_text = table.find("td", text=td_name)
-            if td_text is not None:
-                td_text = td_text.find_next("td").get_text().strip()
-                td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
-                dataset_matadata[td_name] = td_text
-        return dataset_matadata
+        return self.detail_guangxi_common(curl)
 
     def detail_guangxi_hezhou(self, curl):
-        list_fields = ["来源部门", "重点领域", "发布时间", "更新时间", "开放条件"]
-        table_fields = ["数据量", "文件数", "所属行业", "更新频率", "部门电话", "部门邮箱", "标签", "描述"]
-        response = requests.get(
-            curl["url"], headers=curl["headers"], timeout=REQUEST_TIME_OUT
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        dataset_matadata = {}
-        title = soup.find("ul", attrs={"class": "d-title pull-left"})
-        title = title.find("h4").get_text()
-        dataset_matadata["标题"] = title
-        for li in soup.find("ul", attrs={"class": "list-inline"}).find_all(
-            "li", attrs={}
-        ):
-            li_name = li.get_text().split("：")[0].strip()
-            if li_name in list_fields:
-                li_text = (
-                    li.find("span", attrs={"class": "text-primary"}).get_text().strip()
-                )
-                dataset_matadata[li_name] = li_text
-        table = soup.find("li", attrs={"name": "basicinfo"})
-        for td_name in table_fields:
-            td_text = table.find("td", text=td_name)
-            if td_text is not None:
-                td_text = td_text.find_next("td").get_text().strip()
-                td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
-                dataset_matadata[td_name] = td_text
-        return dataset_matadata
+        return self.detail_guangxi_common(curl)
 
     def detail_guangxi_hechi(self, curl):
-        list_fields = ["来源部门", "重点领域", "发布时间", "更新时间", "开放条件"]
-        table_fields = ["数据量", "文件数", "所属行业", "更新频率", "部门电话", "部门邮箱", "标签", "描述"]
-        response = requests.get(
-            curl["url"], headers=curl["headers"], timeout=REQUEST_TIME_OUT
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        dataset_matadata = {}
-        title = soup.find("ul", attrs={"class": "d-title pull-left"})
-        title = title.find("h4").get_text()
-        dataset_matadata["标题"] = title
-        for li in soup.find("ul", attrs={"class": "list-inline"}).find_all(
-            "li", attrs={}
-        ):
-            li_name = li.get_text().split("：")[0].strip()
-            if li_name in list_fields:
-                li_text = (
-                    li.find("span", attrs={"class": "text-primary"}).get_text().strip()
-                )
-                dataset_matadata[li_name] = li_text
-        table = soup.find("li", attrs={"name": "basicinfo"})
-        for td_name in table_fields:
-            td_text = table.find("td", text=td_name)
-            if td_text is not None:
-                td_text = td_text.find_next("td").get_text().strip()
-                td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
-                dataset_matadata[td_name] = td_text
-        return dataset_matadata
+        return self.detail_guangxi_common(curl)
 
     def detail_guangxi_laibin(self, curl):
-        list_fields = ["来源部门", "重点领域", "发布时间", "更新时间", "开放条件"]
-        table_fields = ["数据量", "文件数", "所属行业", "更新频率", "部门电话", "部门邮箱", "标签", "描述"]
-        response = requests.get(
-            curl["url"], headers=curl["headers"], timeout=REQUEST_TIME_OUT
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        dataset_matadata = {}
-        title = soup.find("ul", attrs={"class": "d-title pull-left"})
-        title = title.find("h4").get_text()
-        dataset_matadata["标题"] = title
-        for li in soup.find("ul", attrs={"class": "list-inline"}).find_all(
-            "li", attrs={}
-        ):
-            li_name = li.get_text().split("：")[0].strip()
-            if li_name in list_fields:
-                li_text = (
-                    li.find("span", attrs={"class": "text-primary"}).get_text().strip()
-                )
-                dataset_matadata[li_name] = li_text
-        table = soup.find("li", attrs={"name": "basicinfo"})
-        for td_name in table_fields:
-            td_text = table.find("td", text=td_name)
-            if td_text is not None:
-                td_text = td_text.find_next("td").get_text().strip()
-                td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
-                dataset_matadata[td_name] = td_text
-        return dataset_matadata
+        return self.detail_guangxi_common(curl)
 
     def detail_guangxi_chongzuo(self, curl):
-        list_fields = ["来源部门", "重点领域", "发布时间", "更新时间", "开放条件"]
-        table_fields = ["数据量", "文件数", "所属行业", "更新频率", "部门电话", "部门邮箱", "标签", "描述"]
-        response = requests.get(
-            curl["url"], headers=curl["headers"], timeout=REQUEST_TIME_OUT
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        dataset_matadata = {}
-        title = soup.find("ul", attrs={"class": "d-title pull-left"})
-        title = title.find("h4").get_text()
-        dataset_matadata["标题"] = title
-        for li in soup.find("ul", attrs={"class": "list-inline"}).find_all(
-            "li", attrs={}
-        ):
-            li_name = li.get_text().split("：")[0].strip()
-            if li_name in list_fields:
-                li_text = (
-                    li.find("span", attrs={"class": "text-primary"}).get_text().strip()
-                )
-                dataset_matadata[li_name] = li_text
-        table = soup.find("li", attrs={"name": "basicinfo"})
-        for td_name in table_fields:
-            td_text = table.find("td", text=td_name)
-            if td_text is not None:
-                td_text = td_text.find_next("td").get_text().strip()
-                td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
-                dataset_matadata[td_name] = td_text
-        return dataset_matadata
+        return self.detail_guangxi_common(curl)
 
     def detail_hainan_hainan(self, curl):
         table_fields = [
@@ -4273,7 +3898,7 @@ class Detail:
             dataset_matadata[value] = detail_json[key]
         return dataset_matadata
 
-    def detail_guizhou_guizhou(self, curl):
+    def detail_guizhou_common(self, curl):
         key_map = {
             "name": "标题",
             "description": "数据摘要",
@@ -4325,483 +3950,36 @@ class Detail:
                 detail_json[key] = "有条件开放" if detail_json[key] == 1 else "无条件开放"
             dataset_matadata[value] = detail_json[key]
         return dataset_matadata
+
+    def detail_guizhou_guizhou(self, curl):
+        return self.detail_guizhou_common(curl)
 
     def detail_guizhou_guiyang(self, curl):
-        key_map = {
-            "name": "标题",
-            "description": "数据摘要",
-            "topicName": "主题名称",
-            "orgName": "数据提供方",
-            "industryName": "所属行业",
-            "updateTime": "更新时间",
-            "createTime": "发布时间",
-            "openAttribute": "开放属性",
-            "frequency": "更新频率",
-        }
-
-        frequency_mapping = {
-            0: "每年",
-            1: "每季度",
-            2: "每月",
-            3: "每周",
-            4: "每天",
-            5: "实时",
-            6: "每半年",
-            None: "实时",
-        }
-        try_cnt = 0
-        while True:
-            try_cnt += 1
-            if try_cnt >= REQUEST_MAX_TIME:
-                return {}
-            try:
-                response = requests.post(
-                    curl["url"],
-                    json=curl["data"],
-                    headers=curl["headers"],
-                    timeout=REQUEST_TIME_OUT,
-                )
-                break
-            except:
-                time.sleep(5)
-
-        dataset_matadata = {}
-        detail_json = json.loads(response.text)["data"]
-        for key, value in key_map.items():
-            if key in ["updateTime", "createTime"]:
-                detail_json[key] = time.strftime(
-                    "%Y-%m-%d", time.localtime(detail_json[key] / 1000)
-                )
-            if key == "frequency":
-                detail_json[key] = frequency_mapping[detail_json[key]]
-            if key == "openAttribute":
-                detail_json[key] = "有条件开放" if detail_json[key] == 1 else "无条件开放"
-            dataset_matadata[value] = detail_json[key]
-        return dataset_matadata
+        return self.detail_guizhou_common(curl)
 
     def detail_guizhou_liupanshui(self, curl):
-        key_map = {
-            "name": "标题",
-            "description": "数据摘要",
-            "topicName": "主题名称",
-            "orgName": "数据提供方",
-            "industryName": "所属行业",
-            "updateTime": "更新时间",
-            "createTime": "发布时间",
-            "openAttribute": "开放属性",
-            "frequency": "更新频率",
-        }
-
-        frequency_mapping = {
-            0: "每年",
-            1: "每季度",
-            2: "每月",
-            3: "每周",
-            4: "每天",
-            5: "实时",
-            6: "每半年",
-            None: "实时",
-        }
-        try_cnt = 0
-        while True:
-            try_cnt += 1
-            if try_cnt >= REQUEST_MAX_TIME:
-                return {}
-            try:
-                response = requests.post(
-                    curl["url"],
-                    json=curl["data"],
-                    headers=curl["headers"],
-                    timeout=REQUEST_TIME_OUT,
-                )
-                break
-            except:
-                time.sleep(5)
-
-        dataset_matadata = {}
-        detail_json = json.loads(response.text)["data"]
-        for key, value in key_map.items():
-            if key in ["updateTime", "createTime"]:
-                detail_json[key] = time.strftime(
-                    "%Y-%m-%d", time.localtime(detail_json[key] / 1000)
-                )
-            if key == "frequency":
-                detail_json[key] = frequency_mapping[detail_json[key]]
-            if key == "openAttribute":
-                detail_json[key] = "有条件开放" if detail_json[key] == 1 else "无条件开放"
-            dataset_matadata[value] = detail_json[key]
-        return dataset_matadata
+        return self.detail_guizhou_common(curl)
 
     def detail_guizhou_zunyi(self, curl):
-        key_map = {
-            "name": "标题",
-            "description": "数据摘要",
-            "topicName": "主题名称",
-            "orgName": "数据提供方",
-            "industryName": "所属行业",
-            "updateTime": "更新时间",
-            "createTime": "发布时间",
-            "openAttribute": "开放属性",
-            "frequency": "更新频率",
-        }
-
-        frequency_mapping = {
-            0: "每年",
-            1: "每季度",
-            2: "每月",
-            3: "每周",
-            4: "每天",
-            5: "实时",
-            6: "每半年",
-            None: "实时",
-        }
-        try_cnt = 0
-        while True:
-            try_cnt += 1
-            if try_cnt >= REQUEST_MAX_TIME:
-                return {}
-            try:
-                response = requests.post(
-                    curl["url"],
-                    json=curl["data"],
-                    headers=curl["headers"],
-                    timeout=REQUEST_TIME_OUT,
-                )
-                break
-            except:
-                time.sleep(5)
-
-        dataset_matadata = {}
-        detail_json = json.loads(response.text)["data"]
-        for key, value in key_map.items():
-            if key in ["updateTime", "createTime"]:
-                detail_json[key] = time.strftime(
-                    "%Y-%m-%d", time.localtime(detail_json[key] / 1000)
-                )
-            if key == "frequency":
-                detail_json[key] = frequency_mapping[detail_json[key]]
-            if key == "openAttribute":
-                detail_json[key] = "有条件开放" if detail_json[key] == 1 else "无条件开放"
-            dataset_matadata[value] = detail_json[key]
-        return dataset_matadata
+        return self.detail_guizhou_common(curl)
 
     def detail_guizhou_anshun(self, curl):
-        key_map = {
-            "name": "标题",
-            "description": "数据摘要",
-            "topicName": "主题名称",
-            "orgName": "数据提供方",
-            "industryName": "所属行业",
-            "updateTime": "更新时间",
-            "createTime": "发布时间",
-            "openAttribute": "开放属性",
-            "frequency": "更新频率",
-        }
-
-        frequency_mapping = {
-            0: "每年",
-            1: "每季度",
-            2: "每月",
-            3: "每周",
-            4: "每天",
-            5: "实时",
-            6: "每半年",
-            None: "实时",
-        }
-        try_cnt = 0
-        while True:
-            try_cnt += 1
-            if try_cnt >= REQUEST_MAX_TIME:
-                return {}
-            try:
-                response = requests.post(
-                    curl["url"],
-                    json=curl["data"],
-                    headers=curl["headers"],
-                    timeout=REQUEST_TIME_OUT,
-                )
-                break
-            except:
-                time.sleep(5)
-
-        dataset_matadata = {}
-        detail_json = json.loads(response.text)["data"]
-        for key, value in key_map.items():
-            if key in ["updateTime", "createTime"]:
-                detail_json[key] = time.strftime(
-                    "%Y-%m-%d", time.localtime(detail_json[key] / 1000)
-                )
-            if key == "frequency":
-                detail_json[key] = frequency_mapping[detail_json[key]]
-            if key == "openAttribute":
-                detail_json[key] = "有条件开放" if detail_json[key] == 1 else "无条件开放"
-            dataset_matadata[value] = detail_json[key]
-        return dataset_matadata
+        return self.detail_guizhou_common(curl)
 
     def detail_guizhou_bijie(self, curl):
-        key_map = {
-            "name": "标题",
-            "description": "数据摘要",
-            "topicName": "主题名称",
-            "orgName": "数据提供方",
-            "industryName": "所属行业",
-            "updateTime": "更新时间",
-            "createTime": "发布时间",
-            "openAttribute": "开放属性",
-            "frequency": "更新频率",
-        }
-
-        frequency_mapping = {
-            0: "每年",
-            1: "每季度",
-            2: "每月",
-            3: "每周",
-            4: "每天",
-            5: "实时",
-            6: "每半年",
-            None: "实时",
-        }
-        try_cnt = 0
-        while True:
-            try_cnt += 1
-            if try_cnt >= REQUEST_MAX_TIME:
-                return {}
-            try:
-                response = requests.post(
-                    curl["url"],
-                    json=curl["data"],
-                    headers=curl["headers"],
-                    timeout=REQUEST_TIME_OUT,
-                )
-                break
-            except:
-                time.sleep(5)
-
-        dataset_matadata = {}
-        detail_json = json.loads(response.text)["data"]
-        for key, value in key_map.items():
-            if key in ["updateTime", "createTime"]:
-                detail_json[key] = time.strftime(
-                    "%Y-%m-%d", time.localtime(detail_json[key] / 1000)
-                )
-            if key == "frequency":
-                detail_json[key] = frequency_mapping[detail_json[key]]
-            if key == "openAttribute":
-                detail_json[key] = "有条件开放" if detail_json[key] == 1 else "无条件开放"
-            dataset_matadata[value] = detail_json[key]
-        return dataset_matadata
+        return self.detail_guizhou_common(curl)
 
     def detail_guizhou_tongren(self, curl):
-        key_map = {
-            "name": "标题",
-            "description": "数据摘要",
-            "topicName": "主题名称",
-            "orgName": "数据提供方",
-            "industryName": "所属行业",
-            "updateTime": "更新时间",
-            "createTime": "发布时间",
-            "openAttribute": "开放属性",
-            "frequency": "更新频率",
-        }
-
-        frequency_mapping = {
-            0: "每年",
-            1: "每季度",
-            2: "每月",
-            3: "每周",
-            4: "每天",
-            5: "实时",
-            6: "每半年",
-            None: "实时",
-        }
-        try_cnt = 0
-        while True:
-            try_cnt += 1
-            if try_cnt >= REQUEST_MAX_TIME:
-                return {}
-            try:
-                response = requests.post(
-                    curl["url"],
-                    json=curl["data"],
-                    headers=curl["headers"],
-                    timeout=REQUEST_TIME_OUT,
-                )
-                break
-            except:
-                time.sleep(5)
-
-        dataset_matadata = {}
-        detail_json = json.loads(response.text)["data"]
-        for key, value in key_map.items():
-            if key in ["updateTime", "createTime"]:
-                detail_json[key] = time.strftime(
-                    "%Y-%m-%d", time.localtime(detail_json[key] / 1000)
-                )
-            if key == "frequency":
-                detail_json[key] = frequency_mapping[detail_json[key]]
-            if key == "openAttribute":
-                detail_json[key] = "有条件开放" if detail_json[key] == 1 else "无条件开放"
-            dataset_matadata[value] = detail_json[key]
-        return dataset_matadata
+        return self.detail_guizhou_common(curl)
 
     def detail_guizhou_qianxinan(self, curl):
-        key_map = {
-            "name": "标题",
-            "description": "数据摘要",
-            "topicName": "主题名称",
-            "orgName": "数据提供方",
-            "industryName": "所属行业",
-            "updateTime": "更新时间",
-            "createTime": "发布时间",
-            "openAttribute": "开放属性",
-            "frequency": "更新频率",
-        }
-
-        frequency_mapping = {
-            0: "每年",
-            1: "每季度",
-            2: "每月",
-            3: "每周",
-            4: "每天",
-            5: "实时",
-            6: "每半年",
-            None: "实时",
-        }
-        try_cnt = 0
-        while True:
-            try_cnt += 1
-            if try_cnt >= REQUEST_MAX_TIME:
-                return {}
-            try:
-                response = requests.post(
-                    curl["url"],
-                    json=curl["data"],
-                    headers=curl["headers"],
-                    timeout=REQUEST_TIME_OUT,
-                )
-                break
-            except:
-                time.sleep(5)
-
-        dataset_matadata = {}
-        detail_json = json.loads(response.text)["data"]
-        for key, value in key_map.items():
-            if key in ["updateTime", "createTime"]:
-                detail_json[key] = time.strftime(
-                    "%Y-%m-%d", time.localtime(detail_json[key] / 1000)
-                )
-            if key == "frequency":
-                detail_json[key] = frequency_mapping[detail_json[key]]
-            if key == "openAttribute":
-                detail_json[key] = "有条件开放" if detail_json[key] == 1 else "无条件开放"
-            dataset_matadata[value] = detail_json[key]
-        return dataset_matadata
+        return self.detail_guizhou_common(curl)
 
     def detail_guizhou_qiandongnan(self, curl):
-        key_map = {
-            "name": "标题",
-            "description": "数据摘要",
-            "topicName": "主题名称",
-            "orgName": "数据提供方",
-            "industryName": "所属行业",
-            "updateTime": "更新时间",
-            "createTime": "发布时间",
-            "openAttribute": "开放属性",
-            "frequency": "更新频率",
-        }
-
-        frequency_mapping = {
-            0: "每年",
-            1: "每季度",
-            2: "每月",
-            3: "每周",
-            4: "每天",
-            5: "实时",
-            6: "每半年",
-            None: "实时",
-        }
-        try_cnt = 0
-        while True:
-            try_cnt += 1
-            if try_cnt >= REQUEST_MAX_TIME:
-                return {}
-            try:
-                response = requests.post(
-                    curl["url"],
-                    json=curl["data"],
-                    headers=curl["headers"],
-                    timeout=REQUEST_TIME_OUT,
-                )
-                break
-            except:
-                time.sleep(5)
-
-        dataset_matadata = {}
-        detail_json = json.loads(response.text)["data"]
-        for key, value in key_map.items():
-            if key in ["updateTime", "createTime"]:
-                detail_json[key] = time.strftime(
-                    "%Y-%m-%d", time.localtime(detail_json[key] / 1000)
-                )
-            if key == "frequency":
-                detail_json[key] = frequency_mapping[detail_json[key]]
-            if key == "openAttribute":
-                detail_json[key] = "有条件开放" if detail_json[key] == 1 else "无条件开放"
-            dataset_matadata[value] = detail_json[key]
-        return dataset_matadata
+        return self.detail_guizhou_common(curl)
 
     def detail_guizhou_qiannan(self, curl):
-        key_map = {
-            "name": "标题",
-            "description": "数据摘要",
-            "topicName": "主题名称",
-            "orgName": "数据提供方",
-            "industryName": "所属行业",
-            "updateTime": "更新时间",
-            "createTime": "发布时间",
-            "openAttribute": "开放属性",
-            "frequency": "更新频率",
-        }
-
-        frequency_mapping = {
-            0: "每年",
-            1: "每季度",
-            2: "每月",
-            3: "每周",
-            4: "每天",
-            5: "实时",
-            6: "每半年",
-            None: "实时",
-        }
-        try_cnt = 0
-        while True:
-            try_cnt += 1
-            if try_cnt >= REQUEST_MAX_TIME:
-                return {}
-            try:
-                response = requests.post(
-                    curl["url"],
-                    json=curl["data"],
-                    headers=curl["headers"],
-                    timeout=REQUEST_TIME_OUT,
-                )
-                break
-            except:
-                time.sleep(5)
-
-        dataset_matadata = {}
-        detail_json = json.loads(response.text)["data"]
-        for key, value in key_map.items():
-            if key in ["updateTime", "createTime"]:
-                detail_json[key] = time.strftime(
-                    "%Y-%m-%d", time.localtime(detail_json[key] / 1000)
-                )
-            if key == "frequency":
-                detail_json[key] = frequency_mapping[detail_json[key]]
-            if key == "openAttribute":
-                detail_json[key] = "有条件开放" if detail_json[key] == 1 else "无条件开放"
-            dataset_matadata[value] = detail_json[key]
-        return dataset_matadata
+        return self.detail_guizhou_common(curl)
 
     def detail_ningxia_ningxia(self, curl):
         list_fields = ["来源部门", "重点领域", "发布时间", "更新时间", "开放条件"]

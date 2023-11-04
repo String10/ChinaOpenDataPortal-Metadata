@@ -1292,7 +1292,7 @@ class Crawler:
                 self.metadata_list.append(metadata)
                 time.sleep(1)
 
-    def crawl_guangxi_guangxi(self):
+    def crawl_guangxi_common(self):
         for page in range(1, 2000000):
             curl = self.result_list_curl.copy()
             curl["queries"]["page"] = str(page)
@@ -1311,215 +1311,50 @@ class Crawler:
                 except:
                     self.logs_detail_error(curl["url"], "continue")
 
+    def crawl_guangxi_guangxi(self):
+        return self.crawl_guangxi_common()
+
     def crawl_guangxi_nanning(self):
-        for page in range(1, 2000000):
-            curl = self.result_list_curl.copy()
-            curl["queries"]["page"] = str(page)
-            links = self.result_list.get_result_list(curl)
-            if len(links) == 0:
-                break
-            for link in links:
-                curl = self.detail_list_curl.copy()
-                curl["url"] += link["link"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = curl["url"]
-                metadata["数据格式"] = link["data_formats"]
-                self.metadata_list.append(metadata)
+        return self.crawl_guangxi_common()
 
     def crawl_guangxi_liuzhou(self):
-        for page in range(1, 2000000):
-            curl = self.result_list_curl.copy()
-            curl["queries"]["page"] = str(page)
-            links = self.result_list.get_result_list(curl)
-            if len(links) == 0:
-                break
-            for link in links:
-                curl = self.detail_list_curl.copy()
-                curl["url"] += link["link"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = curl["url"]
-                metadata["数据格式"] = link["data_formats"]
-                self.metadata_list.append(metadata)
+        return self.crawl_guangxi_common()
 
     def crawl_guangxi_guilin(self):
-        for page in range(1, 2000000):
-            curl = self.result_list_curl.copy()
-            curl["queries"]["page"] = str(page)
-            links = self.result_list.get_result_list(curl)
-            if len(links) == 0:
-                break
-            for link in links:
-                curl = self.detail_list_curl.copy()
-                curl["url"] += link["link"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = curl["url"]
-                metadata["数据格式"] = link["data_formats"]
-                self.metadata_list.append(metadata)
+        return self.crawl_guangxi_common()
 
     def crawl_guangxi_wuzhou(self):
-        for page in range(1, 2000000):
-            curl = self.result_list_curl.copy()
-            curl["queries"]["page"] = str(page)
-            links = self.result_list.get_result_list(curl)
-            if len(links) == 0:
-                break
-            for link in links:
-                curl = self.detail_list_curl.copy()
-                curl["url"] += link["link"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = curl["url"]
-                metadata["数据格式"] = link["data_formats"]
-                self.metadata_list.append(metadata)
+        return self.crawl_guangxi_common()
 
     def crawl_guangxi_beihai(self):
-        for page in range(1, 2000000):
-            curl = self.result_list_curl.copy()
-            curl["queries"]["page"] = str(page)
-            links = self.result_list.get_result_list(curl)
-            if len(links) == 0:
-                break
-            for link in links:
-                curl = self.detail_list_curl.copy()
-                curl["url"] += link["link"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = curl["url"]
-                metadata["数据格式"] = link["data_formats"]
-                self.metadata_list.append(metadata)
+        return self.crawl_guangxi_common()
 
     def crawl_guangxi_fangchenggang(self):
-        for page in range(1, 2000000):
-            curl = self.result_list_curl.copy()
-            curl["queries"]["page"] = str(page)
-            links = self.result_list.get_result_list(curl)
-            if len(links) == 0:
-                break
-            for link in links:
-                curl = self.detail_list_curl.copy()
-                curl["url"] += link["link"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = curl["url"]
-                metadata["数据格式"] = link["data_formats"]
-                self.metadata_list.append(metadata)
+        return self.crawl_guangxi_common()
 
     def crawl_guangxi_qinzhou(self):
-        for page in range(1, 2000000):
-            curl = self.result_list_curl.copy()
-            curl["queries"]["page"] = str(page)
-            links = self.result_list.get_result_list(curl)
-            if len(links) == 0:
-                break
-            for link in links:
-                curl = self.detail_list_curl.copy()
-                curl["url"] += link["link"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = curl["url"]
-                metadata["数据格式"] = link["data_formats"]
-                self.metadata_list.append(metadata)
+        return self.crawl_guangxi_common()
 
     def crawl_guangxi_guigang(self):
-        for page in range(1, 2000000):
-            curl = self.result_list_curl.copy()
-            curl["queries"]["page"] = str(page)
-            links = self.result_list.get_result_list(curl)
-            if len(links) == 0:
-                break
-            for link in links:
-                curl = self.detail_list_curl.copy()
-                curl["url"] += link["link"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = curl["url"]
-                metadata["数据格式"] = link["data_formats"]
-                self.metadata_list.append(metadata)
+        return self.crawl_guangxi_common()
 
     def crawl_guangxi_yulin(self):
-        for page in range(1, 2000000):
-            curl = self.result_list_curl.copy()
-            curl["queries"]["page"] = str(page)
-            links = self.result_list.get_result_list(curl)
-            if len(links) == 0:
-                break
-            for link in links:
-                curl = self.detail_list_curl.copy()
-                curl["url"] += link["link"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = curl["url"]
-                metadata["数据格式"] = link["data_formats"]
-                self.metadata_list.append(metadata)
+        return self.crawl_guangxi_common()
 
     def crawl_guangxi_baise(self):
-        for page in range(1, 2000000):
-            curl = self.result_list_curl.copy()
-            curl["queries"]["page"] = str(page)
-            links = self.result_list.get_result_list(curl)
-            if len(links) == 0:
-                break
-            for link in links:
-                curl = self.detail_list_curl.copy()
-                curl["url"] += link["link"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = curl["url"]
-                metadata["数据格式"] = link["data_formats"]
-                self.metadata_list.append(metadata)
+        return self.crawl_guangxi_common()
 
     def crawl_guangxi_hezhou(self):
-        for page in range(1, 2000000):
-            curl = self.result_list_curl.copy()
-            curl["queries"]["page"] = str(page)
-            links = self.result_list.get_result_list(curl)
-            if len(links) == 0:
-                break
-            for link in links:
-                curl = self.detail_list_curl.copy()
-                curl["url"] += link["link"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = curl["url"]
-                metadata["数据格式"] = link["data_formats"]
-                self.metadata_list.append(metadata)
+        return self.crawl_guangxi_common()
 
     def crawl_guangxi_hechi(self):
-        for page in range(1, 2000000):
-            curl = self.result_list_curl.copy()
-            curl["queries"]["page"] = str(page)
-            links = self.result_list.get_result_list(curl)
-            if len(links) == 0:
-                break
-            for link in links:
-                curl = self.detail_list_curl.copy()
-                curl["url"] += link["link"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = curl["url"]
-                metadata["数据格式"] = link["data_formats"]
-                self.metadata_list.append(metadata)
+        return self.crawl_guangxi_common()
 
     def crawl_guangxi_laibin(self):
-        for page in range(1, 2000000):
-            curl = self.result_list_curl.copy()
-            curl["queries"]["page"] = str(page)
-            links = self.result_list.get_result_list(curl)
-            if len(links) == 0:
-                break
-            for link in links:
-                curl = self.detail_list_curl.copy()
-                curl["url"] += link["link"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = curl["url"]
-                metadata["数据格式"] = link["data_formats"]
-                self.metadata_list.append(metadata)
+        return self.crawl_guangxi_common()
 
     def crawl_guangxi_chongzuo(self):
-        for page in range(1, 2000000):
-            curl = self.result_list_curl.copy()
-            curl["queries"]["page"] = str(page)
-            links = self.result_list.get_result_list(curl)
-            if len(links) == 0:
-                break
-            for link in links:
-                curl = self.detail_list_curl.copy()
-                curl["url"] += link["link"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = curl["url"]
-                metadata["数据格式"] = link["data_formats"]
-                self.metadata_list.append(metadata)
+        return self.crawl_guangxi_common()
 
     def crawl_hainan_hainan(self):
         for page in range(0, 100000):
