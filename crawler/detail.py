@@ -552,7 +552,9 @@ class Detail:
         soup = BeautifulSoup(html, "html.parser")
         dataset_metadata = {}
         titleInfo = soup.find("div", attrs={"class": "data-name data-con"})
-        title = titleInfo.get_text().strip()
+        title = "".join(
+            [txt.strip() for txt in titleInfo.contents if isinstance(txt, str)]
+        )
         dataset_metadata["资源标题"] = title
         baseInfo = soup.find("div", attrs={"class": "baseInfo s1"})
         table = baseInfo.find("table")
@@ -567,17 +569,44 @@ class Detail:
                 continue
             td_text = td_text.find_next("td").get_text().strip()
             dataset_metadata[td_name] = td_text
-
-        data_formats = []
-        for li in (
-            soup.find("div", attrs={"class": "service s4"}).find("ul").find_all("li")
-        ):
-            if li.get_text() != "全部":
-                data_formats.append(li.get_text().lower())
-        dataset_metadata["数据格式"] = data_formats
         dataset_metadata["目录发布/更新时间"] = dataset_metadata["目录发布/更新时间"].split(" ")[0]
         dataset_metadata["资源发布/更新时间"] = dataset_metadata["资源发布/更新时间"].split(" ")[0]
         dataset_metadata["详情页网址"] = f"{curl['url']}?cata_id={curl['params']['cata_id']}"
+
+        data_formats = set()
+        detail_link = urlparse(curl["url"])
+        download_info_link = (
+            f"{detail_link.scheme}://{detail_link.netloc}"
+            "/data/catalog/CatalogDetail.do?method=getDownLoadPageInfo"
+        )
+        response = requests.get(
+            download_info_link,
+            params=curl["params"],
+            headers=curl["headers"],
+            timeout=REQUEST_TIME_OUT,
+        )
+        download_info = json.loads(response.text)
+        if self.download_files:
+            dataset_metadata["file_name"] = []
+        for file in download_info["data"]:
+            if file["fileFormat"] == "zip":
+                file_name_with_fmt = file["fileName"]
+                data_formats.add(
+                    file_name_with_fmt[file_name_with_fmt.rfind("_") + 1 :]
+                )
+            else:
+                data_formats.add(file["fileFormat"])
+            if self.download_files:
+                file_link = (
+                    f"{detail_link.scheme}://{detail_link.netloc}"
+                    "/catalog/CatalogDetailDownload.do"
+                    "?method=getFileDownloadAddrby"
+                    f"&fileId={file['fileId']}"
+                )
+                file_name = f"{file['fileName']}.{file['fileFormat']}"
+                self.downloader.start_download(file_link, file_name)
+                dataset_metadata["file_name"].append(file_name)
+        dataset_metadata["数据格式"] = list(data_formats)
         return dataset_metadata
 
     def detail_jiangsu_xuzhou(self, curl):
