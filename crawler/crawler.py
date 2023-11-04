@@ -827,7 +827,7 @@ class Crawler:
                 curl = self.detail_list_curl.copy()
                 curl["url"] += link["link"]
                 metadata = self.detail.get_detail(curl)
-                metadata["数据格式"] = link["data_formats"]  # TODO：扔到detail方法里面
+                metadata["资源格式"] = link["data_formats"]  # TODO：扔到detail方法里面
                 metadata["详情页网址"] = curl["url"]
                 self.metadata_list.append(metadata)
 

@@ -43,6 +43,56 @@ class Detail:
         func = getattr(self, func_name, self.detail_other)
         return func(curl)
 
+    def common_download(self, soup, curl, metadata):
+        if self.download_files:
+            metadata["file_name"] = []
+        org_url = urlparse(curl["url"])
+        file_link_fmt = (
+            f"{org_url.scheme}://{org_url.netloc}{soup.find('input', attrs={'id':'rootPath'})['value']}/catalog/download"
+            f"?cataId={soup.find('input', attrs={'id': 'cata_id'})['value']}"
+            f"&cataName={soup.find('input', attrs={'id': 'cata_name'})['value']}"
+            "&idInRc={}"
+        )
+
+        if "资源格式" not in metadata:
+            metadata["资源格式"] = []
+
+        file_list = soup.find("li", attrs={"name": "file-download"})
+        if file_list:
+            for item in file_list.find("table").find("tbody").find_all("tr"):
+                file_fmt = item.get("fileformat") or item.get("fileFormat")
+                if not file_fmt:
+                    continue
+                metadata["资源格式"].append(file_fmt)
+                if self.download_files:
+                    file = item.find("input", attrs={"type": "checkbox"})
+                    self.downloader.start_download(
+                        file_link_fmt.format(file["file-id"]), file["file-name"]
+                    )
+                    metadata["file_name"].append(file["file-name"])
+            return metadata
+
+        file_list_link = (
+            f"{org_url.scheme}://{org_url.netloc}{soup.find('input', attrs={'id':'rootPath'})['value']}/catalog/getResourceWithFormat"
+            f"?cataId={soup.find('input', attrs={'id': 'cata_id'})['value']}"
+            "&pageNum=1&pageSize=100&fileFormat="
+        )
+        response = requests.get(
+            file_list_link,
+            headers=curl["headers"],
+        )
+        if response.ok:
+            file_list = json.loads(response.text)
+            for file in file_list["object"]["records"]:
+                metadata["资源格式"].append(file["fileFormat"])
+                if self.download_files:
+                    file_name = f"{file['fileName']}.{file['fileFormat']}"
+                    self.downloader.start_download(
+                        file_link_fmt.format(file["idInRc"]), file_name
+                    )
+                    metadata["file_name"].append(file_name)
+        return metadata
+
     def detail_beijing_beijing(self, curl):
         # 资源摘要/摘要 并存
         response = requests.get(
@@ -320,34 +370,6 @@ class Detail:
             dataset_metadata[value] = detail_json[key]
         return dataset_metadata
 
-    def common_download_dongbei(self, soup, url, metadata):
-        file_list = soup.find("li", attrs={"name": "file-download"})
-        if file_list:
-            org_url = urlparse(url)
-            file_link_fmt = (
-                f"{org_url.scheme}://{org_url.netloc}{soup.find('input', attrs={'id':'rootPath'})['value']}/catalog/download"
-                f"?cataId={soup.find('input', attrs={'id': 'cata_id'})['value']}"
-                f"&cataName={soup.find('input', attrs={'id': 'cata_name'})['value']}"
-                "&idInRc={}"
-            )
-            for item in file_list.find("table").find("tbody").find_all("tr"):
-                if "资源格式" not in metadata:
-                    metadata["资源格式"] = []
-                file_fmt = item.get("fileformat") or item.get("fileFormat")
-                if not file_fmt:
-                    continue
-                metadata["资源格式"].append(file_fmt)
-                if self.download_files:
-                    file = item.find("input", attrs={"type": "checkbox"})
-                    self.downloader.start_download(
-                        file_link_fmt.format(file["file-id"]), file["file-name"]
-                    )
-
-                    if "file_name" not in metadata:
-                        metadata["file_name"] = []
-                    metadata["file_name"].append(file["file-name"])
-        return metadata
-
     def detail_liaoning_liaoning(self, curl):
         list_fields = ["来源部门", "重点领域", "数据更新时间", "开放条件"]
         table_fields = ["数据量", "接口量", "所属行业", "更新频率", "部门电话", "部门邮箱", "标签", "描述"]
@@ -378,9 +400,7 @@ class Detail:
             td_text = td_text.find_next("td").get_text().strip()
             td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
             dataset_metadata[td_name] = td_text
-        dataset_metadata = self.common_download_dongbei(
-            soup, curl["url"], dataset_metadata
-        )
+        dataset_metadata = self.common_download(soup, curl, dataset_metadata)
         dataset_metadata["url"] = curl["url"]
         return dataset_metadata
 
@@ -445,9 +465,7 @@ class Detail:
             td_text = td_text.find_next("td").get_text().strip()
             td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
             dataset_metadata[td_name] = td_text
-        dataset_metadata = self.common_download_dongbei(
-            soup, curl["url"], dataset_metadata
-        )
+        dataset_metadata = self.common_download(soup, curl, dataset_metadata)
         dataset_metadata["url"] = curl["url"]
         return dataset_metadata
 
@@ -2053,7 +2071,6 @@ class Detail:
     def detail_shandong_common(self, curl):
         list_fields = ["来源部门", "重点领域", "发布时间", "更新时间", "开放类型"]
         table_fields = ["数据量", "所属行业", "更新频率", "部门电话", "部门邮箱", "标签", "描述"]
-        item_fields = ["英文信息项名", "中文信息项名", "数据类型", "中文描述"]
         for _ in range(REQUEST_MAX_TIME):
             try:
                 response = requests.get(
@@ -2066,10 +2083,10 @@ class Detail:
 
         html = response.content
         soup = BeautifulSoup(html, "html.parser")
-        dataset_matadata = {}
+        dataset_metadata = {}
         title = soup.find("ul", attrs={"class": "d-title pull-left"})
         title = title.find("h4").get_text()
-        dataset_matadata["标题"] = title
+        dataset_metadata["标题"] = title
         for li in soup.find("ul", attrs={"class": "list-inline"}).find_all(
             "li", attrs={}
         ):
@@ -2078,7 +2095,7 @@ class Detail:
                 li_text = (
                     li.find("span", attrs={"class": "text-primary"}).get_text().strip()
                 )
-                dataset_matadata[li_name] = li_text
+                dataset_metadata[li_name] = li_text
         table = soup.find("li", attrs={"name": "basicinfo"})
         for td_name in table_fields:
             if td_name == "数据量":  # 可能叫接口数，或文件数
@@ -2092,12 +2109,13 @@ class Detail:
                     table.find("td", text=td_name).find_next("td").get_text().strip()
                 )
                 td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
-                dataset_matadata[td_name] = td_text
+                dataset_metadata[td_name] = td_text
             except Exception as e:
                 print(e)
                 print("title = ", title)
                 print("url = ", curl["url"])
-        return dataset_matadata
+        dataset_metadata = self.common_download(soup, curl, dataset_metadata)
+        return dataset_metadata
 
     def detail_shandong_shandong(self, curl):
         return self.detail_shandong_common(curl)
