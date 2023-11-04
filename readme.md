@@ -22,6 +22,12 @@ python -m db-writer --db-host DB_ADDR \
     --metadata-path METADATA_SAVING_PATH
 ```
 
+## 数据下载-调试
+建议对爬虫抓取的数据数量进行限制以缩短测试时间.
+``` shell
+python -m crawler --debug --download-files --province xxx --city xxx
+```
+
 # 注意事项
 
 1. 运行爬虫需要使用Python 3.6及以下的版本,
