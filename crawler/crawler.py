@@ -1924,6 +1924,20 @@ class Crawler:
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
 
+    def crawl_guizhou_guianxinqu(self):
+        for page in range(1, 7):
+            curl = self.result_list_curl.copy()
+            curl["data"]["pageIndex"] = page
+            ids = self.result_list.get_result_list(curl)
+            for id in ids:
+                curl = self.detail_list_curl.copy()
+                curl["data"]["id"] = id["id"]
+                metadata = self.detail.get_detail(curl)
+                metadata["详情页网址"] = "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                metadata["数据格式"] = id["resourceFormats"]
+                self.metadata_list.append(metadata)
+                return
+
     def crawl_shaanxi_shaanxi(self):
         for page in range(1, 16):
             curl = self.result_list_curl.copy()

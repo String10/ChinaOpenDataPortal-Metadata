@@ -3981,6 +3981,9 @@ class Detail:
     def detail_guizhou_qiannan(self, curl):
         return self.detail_guizhou_common(curl)
 
+    def detail_guizhou_guianxinqu(self, curl):
+        return self.detail_guizhou_common(curl)
+
     def detail_ningxia_ningxia(self, curl):
         list_fields = ["来源部门", "重点领域", "发布时间", "更新时间", "开放条件"]
         table_fields = ["所属行业", "更新频率", "部门电话", "部门邮箱", "标签", "描述"]

@@ -2247,6 +2247,9 @@ class ResultList:
     def result_list_guizhou_qiannan(self, curl):
         return self.result_list_guizhou_common(curl)
 
+    def result_list_guizhou_guianxinqu(self, curl):
+        return self.result_list_guizhou_common(curl)
+
     def result_list_shaanxi_shaanxi(self, curl):
         response = requests.get(
             curl["url"],

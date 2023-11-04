@@ -6583,6 +6583,55 @@
         "compressed": true,
         "insecure": false
       }
+    },
+    "guianxinqu": {
+      "resultList": {
+        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams",
+        "method": "post",
+        "headers": {
+          "Accept": "application/json, text/plain, */*",
+          "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
+          "Cache-Control": "no-cache",
+          "Origin": "http://data.guizhou.gov.cn",
+          "Pragma": "no-cache",
+          "Proxy-Connection": "keep-alive",
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.76",
+          "role": "0"
+        },
+        "data": {
+          "orderBy": 0,
+          "topicId": [],
+          "orgId": [],
+          "divisionId": "529900",
+          "pageSize": 12,
+          "scenarioId": "",
+          "resourceType": "",
+          "resourceFormats": [],
+          "searchText": [],
+          "pageIndex": 1
+        },
+        "compressed": true,
+        "insecure": false
+      },
+      "detail": {
+        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
+        "method": "post",
+        "headers": {
+          "Accept": "application/json, text/plain, */*",
+          "Accept-Language": "zh-CN,zh-TW;q=0.9,zh;q=0.8,en;q=0.7",
+          "Connection": "keep-alive",
+          "Content-Type": "application/json;charset=UTF-8",
+          "Cookie": "SECKEY_ABVK=v65AGrOtP0eIaCYeyQ3YAGwhmXFFrbXslwkHw4PKp04%3D",
+          "Origin": "http://data.guizhou.gov.cn",
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+          "role": "0"
+        },
+        "data": {
+          "id": "7010fde3-a03a-427c-843e-299850c3bc67"
+        },
+        "compressed": true,
+        "insecure": false
+      }
     }
   },
   "shaanxi": {
