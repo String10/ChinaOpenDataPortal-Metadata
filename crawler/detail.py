@@ -58,7 +58,7 @@ class Detail:
             metadata["资源格式"] = []
 
         file_list = soup.find("li", attrs={"name": "file-download"})
-        if file_list:
+        if file_list and file_list.find("table").find("tbody").find("tr"):
             for item in file_list.find("table").find("tbody").find_all("tr"):
                 file_fmt = item.get("fileformat") or item.get("fileFormat")
                 if not file_fmt:
@@ -81,7 +81,7 @@ class Detail:
             file_list_link,
             headers=curl["headers"],
         )
-        if response.ok:
+        if response.ok and len(response.text) > 0:
             file_list = json.loads(response.text)
             for file in file_list["object"]["records"]:
                 metadata["资源格式"].append(file["fileFormat"])
