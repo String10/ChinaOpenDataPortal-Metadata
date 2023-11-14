@@ -1,5 +1,6 @@
 import argparse
 import json
+from math import ceil, floor
 import os
 import time
 import requests
@@ -55,19 +56,27 @@ def crawl_then_save(province, city):
     crawler.save_metadata_as_json(args.metadata_output)
 
 
+download_worker_pool, crawler_worker_pool = None, None
+workers = args.workers
+if workers > 0:
+    if args.download_files:
+        download_worker_pool = ThreadPoolExecutor(max_workers=ceil(workers / 2))
+        crawler_worker_pool = ThreadPoolExecutor(max_workers=floor(workers / 2))
+    else:
+        crawler_worker_pool = ThreadPoolExecutor(max_workers=workers)
+
 if args.download_files:
     Crawler.download_files = True
     Downloader.file_dir = args.files_output
+    Downloader.pool = download_worker_pool
 
 if args.all:
-    workers = args.workers
-    if workers > 0:
-        pool = ThreadPoolExecutor(max_workers=workers)
-        Downloader.pool = pool
+    if crawler_worker_pool:
         for province in curls:
             for city in curls[province]:
-                pool.submit(crawl_then_save, province, city)
-        pool.shutdown()
+                crawler_worker_pool.submit(crawl_then_save, province, city)
+        crawler_worker_pool.shutdown()
+        download_worker_pool.shutdown()
     else:
         for province in curls:
             for city in curls[province]:
