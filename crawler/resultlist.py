@@ -11,7 +11,8 @@ from requests.utils import add_dict_to_cookiejar
 from bs4 import BeautifulSoup
 
 from common.constants import REQUEST_MAX_TIME, REQUEST_TIME_OUT
-from common.util import log_error, getCookie
+from common.utils import log_error, getCookie
+from common.wrapper import Wrapper
 
 
 class ResultList:
@@ -28,19 +29,22 @@ class ResultList:
             link,
         )
 
-    def get_result_list(self, curl):
+    def get_result_list(self, curl, pages: "Wrapper" = None):
         func_name = f"result_list_{str(self.province)}_{str(self.city)}"
         func = getattr(self, func_name, self.result_list_other)
-        return func(curl)
+        return func(curl, pages)
 
-    def result_list_beijing_beijing(self, curl):
+    def result_list_beijing_beijing(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             data=curl["data"],
             headers=curl["headers"],
             timeout=REQUEST_TIME_OUT,
         )
-        resultList = json.loads(response.text)["object"]["docs"]
+        response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["page"]["countPage"]
+        resultList = response_json["object"]["docs"]
         links = [x["url"] for x in resultList]
         return links
 
@@ -245,7 +249,10 @@ class ResultList:
         )
         resultList = json.loads(response.text)["custom"]["resultList"]
         rowGuid_tag_list = [
-            (x["rowGuid"], [n["name"].replace("其他", "file").lower() for n in x["tag"]])
+            (
+                x["rowGuid"],
+                [n["name"].replace("其他", "file").lower() for n in x["tag"]],
+            )
             for x in resultList
         ]
         return rowGuid_tag_list
@@ -657,9 +664,13 @@ class ResultList:
                 "开放类型": "无条件开放" if result["openType"] == "1" else "有条件开放",
                 "更新频率": frequency_mapping[result["dataUpdateFrequency"]],
                 "数据简介": result["summary"],
-                "资源格式": ["api"]
-                if result["dataResourceType"] == "2"
-                else [file["fileType"].split(".")[-1] for file in result["fileList"]],
+                "资源格式": (
+                    ["api"]
+                    if result["dataResourceType"] == "2"
+                    else [
+                        file["fileType"].split(".")[-1] for file in result["fileList"]
+                    ]
+                ),
             }
             dataset_metadata.append(metadata_mapping)
         return dataset_metadata
@@ -778,7 +789,9 @@ class ResultList:
                 "开放主题": result["fields"]["title"],
                 "发布时间": result["createtime"].split(" ")[0],
                 "更新时间": result["updatetime"].split(" ")[0],
-                "开放类型": "无条件开放" if result["sharetype"] == "2" else "有条件开放",
+                "开放类型": (
+                    "无条件开放" if result["sharetype"] == "2" else "有条件开放"
+                ),
                 "描述": result["description"],
                 "开放领域": result["themes"]["title"],
                 "关键词": result["keyword"],

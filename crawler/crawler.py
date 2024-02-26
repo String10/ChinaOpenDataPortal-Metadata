@@ -11,7 +11,8 @@ from common.constants import (
     REQUEST_TIME_OUT,
     REQUEST_MAX_TIME,
 )
-from common.util import log_error
+from common.utils import log_error
+from common.wrapper import Wrapper
 from crawler.detail import Detail
 from crawler.resultlist import ResultList
 
@@ -50,7 +51,8 @@ class Crawler:
         )
 
     def crawl_beijing_beijing(self):
-        for page in range(1, 1600):
+        pages = Wrapper(1600)
+        for page in range(1, pages.obj):
             curl = self.result_list_curl.copy()
             curl["data"]["curPage"] = str(page)
             links = None
@@ -60,7 +62,7 @@ class Crawler:
                 if try_cnt >= REQUEST_MAX_TIME:
                     break
                 try:
-                    links = self.result_list.get_result_list(curl)
+                    links = self.result_list.get_result_list(curl, pages)
                 except (
                     requests.exceptions.ProxyError,
                     requests.exceptions.SSLError,
@@ -565,9 +567,9 @@ class Crawler:
                 curl["data"]["id"] = iid
                 curl["data"]["zyId"] = zyId
                 metadata = self.detail.get_detail(curl)
-                metadata[
-                    "详情页网址"
-                ] = f"https://www.hefei.gov.cn/open-data-web/data/detail-hfs.do?&id={iid}&zyId={zyId}"
+                metadata["详情页网址"] = (
+                    f"https://www.hefei.gov.cn/open-data-web/data/detail-hfs.do?&id={iid}&zyId={zyId}"
+                )
                 self.metadata_list.append(metadata)
 
     def crawl_anhui_wuhu(self):
@@ -1027,10 +1029,16 @@ class Crawler:
                 "文件类型": item["chnldesc"],
             }
             metadata["更新时间"] = (
-                metadata["更新时间"].replace("年", "-").replace("月", "-").replace("日", "")
+                metadata["更新时间"]
+                .replace("年", "-")
+                .replace("月", "-")
+                .replace("日", "")
             )
             metadata["创建时间"] = (
-                metadata["创建时间"].replace("年", "-").replace("月", "-").replace("日", "")
+                metadata["创建时间"]
+                .replace("年", "-")
+                .replace("月", "-")
+                .replace("日", "")
             )
             metadata["文件类型"] = "file" if metadata["文件类型"] == "数据集" else "api"
             metadata["文件类型"] = metadata["文件类型"].split(",")
@@ -1445,7 +1453,9 @@ class Crawler:
                 curl["queries"]["id"] = id
                 metadata = self.detail.get_detail(curl)
                 if bool(metadata):
-                    metadata["详情页网址"] = "https://data.zg.cn/snww/sjzy/detail.html?" + id
+                    metadata["详情页网址"] = (
+                        "https://data.zg.cn/snww/sjzy/detail.html?" + id
+                    )
                     # 根据可下载类型获取type
                     turl = self.curls[self.province][self.city]["typeList"].copy()
                     turl["queries"]["id"] = id
@@ -1468,7 +1478,9 @@ class Crawler:
                     type_list = []
                     for name, type_info in type_json.items():
                         type_list.append(type_info["type"])
-                    metadata["数据格式"] = str(type_list) if bool(type_list) else "['file']"
+                    metadata["数据格式"] = (
+                        str(type_list) if bool(type_list) else "['file']"
+                    )
                     self.metadata_list.append(metadata)
 
     def crawl_sichuan_panzhihua(self):
@@ -1511,7 +1523,9 @@ class Crawler:
                 curl["queries"]["type"] = "opendata"
                 metadata = self.detail.get_detail(curl)
                 if bool(metadata):
-                    metadata["开放条件"] = "无条件开放" if opens == "1" else "有条件开放"
+                    metadata["开放条件"] = (
+                        "无条件开放" if opens == "1" else "有条件开放"
+                    )
                     metadata["详情页网址"] = (
                         "https://data.luzhou.cn/portal/service_detail?id="
                         + id
@@ -1533,8 +1547,8 @@ class Crawler:
                 curl["queries"]["mlbh"] = id
                 metadata = self.detail.get_detail(curl)
                 if bool(metadata):
-                    metadata["详情页网址"] = "https://www.dysdsj.cn/#/DataSet/" + id.replace(
-                        "/", "%2F"
+                    metadata["详情页网址"] = (
+                        "https://www.dysdsj.cn/#/DataSet/" + id.replace("/", "%2F")
                     )
                     self.metadata_list.append(metadata)
 
@@ -1552,7 +1566,9 @@ class Crawler:
                     metadata["详情页网址"] = (
                         "https://data.mianyang.cn/zwztzlm/index.jhtml?caseid=" + id
                     )
-                    metadata["数据格式"] = "['api']"  # 只有数据库和接口类型，实际全是接口
+                    metadata["数据格式"] = (
+                        "['api']"  # 只有数据库和接口类型，实际全是接口
+                    )
                     self.metadata_list.append(metadata)
             if page % 100 == 0:
                 self.save_metadata_as_json(self.output)
@@ -1568,10 +1584,9 @@ class Crawler:
                 curl["data"]["id"] = str(id)
                 metadata = self.detail.get_detail(curl)
                 if bool(metadata):
-                    metadata[
-                        "详情页网址"
-                    ] = "http://data.cngy.gov.cn/open/index.html?id=user&messid=" + str(
-                        id
+                    metadata["详情页网址"] = (
+                        "http://data.cngy.gov.cn/open/index.html?id=user&messid="
+                        + str(id)
                     )
                     metadata["领域名称"] = "生活服务"
                     metadata["行业名称"] = "公共管理、社会保障和社会组织"
@@ -1589,10 +1604,9 @@ class Crawler:
                 curl["queries"]["mlbh"] = id
                 metadata = self.detail.get_detail(curl)
                 if bool(metadata):
-                    metadata[
-                        "详情页网址"
-                    ] = "https://www.suining.gov.cn/data#/DataSet/" + id.replace(
-                        "/", "%2F"
+                    metadata["详情页网址"] = (
+                        "https://www.suining.gov.cn/data#/DataSet/"
+                        + id.replace("/", "%2F")
                     )
                     type_mapping = {
                         "10": "csv",
@@ -1803,7 +1817,9 @@ class Crawler:
                 curl = self.detail_list_curl.copy()
                 curl["data"]["id"] = id["id"]
                 metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                metadata["详情页网址"] = (
+                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                )
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
 
@@ -1816,7 +1832,9 @@ class Crawler:
                 curl = self.detail_list_curl.copy()
                 curl["data"]["id"] = id["id"]
                 metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                metadata["详情页网址"] = (
+                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                )
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
 
@@ -1829,7 +1847,9 @@ class Crawler:
                 curl = self.detail_list_curl.copy()
                 curl["data"]["id"] = id["id"]
                 metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                metadata["详情页网址"] = (
+                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                )
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
 
@@ -1842,7 +1862,9 @@ class Crawler:
                 curl = self.detail_list_curl.copy()
                 curl["data"]["id"] = id["id"]
                 metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                metadata["详情页网址"] = (
+                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                )
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
 
@@ -1855,7 +1877,9 @@ class Crawler:
                 curl = self.detail_list_curl.copy()
                 curl["data"]["id"] = id["id"]
                 metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                metadata["详情页网址"] = (
+                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                )
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
 
@@ -1868,7 +1892,9 @@ class Crawler:
                 curl = self.detail_list_curl.copy()
                 curl["data"]["id"] = id["id"]
                 metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                metadata["详情页网址"] = (
+                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                )
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
 
@@ -1881,7 +1907,9 @@ class Crawler:
                 curl = self.detail_list_curl.copy()
                 curl["data"]["id"] = id["id"]
                 metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                metadata["详情页网址"] = (
+                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                )
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
 
@@ -1894,7 +1922,9 @@ class Crawler:
                 curl = self.detail_list_curl.copy()
                 curl["data"]["id"] = id["id"]
                 metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                metadata["详情页网址"] = (
+                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                )
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
 
@@ -1907,7 +1937,9 @@ class Crawler:
                 curl = self.detail_list_curl.copy()
                 curl["data"]["id"] = id["id"]
                 metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                metadata["详情页网址"] = (
+                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                )
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
 
@@ -1920,7 +1952,9 @@ class Crawler:
                 curl = self.detail_list_curl.copy()
                 curl["data"]["id"] = id["id"]
                 metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                metadata["详情页网址"] = (
+                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                )
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
 
@@ -1933,7 +1967,9 @@ class Crawler:
                 curl = self.detail_list_curl.copy()
                 curl["data"]["id"] = id["id"]
                 metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                metadata["详情页网址"] = (
+                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                )
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
                 return
