@@ -116,10 +116,11 @@ class Crawler:
                     self.logs_detail_error(data["link"], "continue")
 
     def crawl_hebei_hebei(self):
-        for page in range(1, 128):
+        pages = Wrapper(128)
+        for page in range(1, pages.obj):
             curl = self.result_list_curl.copy()
             curl["data"]["pageNo"] = str(page)
-            metadata_ids = self.result_list.get_result_list(curl)
+            metadata_ids = self.result_list.get_result_list(curl, pages)
             for metadata_id in metadata_ids:
                 curl = self.detail_list_curl.copy()
                 curl["data"]["rowkey"] = metadata_id["METADATA_ID"]

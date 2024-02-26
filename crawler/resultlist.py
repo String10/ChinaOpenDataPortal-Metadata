@@ -48,7 +48,7 @@ class ResultList:
         links = [x["url"] for x in resultList]
         return links
 
-    def result_list_tianjin_tianjin(self, curl):
+    def result_list_tianjin_tianjin(self, curl, pages: "Wrapper"):
         response = requests.get(curl["dataset url"], timeout=REQUEST_TIME_OUT)
         resultList = json.loads(response.text)["dataList"]
         # links = [x['href'] for x in resultList]
@@ -62,16 +62,20 @@ class ResultList:
         )
         return link_format_data
 
-    def result_list_hebei_hebei(self, curl):
-        response = requests.post(
+    def result_list_hebei_hebei(self, curl, pages: "Wrapper"):
+        session = requests.session()
+        session.get(curl["headers"]["Origin"])
+        response = session.post(
             curl["url"],
-            cookies=curl["cookies"],
             headers=curl["headers"],
             data=curl["data"],
             timeout=REQUEST_TIME_OUT,
             verify=False,
         )
-        resultList = json.loads(response.text)["page"]["dataList"]
+        response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["page"]["totalPage"]
+        resultList = response_json["page"]["dataList"]
         metadata_ids = [
             {
                 "METADATA_ID": x["METADATA_ID"],
@@ -83,7 +87,7 @@ class ResultList:
         ]
         return metadata_ids
 
-    def result_list_shanxi_datong(self, curl):
+    def result_list_shanxi_datong(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -109,7 +113,7 @@ class ResultList:
             #     text = info.get_text().strip()  # e.g. 开放状态：无条件开放
         return links
 
-    def result_list_shanxi_changzhi(self, curl):
+    def result_list_shanxi_changzhi(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             params=curl["queries"],
@@ -123,7 +127,7 @@ class ResultList:
         ids = [x["cata_id"] for x in resultList]
         return ids
 
-    def result_list_shanxi_jincheng(self, curl):
+    def result_list_shanxi_jincheng(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             cookies=curl["cookies"],
@@ -138,7 +142,7 @@ class ResultList:
         ids = [x["id"] for x in resultList]
         return ids
 
-    def result_list_shanxi_yuncheng(self, curl):
+    def result_list_shanxi_yuncheng(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -156,7 +160,7 @@ class ResultList:
             links.append(link)
         return links
 
-    def result_list_neimenggu_neimenggu(self, curl):
+    def result_list_neimenggu_neimenggu(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             headers=curl["headers"],
@@ -168,7 +172,7 @@ class ResultList:
         ids = [x["id"] for x in resultList]
         return ids
 
-    def result_list_neimenggu_xinganmeng(self, curl):
+    def result_list_neimenggu_xinganmeng(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             headers=curl["headers"],
@@ -180,7 +184,7 @@ class ResultList:
         ids = [x["id"] for x in resultList]
         return ids
 
-    def result_list_liaoning_liaoning(self, curl):
+    def result_list_liaoning_liaoning(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -195,7 +199,7 @@ class ResultList:
             links.append(link["href"])
         return links
 
-    def result_list_liaoning_shenyang(self, curl):
+    def result_list_liaoning_shenyang(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -210,7 +214,7 @@ class ResultList:
             links.append(link["href"])
         return links
 
-    def result_list_heilongjiang_harbin(self, curl):
+    def result_list_heilongjiang_harbin(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -225,7 +229,7 @@ class ResultList:
             links.append(link["href"])
         return links
 
-    def result_list_shanghai_shanghai(self, curl):
+    def result_list_shanghai_shanghai(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             headers=curl["headers"],
@@ -239,7 +243,7 @@ class ResultList:
         ]
         return dataset_ids
 
-    def result_list_jiangsu_jiangsu(self, curl):
+    def result_list_jiangsu_jiangsu(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             data=curl["data"],
@@ -257,7 +261,7 @@ class ResultList:
         ]
         return rowGuid_tag_list
 
-    def result_list_jiangsu_wuxi(self, curl):
+    def result_list_jiangsu_wuxi(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             headers=curl["headers"],
@@ -269,7 +273,7 @@ class ResultList:
         cata_ids = [x["cata_id"] for x in resultList]
         return cata_ids
 
-    def result_list_jiangsu_xuzhou(self, curl):
+    def result_list_jiangsu_xuzhou(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             headers=curl["headers"],
@@ -281,7 +285,7 @@ class ResultList:
         mlbhs = [x["mlbh"] for x in resultList]
         return mlbhs
 
-    def result_list_jiangsu_suzhou(self, curl):
+    def result_list_jiangsu_suzhou(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             params=curl["params"],
@@ -293,7 +297,7 @@ class ResultList:
         ids = [x["id"] for x in resultList]
         return ids
 
-    def result_list_jiangsu_nantong(self, curl):
+    def result_list_jiangsu_nantong(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["params"],
@@ -304,7 +308,7 @@ class ResultList:
         ids = [x["id"] for x in resultList]
         return ids
 
-    def result_list_jiangsu_lianyungang(self, curl):
+    def result_list_jiangsu_lianyungang(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["params"],
@@ -325,7 +329,7 @@ class ResultList:
             dmids.append(dmid)
         return dmids
 
-    def result_list_jiangsu_huaian(self, curl):
+    def result_list_jiangsu_huaian(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["params"],
@@ -336,7 +340,7 @@ class ResultList:
         ids = [x["id"] for x in result_list]
         return ids
 
-    def result_list_jiangsu_yancheng(self, curl):
+    def result_list_jiangsu_yancheng(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["params"],
@@ -347,7 +351,7 @@ class ResultList:
         catalogPks = [x["catalogPk"] for x in result_list]
         return catalogPks
 
-    def result_list_jiangsu_zhenjiang(self, curl):
+    def result_list_jiangsu_zhenjiang(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["params"],
@@ -358,7 +362,7 @@ class ResultList:
         ids = [x["id"] for x in result_list]
         return ids
 
-    def result_list_jiangsu_taizhou(self, curl):
+    def result_list_jiangsu_taizhou(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["params"],
@@ -384,7 +388,7 @@ class ResultList:
             ids.append(id)
         return ids
 
-    def result_list_jiangsu_suqian(self, curl):
+    def result_list_jiangsu_suqian(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["params"],
@@ -416,7 +420,7 @@ class ResultList:
             id_infos.append((id, update_time))
         return id_infos
 
-    def result_list_zhejiang_zhejiang(self, curl):
+    def result_list_zhejiang_zhejiang(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             data=curl["data"],
@@ -434,7 +438,7 @@ class ResultList:
             iids.append(querys)
         return iids
 
-    def result_list_zhejiang_hangzhou(self, curl):
+    def result_list_zhejiang_hangzhou(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             headers=curl["headers"],
@@ -445,7 +449,7 @@ class ResultList:
         id_formats = [(x["id"], x["source_type"].lower()) for x in result_list]
         return id_formats
 
-    def result_list_zhejiang_ningbo(self, curl):
+    def result_list_zhejiang_ningbo(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             headers=curl["headers"],
@@ -457,7 +461,7 @@ class ResultList:
         uuids = [x["uuid"] for x in result_list]
         return uuids
 
-    def result_list_zhejiang_wenzhou(self, curl):
+    def result_list_zhejiang_wenzhou(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             headers=curl["headers"],
@@ -476,7 +480,7 @@ class ResultList:
             iids.append(querys)
         return iids
 
-    def result_list_zhejiang_jiaxing(self, curl):
+    def result_list_zhejiang_jiaxing(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             headers=curl["headers"],
@@ -494,7 +498,7 @@ class ResultList:
             iids.append(querys)
         return iids
 
-    def result_list_zhejiang_shaoxing(self, curl):
+    def result_list_zhejiang_shaoxing(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             headers=curl["headers"],
@@ -505,7 +509,7 @@ class ResultList:
         iids = [x["iid"] for x in result_list]
         return iids
 
-    def result_list_zhejiang_jinhua(self, curl):
+    def result_list_zhejiang_jinhua(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             headers=curl["headers"],
@@ -524,7 +528,7 @@ class ResultList:
             iids.append(querys)
         return iids
 
-    def result_list_zhejiang_quzhou(self, curl):
+    def result_list_zhejiang_quzhou(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             headers=curl["headers"],
@@ -542,7 +546,7 @@ class ResultList:
             iids.append(querys)
         return iids
 
-    def result_list_zhejiang_zhoushan(self, curl):
+    def result_list_zhejiang_zhoushan(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             headers=curl["headers"],
@@ -554,7 +558,7 @@ class ResultList:
         ids = [x["id"] for x in result_list]
         return ids
 
-    def result_list_zhejiang_taizhou(self, curl):
+    def result_list_zhejiang_taizhou(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             headers=curl["headers"],
@@ -565,7 +569,7 @@ class ResultList:
         iids = [x["iid"] for x in result_list]
         return iids
 
-    def result_list_zhejiang_lishui(self, curl):
+    def result_list_zhejiang_lishui(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             headers=curl["headers"],
@@ -584,7 +588,7 @@ class ResultList:
             iids.append(querys)
         return iids
 
-    def result_list_anhui_anhui(self, curl):
+    def result_list_anhui_anhui(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             data=curl["data"],
@@ -596,7 +600,7 @@ class ResultList:
         rids = [x["rid"] for x in resultList]
         return rids
 
-    def result_list_anhui_hefei(self, curl):
+    def result_list_anhui_hefei(self, curl, pages: "Wrapper"):
         # 使用session保持会话
         session = requests.session()
         res1 = session.get(curl["url"], headers=curl["headers"], params=curl["queries"])
@@ -627,7 +631,7 @@ class ResultList:
         ids = [(str(x["id"]), x["zyId"]) for x in resultList]
         return ids
 
-    def result_list_anhui_wuhu(self, curl):
+    def result_list_anhui_wuhu(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             data=curl["data"],
@@ -675,7 +679,7 @@ class ResultList:
             dataset_metadata.append(metadata_mapping)
         return dataset_metadata
 
-    def result_list_anhui_bengbu(self, curl):
+    def result_list_anhui_bengbu(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -698,7 +702,7 @@ class ResultList:
             links.append(link["href"])
         return links
 
-    def result_list_anhui_huainan(self, curl):
+    def result_list_anhui_huainan(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -709,7 +713,7 @@ class ResultList:
         data_ids = [x["dataId"] for x in resultList]
         return data_ids
 
-    def result_list_anhui_huaibei(self, curl):
+    def result_list_anhui_huaibei(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             params=curl["queries"],
@@ -724,7 +728,7 @@ class ResultList:
         ids = [x["id"] for x in resultList]
         return ids
 
-    def result_list_anhui_huangshan(self, curl):
+    def result_list_anhui_huangshan(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -769,7 +773,7 @@ class ResultList:
             links.append((link["href"], depart, cata, format_list))
         return links
 
-    def result_list_anhui_chuzhou(self, curl):
+    def result_list_anhui_chuzhou(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -799,7 +803,7 @@ class ResultList:
             dataset_metadata.append(metadata_mapping)
         return dataset_metadata
 
-    def result_list_anhui_suzhou(self, curl):
+    def result_list_anhui_suzhou(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -829,7 +833,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_anhui_luan(self, curl):
+    def result_list_anhui_luan(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -859,7 +863,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_anhui_chizhou(self, curl):
+    def result_list_anhui_chizhou(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -895,7 +899,7 @@ class ResultList:
             metadata_list.append(dataset_metadata)
         return metadata_list
 
-    def result_list_fujian_fujian(self, curl):
+    def result_list_fujian_fujian(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -910,7 +914,7 @@ class ResultList:
             links.append(link["href"])
         return links
 
-    def result_list_fujian_fuzhou(self, curl):
+    def result_list_fujian_fuzhou(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             json=curl["data"],
@@ -921,7 +925,7 @@ class ResultList:
         res_ids = [x["resId"] for x in resultList]
         return res_ids
 
-    def result_list_fujian_xiamen(self, curl):
+    def result_list_fujian_xiamen(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             json=curl["data"],
@@ -932,7 +936,7 @@ class ResultList:
         catalog_ids = [x["catalogId"] for x in resultList]
         return catalog_ids
 
-    def result_list_jiangxi_jiangxi(self, curl):
+    def result_list_jiangxi_jiangxi(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             json=curl["data"],
@@ -945,7 +949,7 @@ class ResultList:
         ]
         return data_ids
 
-    def result_list_jiangxi_ganzhou(self, curl):
+    def result_list_jiangxi_ganzhou(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             json=curl["data"],
@@ -983,58 +987,58 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": data_formats})
         return links
 
-    def result_list_shandong_shandong(self, curl):
+    def result_list_shandong_shandong(self, curl, pages: "Wrapper"):
         return self.result_list_shandong_common(curl, "portal")
 
-    def result_list_shandong_jinan(self, curl):
+    def result_list_shandong_jinan(self, curl, pages: "Wrapper"):
         return self.result_list_shandong_common(curl, "jinan")
 
-    def result_list_shandong_qingdao(self, curl):
+    def result_list_shandong_qingdao(self, curl, pages: "Wrapper"):
         return self.result_list_shandong_common(curl, "qingdao")
 
-    def result_list_shandong_zibo(self, curl):
+    def result_list_shandong_zibo(self, curl, pages: "Wrapper"):
         return self.result_list_shandong_common(curl, "zibo")
 
-    def result_list_shandong_zaozhuang(self, curl):
+    def result_list_shandong_zaozhuang(self, curl, pages: "Wrapper"):
         return self.result_list_shandong_common(curl, "zaozhuang")
 
-    def result_list_shandong_dongying(self, curl):
+    def result_list_shandong_dongying(self, curl, pages: "Wrapper"):
         return self.result_list_shandong_common(curl, "dongying")
 
-    def result_list_shandong_yantai(self, curl):
+    def result_list_shandong_yantai(self, curl, pages: "Wrapper"):
         return self.result_list_shandong_common(curl, "yantai")
 
-    def result_list_shandong_weifang(self, curl):
+    def result_list_shandong_weifang(self, curl, pages: "Wrapper"):
         return self.result_list_shandong_common(curl, "weifang")
 
-    def result_list_shandong_jining(self, curl):
+    def result_list_shandong_jining(self, curl, pages: "Wrapper"):
         return self.result_list_shandong_common(curl, "jining")
 
-    def result_list_shandong_taian(self, curl):
+    def result_list_shandong_taian(self, curl, pages: "Wrapper"):
         return self.result_list_shandong_common(curl, "taian")
 
-    def result_list_shandong_weihai(self, curl):
+    def result_list_shandong_weihai(self, curl, pages: "Wrapper"):
         return self.result_list_shandong_common(curl, "weihai")
 
-    def result_list_shandong_rizhao(self, curl):
+    def result_list_shandong_rizhao(self, curl, pages: "Wrapper"):
         return self.result_list_shandong_common(curl, "rizhao")
 
-    def result_list_shandong_linyi(self, curl):
+    def result_list_shandong_linyi(self, curl, pages: "Wrapper"):
         return self.result_list_shandong_common(curl, "linyi")
 
-    def result_list_shandong_dezhou(self, curl):
+    def result_list_shandong_dezhou(self, curl, pages: "Wrapper"):
         return self.result_list_shandong_common(curl, "dezhou")
 
-    def result_list_shandong_liaocheng(self, curl):
+    def result_list_shandong_liaocheng(self, curl, pages: "Wrapper"):
         return self.result_list_shandong_common(curl, "liaocheng")
 
-    def result_list_shandong_binzhou(self, curl):
+    def result_list_shandong_binzhou(self, curl, pages: "Wrapper"):
         return self.result_list_shandong_common(curl, "binzhou")
 
-    def result_list_shandong_heze(self, curl):
+    def result_list_shandong_heze(self, curl, pages: "Wrapper"):
         return self.result_list_shandong_common(curl, "heze")
 
-    def result_list_hubei_wuhan(self, curl):
+    def result_list_hubei_wuhan(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             json=curl["data"],
@@ -1046,7 +1050,7 @@ class ResultList:
         cataIds = list(map(lambda x: x["cataId"], resultList["records"]))
         return cataIds
 
-    def result_list_hubei_huangshi(self, curl):
+    def result_list_hubei_huangshi(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"], headers=curl["headers"], verify=False, timeout=REQUEST_TIME_OUT
         )
@@ -1054,7 +1058,7 @@ class ResultList:
         ids = list(map(lambda x: x["infoid"], data))
         return ids
 
-    def result_list_hubei_yichang(self, curl):
+    def result_list_hubei_yichang(self, curl, pages: "Wrapper"):
         if curl["crawl_type"] == "dataset":
             response = requests.post(
                 curl["url"],
@@ -1077,7 +1081,7 @@ class ResultList:
             cataIds = list(map(lambda x: x["iid"], resultList["list"]))
             return cataIds
 
-    def result_list_hubei_ezhou(self, curl):
+    def result_list_hubei_ezhou(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"], headers=curl["headers"], verify=False, timeout=REQUEST_TIME_OUT
         )
@@ -1096,7 +1100,7 @@ class ResultList:
                 )
         return links
 
-    def result_list_hubei_jingzhou(self, curl):
+    def result_list_hubei_jingzhou(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1113,7 +1117,7 @@ class ResultList:
                 ids.append(a["href"].split("/")[-1])
         return ids
 
-    def result_list_hubei_suizhou(self, curl):
+    def result_list_hubei_suizhou(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             data=curl["data"],
@@ -1125,7 +1129,7 @@ class ResultList:
         ids = list(map(lambda x: x["id"], data["list"]))
         return ids
 
-    def result_list_hunan_yueyang(self, curl):
+    def result_list_hunan_yueyang(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1142,7 +1146,7 @@ class ResultList:
             ids.append(a["href"].split("=")[1])
         return ids
 
-    def result_list_hunan_changde(self, curl):
+    def result_list_hunan_changde(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1154,7 +1158,7 @@ class ResultList:
         cata_ids = list(map(lambda x: x["CATA_ID"], data["list"]))
         return cata_ids
 
-    def result_list_hunan_chenzhou(self, curl):
+    def result_list_hunan_chenzhou(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1172,7 +1176,7 @@ class ResultList:
             ids.append(a["href"].split("=")[1])
         return ids
 
-    def result_list_hunan_yiyang(self, curl):
+    def result_list_hunan_yiyang(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1190,7 +1194,7 @@ class ResultList:
             ids.append(a["href"].split("=")[1])
         return ids
 
-    def result_list_guangdong_guangdong(self, curl):
+    def result_list_guangdong_guangdong(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             json=curl["data"],
@@ -1201,7 +1205,7 @@ class ResultList:
         ids = list(map(lambda x: x["resId"], data["page"]["list"]))
         return ids
 
-    def result_list_guangdong_guangzhou(self, curl):
+    def result_list_guangdong_guangzhou(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             json=curl["data"],
@@ -1212,7 +1216,7 @@ class ResultList:
         ids = list(map(lambda x: x["sid"], data))
         return ids
 
-    def result_list_guangdong_shenzhen(self, curl):
+    def result_list_guangdong_shenzhen(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             data=curl["data"],
@@ -1227,7 +1231,7 @@ class ResultList:
         ids = list(map(lambda x: x["resId"], data))
         return ids
 
-    def result_list_guangdong_zhongshan(self, curl):
+    def result_list_guangdong_zhongshan(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             data=curl["data"],
@@ -1242,7 +1246,7 @@ class ResultList:
             ids.append(href.split("'")[1])
         return ids
 
-    def result_list_guangxi_guangxi(self, curl):
+    def result_list_guangxi_guangxi(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1276,7 +1280,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_guangxi_nanning(self, curl):
+    def result_list_guangxi_nanning(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1306,7 +1310,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_guangxi_liuzhou(self, curl):
+    def result_list_guangxi_liuzhou(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1336,7 +1340,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_guangxi_guilin(self, curl):
+    def result_list_guangxi_guilin(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1366,7 +1370,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_guangxi_wuzhou(self, curl):
+    def result_list_guangxi_wuzhou(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1396,7 +1400,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_guangxi_beihai(self, curl):
+    def result_list_guangxi_beihai(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1426,7 +1430,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_guangxi_fangchenggang(self, curl):
+    def result_list_guangxi_fangchenggang(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1456,7 +1460,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_guangxi_qinzhou(self, curl):
+    def result_list_guangxi_qinzhou(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1486,7 +1490,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_guangxi_guigang(self, curl):
+    def result_list_guangxi_guigang(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1516,7 +1520,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_guangxi_yulin(self, curl):
+    def result_list_guangxi_yulin(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1546,7 +1550,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_guangxi_baise(self, curl):
+    def result_list_guangxi_baise(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1576,7 +1580,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_guangxi_hezhou(self, curl):
+    def result_list_guangxi_hezhou(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1606,7 +1610,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_guangxi_hechi(self, curl):
+    def result_list_guangxi_hechi(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1636,7 +1640,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_guangxi_laibin(self, curl):
+    def result_list_guangxi_laibin(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1666,7 +1670,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_guangxi_chongzuo(self, curl):
+    def result_list_guangxi_chongzuo(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1696,7 +1700,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_hainan_hainan(self, curl):
+    def result_list_hainan_hainan(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             data=curl["data"],
@@ -1707,13 +1711,13 @@ class ResultList:
         res_ids = [x["id"] for x in resultList]
         return res_ids
 
-    def result_list_hainan_hainansjj(self, curl):
+    def result_list_hainan_hainansjj(self, curl, pages: "Wrapper"):
         return self.result_list_hainan_hainan(curl)
 
-    def result_list_hainan_hainansjjk(self, curl):
+    def result_list_hainan_hainansjjk(self, curl, pages: "Wrapper"):
         return self.result_list_hainan_hainan(curl)
 
-    def result_list_chongqing_chongqing(self, curl):
+    def result_list_chongqing_chongqing(self, curl, pages: "Wrapper"):
         key_map = {
             "resourceName": "标题",
             "resourceDesc": "摘要",
@@ -1777,7 +1781,7 @@ class ResultList:
             metadatas.append(dataset_metadata)
         return metadatas
 
-    def result_list_sichuan_sichuan(self, curl):
+    def result_list_sichuan_sichuan(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1808,7 +1812,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_sichuan_chengdu(self, curl):
+    def result_list_sichuan_chengdu(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1839,7 +1843,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_sichuan_panzhihua(self, curl):
+    def result_list_sichuan_panzhihua(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1870,7 +1874,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_sichuan_zigong(self, curl):
+    def result_list_sichuan_zigong(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1882,7 +1886,7 @@ class ResultList:
         ids = [x["id"] for x in resultList]
         return ids
 
-    def result_list_sichuan_luzhou(self, curl):
+    def result_list_sichuan_luzhou(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             json=curl["data"],
@@ -1897,7 +1901,7 @@ class ResultList:
         ]
         return ids
 
-    def result_list_sichuan_deyang(self, curl):
+    def result_list_sichuan_deyang(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             json=curl["data"],
@@ -1909,7 +1913,7 @@ class ResultList:
         ids = [x["mlbh"] for x in resultList]
         return ids
 
-    def result_list_sichuan_mianyang(self, curl):
+    def result_list_sichuan_mianyang(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1925,7 +1929,7 @@ class ResultList:
             self.log_request_error(-1, curl["url"])
             return []
 
-    def result_list_sichuan_guangyuan(self, curl):
+    def result_list_sichuan_guangyuan(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             json=curl["data"],
@@ -1940,7 +1944,7 @@ class ResultList:
         ids = [x["ID"] for x in resultList]
         return ids
 
-    def result_list_sichuan_suining(self, curl):
+    def result_list_sichuan_suining(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             json=curl["data"],
@@ -1955,7 +1959,7 @@ class ResultList:
         ids = [(x["mlbh"], x["wjlx"]) for x in resultList]
         return ids
 
-    def result_list_sichuan_neijiang(self, curl):
+    def result_list_sichuan_neijiang(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             params=curl["queries"],
@@ -1971,7 +1975,7 @@ class ResultList:
         ids = [str(x["id"]) for x in resultList]
         return ids
 
-    def result_list_sichuan_leshan(self, curl):
+    def result_list_sichuan_leshan(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1986,7 +1990,7 @@ class ResultList:
         ids = [str(x["resourceId"]) for x in resultList]
         return ids
 
-    def result_list_sichuan_nanchong(self, curl):
+    def result_list_sichuan_nanchong(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -2001,7 +2005,7 @@ class ResultList:
         ids = [str(x["ID"]) for x in resultList]
         return ids
 
-    def result_list_sichuan_meishan(self, curl):
+    def result_list_sichuan_meishan(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             data=curl["data"],
@@ -2029,7 +2033,7 @@ class ResultList:
         #     links.append({'link': link['href'], 'data_formats': str(data_formats)})
         return links
 
-    def result_list_sichuan_yibin(self, curl):
+    def result_list_sichuan_yibin(self, curl, pages: "Wrapper"):
         try_cnt = 0
         while True:
             try_cnt += 1
@@ -2067,7 +2071,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_sichuan_dazhou(self, curl):
+    def result_list_sichuan_dazhou(self, curl, pages: "Wrapper"):
         try_cnt = 0
         while True:
             try_cnt += 1
@@ -2105,7 +2109,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_sichuan_yaan(self, curl):
+    def result_list_sichuan_yaan(self, curl, pages: "Wrapper"):
         try_cnt = 0
         while True:
             try_cnt += 1
@@ -2143,7 +2147,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_sichuan_bazhong(self, curl):
+    def result_list_sichuan_bazhong(self, curl, pages: "Wrapper"):
         try_cnt = 0
         while True:
             try_cnt += 1
@@ -2165,7 +2169,7 @@ class ResultList:
         links = [link["catalogInfo"]["id"] for link in resultList]
         return links
 
-    def result_list_sichuan_aba(self, curl):
+    def result_list_sichuan_aba(self, curl, pages: "Wrapper"):
         try_cnt = 0
         while True:
             try_cnt += 1
@@ -2186,7 +2190,7 @@ class ResultList:
         links = [link["tableId"] for link in resultList]
         return links
 
-    def result_list_sichuan_ganzi(self, curl):
+    def result_list_sichuan_ganzi(self, curl, pages: "Wrapper"):
         try_cnt = 0
         while True:
             try_cnt += 1
@@ -2207,7 +2211,7 @@ class ResultList:
         links = [link["mlbh"] for link in resultList]
         return links
 
-    def result_list_guizhou_common(self, curl):
+    def result_list_guizhou_common(self, curl, pages: "Wrapper"):
         try_cnt = 0
         while True:
             try_cnt += 1
@@ -2230,40 +2234,40 @@ class ResultList:
         ]
         return ids
 
-    def result_list_guizhou_guizhou(self, curl):
+    def result_list_guizhou_guizhou(self, curl, pages: "Wrapper"):
         return self.result_list_guizhou_common(curl)
 
-    def result_list_guizhou_guiyang(self, curl):
+    def result_list_guizhou_guiyang(self, curl, pages: "Wrapper"):
         return self.result_list_guizhou_common(curl)
 
-    def result_list_guizhou_liupanshui(self, curl):
+    def result_list_guizhou_liupanshui(self, curl, pages: "Wrapper"):
         return self.result_list_guizhou_common(curl)
 
-    def result_list_guizhou_zunyi(self, curl):
+    def result_list_guizhou_zunyi(self, curl, pages: "Wrapper"):
         return self.result_list_guizhou_common(curl)
 
-    def result_list_guizhou_anshun(self, curl):
+    def result_list_guizhou_anshun(self, curl, pages: "Wrapper"):
         return self.result_list_guizhou_common(curl)
 
-    def result_list_guizhou_bijie(self, curl):
+    def result_list_guizhou_bijie(self, curl, pages: "Wrapper"):
         return self.result_list_guizhou_common(curl)
 
-    def result_list_guizhou_tongren(self, curl):
+    def result_list_guizhou_tongren(self, curl, pages: "Wrapper"):
         return self.result_list_guizhou_common(curl)
 
-    def result_list_guizhou_qianxinan(self, curl):
+    def result_list_guizhou_qianxinan(self, curl, pages: "Wrapper"):
         return self.result_list_guizhou_common(curl)
 
-    def result_list_guizhou_qiandongnan(self, curl):
+    def result_list_guizhou_qiandongnan(self, curl, pages: "Wrapper"):
         return self.result_list_guizhou_common(curl)
 
-    def result_list_guizhou_qiannan(self, curl):
+    def result_list_guizhou_qiannan(self, curl, pages: "Wrapper"):
         return self.result_list_guizhou_common(curl)
 
-    def result_list_guizhou_guianxinqu(self, curl):
+    def result_list_guizhou_guianxinqu(self, curl, pages: "Wrapper"):
         return self.result_list_guizhou_common(curl)
 
-    def result_list_shaanxi_shaanxi(self, curl):
+    def result_list_shaanxi_shaanxi(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -2296,7 +2300,7 @@ class ResultList:
             metadata_list.append(dataset_metadata)
         return metadata_list
 
-    def result_list_ningxia_ningxia(self, curl):
+    def result_list_ningxia_ningxia(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -2330,7 +2334,7 @@ class ResultList:
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
 
-    def result_list_ningxia_yinchuan(self, curl):
+    def result_list_ningxia_yinchuan(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             params=curl["queries"],
@@ -2346,7 +2350,7 @@ class ResultList:
         ids = [(str(x["cata_id"]), x["conf_catalog_format"]) for x in resultList]
         return ids
 
-    def result_list_xinjiang_wulumuqi(self, curl):
+    def result_list_xinjiang_wulumuqi(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             params=curl["queries"],
