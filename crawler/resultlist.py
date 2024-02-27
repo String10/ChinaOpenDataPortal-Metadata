@@ -244,6 +244,8 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
         )
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["data"]["totalPageNum"]
         result_list = response_json["data"]["content"]
         dataset_ids = [
             {"datasetId": x["datasetId"], "datasetName": x["datasetName"]}
@@ -260,7 +262,10 @@ class ResultList:
             verify=False,
         )
         response_json = json.loads(response.text)
-        result_list = response_json["custom"]["result_list"]
+        if pages:
+            # pageSize set in `curl.json` : 15
+            pages.obj = math.ceil(int(response_json["custom"]["total"]) / 15)
+        result_list = response_json["custom"]["resultList"]
         rowGuid_tag_list = [
             (
                 x["rowGuid"],
@@ -279,6 +284,10 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
         )
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = math.ceil(
+                response_json["recordsTotal"] / int(curl["data"]["pageSize"])
+            )
         result_list = response_json["data"]
         cata_ids = [x["cata_id"] for x in result_list]
         return cata_ids

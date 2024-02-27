@@ -94,6 +94,7 @@ class Crawler:
                         # e.g. https://data.beijing.gov.cn/zyml/ajg/sswj1/598f4a53ae9d4cbe88074777572b38d5.htm
                         self.logs_detail_error(link, "break")
                         break
+            page += 1
 
     def crawl_tianjin_tianjin(self):
         curl = self.result_list_curl.copy()
@@ -132,6 +133,7 @@ class Crawler:
                 metadata["发布时间"] = metadata_id["CREAT_DATE"]
                 metadata["更新日期"] = metadata_id["UPDATE_DATE"]
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_shanxi_datong(self):
         pages = Wrapper(61)
@@ -146,6 +148,7 @@ class Crawler:
                 metadata = self.detail.get_detail(curl)
                 metadata["url"] = curl["url"]
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_shanxi_changzhi(self):
         pages = Wrapper(17)
@@ -159,6 +162,7 @@ class Crawler:
                 curl["queries"]["cata_id"] = id
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_shanxi_jincheng(self):
         pages = Wrapper(57)
@@ -172,6 +176,7 @@ class Crawler:
                 curl["url"] = curl["url"].format(id)
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     # Dead Portal
     def crawl_shanxi_yuncheng(self):
@@ -186,6 +191,7 @@ class Crawler:
                 curl["url"] += link
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_neimenggu_neimenggu(self):
         pages = Wrapper(8)
@@ -199,6 +205,7 @@ class Crawler:
                 curl["data"]["id"] = id
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_neimenggu_xinganmeng(self):
         pages = Wrapper(24)
@@ -213,6 +220,7 @@ class Crawler:
                 metadata = self.detail.get_detail(curl)
                 metadata["url"] = curl["detail_url"].format(id)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_dongbei_common(self):
         pages = Wrapper(26)
@@ -226,6 +234,7 @@ class Crawler:
                 curl["url"] += link
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_liaoning_liaoning(self):
         self.crawl_dongbei_common()
@@ -265,13 +274,16 @@ class Crawler:
                 curl["url"] = curl["url"].format(dataset_id["datasetId"])
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_jiangsu_jiangsu(self):
         for city, max_page in zip(["", "all"], [54, 11]):
-            for page in range(0, max_page):
+            pages = Wrapper(max_page)
+            page = 0
+            while page <= pages.obj:
                 curl = self.result_list_curl.copy()
                 curl["data"] = curl["data"].format(page, city)
-                rowGuid_tag_list = self.result_list.get_result_list(curl)
+                rowGuid_tag_list = self.result_list.get_result_list(curl, pages)
                 for rowGuid, tags in rowGuid_tag_list:
                     curl = self.detail_list_curl.copy()
                     curl["url"] = curl["url"].format(rowGuid)
@@ -280,6 +292,7 @@ class Crawler:
                     metadata["数据格式"] = tags
                     metadata["详情页网址"] = curl["headers"]["Referer"].format(rowGuid)
                     self.metadata_list.append(metadata)
+                page += 1
 
     # def crawl_jiangsu_nanjing(self):
     #     curl = self.result_list_curl.copy()
@@ -304,6 +317,7 @@ class Crawler:
                     self.metadata_list.append(metadata)
                 except:
                     self.logs_detail_error(f"page {page} cata-id {cata_id}", "continue")
+            page += 1
 
     def crawl_jiangsu_xuzhou(self):
         pages = Wrapper(43)
@@ -317,6 +331,7 @@ class Crawler:
                 curl["params"]["mlbh"] = mlbh
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_jiangsu_suzhou(self):
         pages = Wrapper(162)
@@ -331,6 +346,7 @@ class Crawler:
                 curl["params"]["id"] = id
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_jiangsu_nantong(self):
         pages = Wrapper(120)
@@ -344,6 +360,7 @@ class Crawler:
                 curl["params"]["id"] = id
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_jiangsu_lianyungang(self):
         pages = Wrapper(111)
@@ -358,6 +375,7 @@ class Crawler:
                 valid, metadata = self.detail.get_detail(curl)
                 if valid:
                     self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_jiangsu_huaian(self):
         pages = Wrapper(130)
@@ -371,6 +389,7 @@ class Crawler:
                 curl["params"]["catalogId"] = catalogId
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_jiangsu_yancheng(self):
         pages = Wrapper(99)
@@ -384,6 +403,7 @@ class Crawler:
                 curl["params"]["catalogId"] = catalogPk
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_jiangsu_zhenjiang(self):
         pages = Wrapper(215)
@@ -397,6 +417,7 @@ class Crawler:
                 curl["params"]["id"] = id
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_jiangsu_taizhou(self):
         pages = Wrapper(541)
@@ -410,6 +431,7 @@ class Crawler:
                 curl["url"] = curl["url"].format(id)
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_jiangsu_suqian(self):
         pages = Wrapper(268)
@@ -424,6 +446,7 @@ class Crawler:
                 metadata = self.detail.get_detail(curl)
                 metadata["更新时间"] = update_time
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_zhejiang_zhejiang(self):
         pages = Wrapper(132)
@@ -437,6 +460,7 @@ class Crawler:
                 curl["queries"] = iid
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_zhejiang_hangzhou(self):
         pages = Wrapper(660)
@@ -462,6 +486,7 @@ class Crawler:
                     continue
                 metadata["数据格式"] = mformat
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_zhejiang_ningbo(self):
         pages = Wrapper(177)
@@ -475,6 +500,7 @@ class Crawler:
                 curl["json_data"]["uuid"] = uuid
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_zhejiang_wenzhou(self):
         pages = Wrapper(51)
@@ -488,6 +514,7 @@ class Crawler:
                 curl["params"]["iid"] = iid["iid"]
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_zhejiang_jiaxing(self):
         pages = Wrapper(20)
@@ -501,6 +528,7 @@ class Crawler:
                 curl["params"]["iid"] = iid["iid"]
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_zhejiang_shaoxing(self):
         pages = Wrapper(75)
@@ -516,6 +544,7 @@ class Crawler:
                 curl["params"]["dataId"] = iid
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_zhejiang_jinhua(self):
         pages = Wrapper(39)
@@ -529,6 +558,7 @@ class Crawler:
                 curl["params"]["iid"] = iid["iid"]
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_zhejiang_quzhou(self):
         pages = Wrapper(51)
@@ -542,6 +572,7 @@ class Crawler:
                 curl["params"]["iid"] = iid["iid"]
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_zhejiang_zhoushan(self):
         pages = Wrapper(12)
@@ -555,6 +586,7 @@ class Crawler:
                 curl["params"]["id"] = id
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_zhejiang_taizhou(self):
         pages = Wrapper(108)
@@ -568,6 +600,7 @@ class Crawler:
                 curl["params"]["dataId"] = iid
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_zhejiang_lishui(self):
         pages = Wrapper(44)
@@ -582,6 +615,7 @@ class Crawler:
                 metadata = self.detail.get_detail(curl)
                 if metadata is not None:
                     self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_anhui_anhui(self):
         pages = Wrapper(100000000)
@@ -602,6 +636,7 @@ class Crawler:
                     + rid
                 )
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_anhui_hefei(self):
         pages = Wrapper(34)
@@ -624,6 +659,7 @@ class Crawler:
                     f"https://www.hefei.gov.cn/open-data-web/data/detail-hfs.do?&id={iid}&zyId={zyId}"
                 )
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_anhui_wuhu(self):
         pages = Wrapper(37)
@@ -635,6 +671,7 @@ class Crawler:
             if len(metadata_list) == 0:
                 break
             self.metadata_list.extend(metadata_list)
+            page += 1
 
     def crawl_anhui_bengbu(self):
         # dataset
@@ -656,6 +693,8 @@ class Crawler:
                 if metadata["下载格式"][0] == "":
                     metadata["下载格式"] = ["file"]
                 self.metadata_list.append(metadata)
+            page += 1
+
         # api
         pages = Wrapper(2)
         page = 0
@@ -676,6 +715,7 @@ class Crawler:
                 metadata["详情页网址"] = "https://www.bengbu.gov.cn" + iid
                 metadata["下载格式"] = ["api"]
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_anhui_huainan(self):
         pages = Wrapper(5)
@@ -697,6 +737,7 @@ class Crawler:
                     + str(data_id)
                 )
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_anhui_huaibei(self):
         pages = Wrapper(39)
@@ -715,6 +756,7 @@ class Crawler:
                     "http://open.huaibeidata.cn:1123/#/data_public/detail/" + iid
                 )
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_anhui_huangshan(self):
         # dataset
@@ -740,6 +782,7 @@ class Crawler:
                 metadata["资源格式"] = format_list
                 metadata["开放条件"] = "无条件开放"
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_anhui_chuzhou(self):
         pages = Wrapper(86)
@@ -758,6 +801,7 @@ class Crawler:
                 remains = self.detail.get_detail(curl)
                 remains.update(meta)
                 self.metadata_list.append(remains)
+            page += 1
 
     def crawl_anhui_suzhou(self):
         pages = Wrapper(54)
@@ -775,6 +819,7 @@ class Crawler:
                 metadata["数据格式"] = link["data_formats"]
                 metadata["url"] = curl["url"]
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_anhui_luan(self):
         pages = Wrapper(56)
@@ -792,6 +837,7 @@ class Crawler:
                 metadata["数据格式"] = link["data_formats"]
                 metadata["url"] = curl["url"]
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_anhui_chizhou(self):
         pages = Wrapper(276)
@@ -804,6 +850,7 @@ class Crawler:
                 break
             for metadata in metadatas:
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_fujian_fujian(self):
         pages = Wrapper(737)
@@ -818,6 +865,7 @@ class Crawler:
                 metadata = self.detail.get_detail(curl)
                 metadata["url"] = curl["url"]
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_fujian_fuzhou(self):
         pages = Wrapper(116)
@@ -832,6 +880,7 @@ class Crawler:
                 metadata = self.detail.get_detail(curl)
                 metadata["url"] = "http://data.fuzhou.gov.cn/data/catalog/toDataCatalog"
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_fujian_xiamen(self):
         pages = Wrapper(102)
@@ -846,6 +895,7 @@ class Crawler:
                 metadata = self.detail.get_detail(curl)
                 metadata["url"] = curl["url"] + "?" + catalog_id
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_jiangxi_jiangxi(self):
         pages = Wrapper(29)
@@ -873,6 +923,7 @@ class Crawler:
                     + data_id["dataId"]
                 )
                 self.metadata_list.append(metadata)
+            page += 1
 
     # def crawl_jiangxi_ganzhou(self):
     #     for page in range(1, 24):
@@ -890,15 +941,15 @@ class Crawler:
 
     def crawl_shandong_common(self, use_cache=True, page_size=10):
         # TODO:debug
-        page = 1
+        curr_page = 1
         try_cnt = 0  # 每一页的重试次数
 
         # 遍历每一页直到拿不到result_list
         while True:
             # TODO:加文件类型
             curl = self.result_list_curl.copy()
-            curl["params"]["page"] = str(page)
-            page += 1
+            curl["params"]["page"] = str(curr_page)
+            curr_page += 1
             links = self.result_list.get_result_list(curl)
             if not len(links):
                 if try_cnt >= REQUEST_MAX_TIME:
@@ -983,6 +1034,7 @@ class Crawler:
                 curl["queries"]["cataId"] = id
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_hubei_huangshi(self):
         all_ids = []
@@ -1014,11 +1066,13 @@ class Crawler:
 
     def crawl_hubei_yichang(self):
         all_ids = []
-        for page in range(1, 66):
+        pages = Wrapper(66)
+        page = 1
+        while page <= pages.obj:
             curl = copy.deepcopy(self.result_list_curl)
             curl["dataset"]["crawl_type"] = "dataset"
             curl["dataset"]["data"]["pageNum"] = page
-            ids = self.result_list.get_result_list(curl["dataset"])
+            ids = self.result_list.get_result_list(curl["dataset"], pages)
             for id in ids:
                 if id in all_ids:
                     continue
@@ -1029,11 +1083,14 @@ class Crawler:
                 curl["dataset"]["queries"]["dataId"] = id
                 metadata = self.detail.get_detail(curl["dataset"])
                 self.metadata_list.append(metadata)
-        for page in range(1, 14):
+            page += 1
+
+        page = 1
+        while page <= pages.obj:
             curl = copy.deepcopy(self.result_list_curl)
             curl["interface"]["crawl_type"] = "interface"
             curl["interface"]["data"]["pageNum"] = page
-            ids = self.result_list.get_result_list(curl["interface"])
+            ids = self.result_list.get_result_list(curl["interface"], pages)
             for id in ids:
                 if id in all_ids:
                     continue
@@ -1044,6 +1101,7 @@ class Crawler:
                 curl["interface"]["data"]["baseDataId"] = id
                 metadata = self.detail.get_detail(curl["interface"])
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_hubei_ezhou(self):
         all_ids = []
@@ -1065,6 +1123,8 @@ class Crawler:
                 curl["url"] = url
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
+
         pages = Wrapper(1)
         page = 0
         while page <= pages.obj:
@@ -1084,6 +1144,7 @@ class Crawler:
                 curl["api"] = True
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_hubei_jingzhou(self):
         all_ids = []
@@ -1102,6 +1163,7 @@ class Crawler:
                 curl["url"] = curl["url"].format(id)
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_hubei_xianning(self):
         curl = copy.deepcopy(self.result_list_curl)
@@ -1152,6 +1214,8 @@ class Crawler:
                 curl["url"] = curl["url"].format("dataSet/toDataDetails/" + str(id))
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
+
         pages = Wrapper(2)
         page = 1
         while page <= pages.obj:
@@ -1169,6 +1233,7 @@ class Crawler:
                 curl["url"] = curl["url"].format("dataApi/toDataDetails/" + str(id))
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_hunan_yueyang(self):
         curl = copy.deepcopy(self.result_list_curl)
@@ -1204,6 +1269,7 @@ class Crawler:
                     curl["queries"]["id"] = link
                     metadata = self.detail.get_detail(curl)
                     self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_hunan_changde(self):
         all_ids = []
@@ -1222,6 +1288,7 @@ class Crawler:
                 curl["queries"]["cataId"] = id
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_hunan_yiyang(self):
         curl = copy.deepcopy(self.result_list_curl)
@@ -1260,6 +1327,7 @@ class Crawler:
                     curl["queries"]["id"] = link
                     metadata = self.detail.get_detail(curl)
                     self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_hunan_chenzhou(self):
         curl = copy.deepcopy(self.result_list_curl)
@@ -1299,10 +1367,13 @@ class Crawler:
                     curl["queries"]["id"] = link
                     metadata = self.detail.get_detail(curl)
                     self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_guangdong_guangdong(self):
         all_ids = []
-        for page in range(1, 7574):
+        pages = Wrapper(7574)
+        page = 1
+        while page <= pages.obj:
             curl = copy.deepcopy(self.result_list_curl)
             curl["dataset"]["data"]["pageNo"] = page
             curl["dataset"]["crawl_type"] = "dataset"
@@ -1317,7 +1388,10 @@ class Crawler:
                 curl["dataset"]["data"]["resId"] = id
                 metadata = self.detail.get_detail(curl["dataset"])
                 self.metadata_list.append(metadata)
-        for page in range(1, 37):
+            page += 1
+
+        page = 1
+        while page <= pages.obj:
             curl = copy.deepcopy(self.result_list_curl)
             curl["api"]["data"]["pageNo"] = page
             curl["api"]["crawl_type"] = "api"
@@ -1332,6 +1406,7 @@ class Crawler:
                 curl["api"]["crawl_type"] = "api"
                 metadata = self.detail.get_detail(curl["api"])
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_guangdong_guangzhou(self):
         all_ids = []
@@ -1352,10 +1427,13 @@ class Crawler:
                 curl["doc"]["queries"]["sid"] = id
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_guangdong_shenzhen(self):
         all_ids = []
-        for page in range(1, 553):
+        pages = Wrapper(553)
+        page = 1
+        while page <= pages.obj:
             curl = copy.deepcopy(self.result_list_curl)
             curl["dataset"]["data"]["pageNo"] = page
             curl["dataset"]["crawl_type"] = "dataset"
@@ -1370,7 +1448,10 @@ class Crawler:
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
                 time.sleep(1)
-        for page in range(1, 548):
+            page += 1
+
+        page = 1
+        while page <= pages.obj:
             curl = copy.deepcopy(self.result_list_curl)
             curl["api"]["data"]["pageNo"] = page
             curl["api"]["crawl_type"] = "api"
@@ -1385,6 +1466,7 @@ class Crawler:
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
                 time.sleep(1)
+            page += 1
 
     def crawl_guangdong_zhongshan(self):
         all_ids = []
@@ -1404,6 +1486,7 @@ class Crawler:
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
                 time.sleep(1)
+            page += 1
 
     def crawl_guangxi_common(self):
         pages = Wrapper(2000000)
@@ -1425,6 +1508,7 @@ class Crawler:
                         self.metadata_list.append(metadata)
                 except:
                     self.logs_detail_error(curl["url"], "continue")
+            page += 1
 
     def crawl_guangxi_guangxi(self):
         return self.crawl_guangxi_common()
@@ -1486,6 +1570,7 @@ class Crawler:
                 metadata = self.detail.get_detail(curl)
                 metadata["详情页网址"] = curl["url"]
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_hainan_hainansjj(self):
         self.crawl_hainan_hainan()
@@ -1530,6 +1615,7 @@ class Crawler:
                         self.metadata_list.append(metadata)
                 except:
                     self.logs_detail_error(curl["url"], f"continue")
+            page += 1
 
     def crawl_sichuan_chengdu(self):
         pages = Wrapper(704)
@@ -1553,6 +1639,7 @@ class Crawler:
                     )
                     metadata["详情页网址"] = curl["url"]
                     self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_sichuan_zigong(self):
         pages = Wrapper(870)
@@ -1596,6 +1683,7 @@ class Crawler:
                         str(type_list) if bool(type_list) else "['file']"
                     )
                     self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_sichuan_panzhihua(self):
         pages = Wrapper(700)
@@ -1625,6 +1713,7 @@ class Crawler:
                         self.metadata_list.append(metadata)
                 except:
                     self.logs_detail_error(curl["url"], "continue")
+            page += 1
 
     def crawl_sichuan_luzhou(self):
         pages = Wrapper(701)
@@ -1652,6 +1741,7 @@ class Crawler:
                     metadata["更新时间"] = updatet
                     metadata["数据格式"] = "['api']"
                     self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_sichuan_deyang(self):
         pages = Wrapper(99)
@@ -1670,6 +1760,7 @@ class Crawler:
                         "https://www.dysdsj.cn/#/DataSet/" + id.replace("/", "%2F")
                     )
                     self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_sichuan_mianyang(self):
         pages = Wrapper(1297)
@@ -1693,6 +1784,7 @@ class Crawler:
                     self.metadata_list.append(metadata)
             if page % 100 == 0:
                 self.save_metadata_as_json(self.output)
+            page += 1
 
     def crawl_sichuan_guangyuan(self):
         pages = Wrapper(1874)
@@ -1716,6 +1808,7 @@ class Crawler:
                     self.metadata_list.append(metadata)
             if page % 100 == 0:
                 self.save_metadata_as_json(self.output)
+            page += 1
 
     def crawl_sichuan_suining(self):
         pages = Wrapper(910)
@@ -1746,6 +1839,7 @@ class Crawler:
                     self.metadata_list.append(metadata)
             if page % 100 == 0:
                 self.save_metadata_as_json(self.output)
+            page += 1
 
     def crawl_sichuan_neijiang(self):
         pages = Wrapper(317)
@@ -1767,6 +1861,7 @@ class Crawler:
                     self.metadata_list.append(metadata)
             if page % 100 == 0:
                 self.save_metadata_as_json(self.output)
+            page += 1
 
     def crawl_sichuan_leshan(self):
         pages = Wrapper(1575)
@@ -1800,6 +1895,7 @@ class Crawler:
                     continue
             if page % 100 == 0:
                 self.save_metadata_as_json(self.output)
+            page += 1
 
     def crawl_sichuan_nanchong(self):
         pages = Wrapper(1655)
@@ -1829,6 +1925,7 @@ class Crawler:
                     )
             # 响应太慢了，每次都写入吧
             self.save_metadata_as_json(self.output)
+            page += 1
 
     def crawl_sichuan_meishan(self):
         pages = Wrapper(617)
@@ -1844,6 +1941,7 @@ class Crawler:
                 metadata["标题"] = link["serviceName"]
                 self.metadata_list.append(metadata)
             time.sleep(5)
+            page += 1
 
     def crawl_sichuan_yibin(self):
         pages = Wrapper(444)
@@ -1862,6 +1960,7 @@ class Crawler:
                 metadata["数据格式"] = link["data_formats"]
                 self.metadata_list.append(metadata)
             time.sleep(5)
+            page += 1
 
     def crawl_sichuan_dazhou(self):
         pages = Wrapper(565)
@@ -1880,6 +1979,7 @@ class Crawler:
                 metadata["数据格式"] = link["data_formats"]
                 self.metadata_list.append(metadata)
             time.sleep(5)
+            page += 1
 
     def crawl_sichuan_yaan(self):
         pages = Wrapper(840)
@@ -1898,6 +1998,7 @@ class Crawler:
                 metadata["数据格式"] = link["data_formats"]
                 self.metadata_list.append(metadata)
             time.sleep(5)
+            page += 1
 
     def crawl_sichuan_bazhong(self):
         pages = Wrapper(1809)
@@ -1916,6 +2017,7 @@ class Crawler:
                     "https://www.bzgongxiang.com/#/dataCatalog/catalogDetail/" + link
                 )
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_sichuan_aba(self):
         pages = Wrapper(739)
@@ -1935,6 +2037,7 @@ class Crawler:
                     + str(link)
                 )
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_sichuan_ganzi(self):
         pages = Wrapper(1192)
@@ -1952,6 +2055,7 @@ class Crawler:
                     + link.replace("/", "%2F")
                 )
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_guizhou_guizhou(self):
         pages = Wrapper(1368)
@@ -1969,6 +2073,7 @@ class Crawler:
                 )
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_guizhou_guiyang(self):
         pages = Wrapper(207)
@@ -1986,6 +2091,7 @@ class Crawler:
                 )
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_guizhou_liupanshui(self):
         pages = Wrapper(84)
@@ -2003,6 +2109,7 @@ class Crawler:
                 )
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_guizhou_zunyi(self):
         pages = Wrapper(122)
@@ -2020,6 +2127,7 @@ class Crawler:
                 )
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_guizhou_anshun(self):
         pages = Wrapper(108)
@@ -2037,6 +2145,7 @@ class Crawler:
                 )
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_guizhou_bijie(self):
         pages = Wrapper(123)
@@ -2054,6 +2163,7 @@ class Crawler:
                 )
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_guizhou_tongren(self):
         pages = Wrapper(86)
@@ -2071,6 +2181,7 @@ class Crawler:
                 )
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_guizhou_qianxinan(self):
         pages = Wrapper(54)
@@ -2088,6 +2199,7 @@ class Crawler:
                 )
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_guizhou_qiandongnan(self):
         pages = Wrapper(132)
@@ -2105,6 +2217,7 @@ class Crawler:
                 )
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_guizhou_qiannan(self):
         pages = Wrapper(131)
@@ -2122,6 +2235,7 @@ class Crawler:
                 )
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_guizhou_guianxinqu(self):
         pages = Wrapper(7)
@@ -2140,6 +2254,7 @@ class Crawler:
                 metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
                 return
+            page += 1
 
     def crawl_shaanxi_shaanxi(self):
         pages = Wrapper(16)
@@ -2151,6 +2266,7 @@ class Crawler:
             self.metadata_list.extend(metas)
             if page % 100 == 0:
                 self.save_metadata_as_json(self.output)
+            page += 1
 
     def crawl_ningxia_ningxia(self):
         pages = Wrapper(202)
@@ -2175,6 +2291,7 @@ class Crawler:
                     self.metadata_list.append(metadata)
             if page % 100 == 0:
                 self.save_metadata_as_json(self.output)
+            page += 1
 
     def crawl_ningxia_yinchuan(self):
         pages = Wrapper(169)
@@ -2203,6 +2320,7 @@ class Crawler:
                         ]
                         metadata["数据格式"] = str(type_list)
                     self.metadata_list.append(metadata)
+            page += 1
 
     def crawl_xinjiang_wulumuqi(self):
         pages = Wrapper(18)
@@ -2233,6 +2351,7 @@ class Crawler:
                     self.metadata_list.append(metadata)
             if page % 100 == 0:
                 self.save_metadata_as_json(self.output)
+            page += 1
 
     def crawl_other(self):
         log_error("crawl: 暂无该地 - %s - %s", self.province, self.city)
