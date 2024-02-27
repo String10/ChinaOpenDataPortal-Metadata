@@ -132,10 +132,11 @@ class Crawler:
                 self.metadata_list.append(metadata)
 
     def crawl_shanxi_datong(self):
-        for page in range(1, 61):
+        pages = Wrapper(61)
+        for page in range(1, pages.obj):
             curl = self.result_list_curl.copy()
             curl["queries"]["pageNumber"] = str(page)
-            links = self.result_list.get_result_list(curl)
+            links = self.result_list.get_result_list(curl, pages)
             for link in links:
                 curl = self.detail_list_curl.copy()
                 curl["url"] += link

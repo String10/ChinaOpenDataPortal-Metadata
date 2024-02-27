@@ -96,6 +96,12 @@ class ResultList:
         )
         html = response.content
         soup = BeautifulSoup(html, "html.parser")
+        if pages:
+            pages.obj = (
+                soup.find("select", attrs={"class": "page-select"})
+                .find_all("option")[-1]
+                .get_text()
+            )
         links = []
         for li in (
             soup.find("div", attrs={"class": "m-cata-list"})
