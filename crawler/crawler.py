@@ -173,6 +173,7 @@ class Crawler:
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
 
+    # Dead Portal
     def crawl_shanxi_yuncheng(self):
         pages = Wrapper(5)
         page = 1

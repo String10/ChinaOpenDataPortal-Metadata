@@ -150,9 +150,10 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
             verify=False,
         )
-        result_list = json.loads(json.loads(response.text)["jsonStr"])["obj"][
-            "pagingList"
-        ]
+        response_json = json.loads(json.loads(response.text)["jsonStr"])
+        if pages:
+            pages.obj = response_json["obj"]["totalPages"]
+        result_list = response_json["obj"]["pagingList"]
         ids = [x["id"] for x in result_list]
         return ids
 
@@ -165,12 +166,9 @@ class ResultList:
         )
         html = response.content
         soup = BeautifulSoup(html, "html.parser")
-        # link_format_data = []
         links = []
         for li in soup.find("div", attrs={"class": "etab1"}).find("ul").find_all("li"):
             link = li.find("h2", attrs={"class": "tit"}).find("a").get("href")
-            # format = [x.get('class')[0] for x in li.find_all('b')]
-            # link_format_data.append({'link': link, 'format': format})
             links.append(link)
         return links
 
@@ -183,6 +181,8 @@ class ResultList:
             verify=False,
         )
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["ttlpage"]
         result_list = response_json["data"]
         ids = [x["id"] for x in result_list]
         return ids
