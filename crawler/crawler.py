@@ -214,7 +214,7 @@ class Crawler:
                 metadata["url"] = curl["detail_url"].format(id)
                 self.metadata_list.append(metadata)
 
-    def crawl_liaoning_liaoning(self):
+    def crawl_dongbei_common(self):
         pages = Wrapper(26)
         page = 1
         while page <= pages.obj:
@@ -227,31 +227,14 @@ class Crawler:
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
 
+    def crawl_liaoning_liaoning(self):
+        self.crawl_dongbei_common()
+
     def crawl_liaoning_shenyang(self):
-        pages = Wrapper(202)
-        page = 1
-        while page <= pages.obj:
-            curl = self.result_list_curl.copy()
-            curl["queries"]["page"] = str(page)
-            links = self.result_list.get_result_list(curl, pages)
-            for link in links:
-                curl = self.detail_list_curl.copy()
-                curl["url"] += link
-                metadata = self.detail.get_detail(curl)
-                self.metadata_list.append(metadata)
+        self.crawl_dongbei_common()
 
     def crawl_heilongjiang_harbin(self):
-        pages = Wrapper(295)
-        page = 1
-        while page <= pages.obj:
-            curl = self.result_list_curl.copy()
-            curl["queries"]["page"] = str(page)
-            links = self.result_list.get_result_list(curl, pages)
-            for link in links:
-                curl = self.detail_list_curl.copy()
-                curl["url"] += link
-                metadata = self.detail.get_detail(curl)
-                self.metadata_list.append(metadata)
+        self.crawl_dongbei_common()
 
     # def crawl_jilin_jilin(self):
     #     for page in range(1, 25):

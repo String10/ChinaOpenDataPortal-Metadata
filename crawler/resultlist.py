@@ -196,11 +196,13 @@ class ResultList:
             verify=False,
         )
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["data"]["pages"]
         result_list = response_json["data"]["data"]
         ids = [x["id"] for x in result_list]
         return ids
 
-    def result_list_liaoning_liaoning(self, curl, pages: "Wrapper"):
+    def result_list_dongbei_common(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -209,41 +211,30 @@ class ResultList:
         )
         html = response.content
         soup = BeautifulSoup(html, "html.parser")
+        if pages:
+            pages.obj = math.ceil(
+                int(
+                    soup.find("div", attrs={"class": "top-title"})
+                    .find("span")
+                    .get_text()
+                    .replace(",", "")
+                )
+                / 10  # TODO: items per page
+            )
         links = []
         for title in soup.find_all("div", attrs={"class": "cata-title"}):
             link = title.find("a", attrs={"href": re.compile("/oportal/catalog/*")})
             links.append(link["href"])
         return links
+
+    def result_list_liaoning_liaoning(self, curl, pages: "Wrapper"):
+        return self.result_list_dongbei_common(curl, pages)
 
     def result_list_liaoning_shenyang(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-        for title in soup.find_all("div", attrs={"class": "cata-title"}):
-            link = title.find("a", attrs={"href": re.compile("/oportal/catalog/*")})
-            links.append(link["href"])
-        return links
+        return self.result_list_dongbei_common(curl, pages)
 
     def result_list_heilongjiang_harbin(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-        for title in soup.find_all("div", attrs={"class": "cata-title"}):
-            link = title.find("a", attrs={"href": re.compile("/oportal/catalog/*")})
-            links.append(link["href"])
-        return links
+        return self.result_list_dongbei_common(curl, pages)
 
     def result_list_shanghai_shanghai(self, curl, pages: "Wrapper"):
         response = requests.post(
