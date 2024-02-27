@@ -1,4 +1,5 @@
 import json
+import math
 import os
 import re
 import time
@@ -44,21 +45,23 @@ class ResultList:
         response_json = json.loads(response.text)
         if pages:
             pages.obj = response_json["page"]["countPage"]
-        resultList = response_json["object"]["docs"]
-        links = [x["url"] for x in resultList]
+        result_list = response_json["object"]["docs"]
+        links = [x["url"] for x in result_list]
         return links
 
     def result_list_tianjin_tianjin(self, curl, pages: "Wrapper"):
         response = requests.get(curl["dataset url"], timeout=REQUEST_TIME_OUT)
-        resultList = json.loads(response.text)["dataList"]
-        # links = [x['href'] for x in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["dataList"]
+        # links = [x['href'] for x in result_list]
         link_format_data = [
-            {"link": x["href"], "format": x["documentType"]} for x in resultList
+            {"link": x["href"], "format": x["documentType"]} for x in result_list
         ]
         response = requests.get(curl["interface url"], timeout=REQUEST_TIME_OUT)
-        resultList = json.loads(response.text)["dataList"]
+        response_json = json.loads(response.text)
+        result_list = response_json["dataList"]
         link_format_data.extend(
-            [{"link": x["href"], "format": "api"} for x in resultList]
+            [{"link": x["href"], "format": "api"} for x in result_list]
         )
         return link_format_data
 
@@ -75,7 +78,7 @@ class ResultList:
         response_json = json.loads(response.text)
         if pages:
             pages.obj = response_json["page"]["totalPage"]
-        resultList = response_json["page"]["dataList"]
+        result_list = response_json["page"]["dataList"]
         metadata_ids = [
             {
                 "METADATA_ID": x["METADATA_ID"],
@@ -83,7 +86,7 @@ class ResultList:
                 "UPDATE_DATE": x["UPDATE_DATE"],
                 "THEME_NAME": x["THEME_NAME"],
             }
-            for x in resultList
+            for x in result_list
         ]
         return metadata_ids
 
@@ -129,8 +132,13 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
             verify=False,
         )
-        resultList = json.loads(response.text)["data"]
-        ids = [x["cata_id"] for x in resultList]
+        response_json = json.loads(response.text)
+        if pages:
+            pages.obj = math.ceil(
+                response_json["recordsTotal"] / int(curl["data"]["pageLength"])
+            )
+        result_list = response_json["data"]
+        ids = [x["cata_id"] for x in result_list]
         return ids
 
     def result_list_shanxi_jincheng(self, curl, pages: "Wrapper"):
@@ -142,10 +150,10 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
             verify=False,
         )
-        resultList = json.loads(json.loads(response.text)["jsonStr"])["obj"][
+        result_list = json.loads(json.loads(response.text)["jsonStr"])["obj"][
             "pagingList"
         ]
-        ids = [x["id"] for x in resultList]
+        ids = [x["id"] for x in result_list]
         return ids
 
     def result_list_shanxi_yuncheng(self, curl, pages: "Wrapper"):
@@ -174,8 +182,9 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
             verify=False,
         )
-        resultList = json.loads(response.text)["data"]
-        ids = [x["id"] for x in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]
+        ids = [x["id"] for x in result_list]
         return ids
 
     def result_list_neimenggu_xinganmeng(self, curl, pages: "Wrapper"):
@@ -186,8 +195,9 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
             verify=False,
         )
-        resultList = json.loads(response.text)["data"]["data"]
-        ids = [x["id"] for x in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["data"]
+        ids = [x["id"] for x in result_list]
         return ids
 
     def result_list_liaoning_liaoning(self, curl, pages: "Wrapper"):
@@ -242,10 +252,11 @@ class ResultList:
             data=curl["data"],
             timeout=REQUEST_TIME_OUT,
         )
-        resultList = json.loads(response.text)["data"]["content"]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["content"]
         dataset_ids = [
             {"datasetId": x["datasetId"], "datasetName": x["datasetName"]}
-            for x in resultList
+            for x in result_list
         ]
         return dataset_ids
 
@@ -257,13 +268,14 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
             verify=False,
         )
-        resultList = json.loads(response.text)["custom"]["resultList"]
+        response_json = json.loads(response.text)
+        result_list = response_json["custom"]["result_list"]
         rowGuid_tag_list = [
             (
                 x["rowGuid"],
                 [n["name"].replace("其他", "file").lower() for n in x["tag"]],
             )
-            for x in resultList
+            for x in result_list
         ]
         return rowGuid_tag_list
 
@@ -275,8 +287,9 @@ class ResultList:
             data=curl["data"],
             timeout=REQUEST_TIME_OUT,
         )
-        resultList = json.loads(response.text)["data"]
-        cata_ids = [x["cata_id"] for x in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]
+        cata_ids = [x["cata_id"] for x in result_list]
         return cata_ids
 
     def result_list_jiangsu_xuzhou(self, curl, pages: "Wrapper"):
@@ -287,8 +300,9 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
             verify=False,
         )
-        resultList = json.loads(response.text)["data"]["rows"]
-        mlbhs = [x["mlbh"] for x in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["rows"]
+        mlbhs = [x["mlbh"] for x in result_list]
         return mlbhs
 
     def result_list_jiangsu_suzhou(self, curl, pages: "Wrapper"):
@@ -299,8 +313,9 @@ class ResultList:
             json=curl["json_data"],
             timeout=REQUEST_TIME_OUT,
         )
-        resultList = json.loads(response.text)["data"]["records"]
-        ids = [x["id"] for x in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["records"]
+        ids = [x["id"] for x in result_list]
         return ids
 
     def result_list_jiangsu_nantong(self, curl, pages: "Wrapper"):
@@ -310,8 +325,9 @@ class ResultList:
             headers=curl["headers"],
             timeout=REQUEST_TIME_OUT,
         )
-        resultList = json.loads(response.text)["data"]["content"]
-        ids = [x["id"] for x in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["content"]
+        ids = [x["id"] for x in result_list]
         return ids
 
     def result_list_jiangsu_lianyungang(self, curl, pages: "Wrapper"):
@@ -342,7 +358,8 @@ class ResultList:
             headers=curl["headers"],
             timeout=REQUEST_TIME_OUT,
         )
-        result_list = json.loads(response.text)["data"]["data"]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["data"]
         ids = [x["id"] for x in result_list]
         return ids
 
@@ -353,7 +370,8 @@ class ResultList:
             headers=curl["headers"],
             timeout=REQUEST_TIME_OUT,
         )
-        result_list = json.loads(response.text)["resultData"]["list"]
+        response_json = json.loads(response.text)
+        result_list = response_json["resultData"]["list"]
         catalogPks = [x["catalogPk"] for x in result_list]
         return catalogPks
 
@@ -364,7 +382,8 @@ class ResultList:
             headers=curl["headers"],
             timeout=REQUEST_TIME_OUT,
         )
-        result_list = json.loads(response.text)["data"]["content"]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["content"]
         ids = [x["id"] for x in result_list]
         return ids
 
@@ -451,7 +470,8 @@ class ResultList:
             data=curl["data"],
             timeout=REQUEST_TIME_OUT,
         )
-        result_list = json.loads(response.text)["rows"]
+        response_json = json.loads(response.text)
+        result_list = response_json["rows"]
         id_formats = [(x["id"], x["source_type"].lower()) for x in result_list]
         return id_formats
 
@@ -463,7 +483,8 @@ class ResultList:
             verify=False,
             timeout=REQUEST_TIME_OUT,
         )
-        result_list = json.loads(response.text)["list"]["rows"]
+        response_json = json.loads(response.text)
+        result_list = response_json["list"]["rows"]
         uuids = [x["uuid"] for x in result_list]
         return uuids
 
@@ -511,7 +532,8 @@ class ResultList:
             json=curl["json_data"],
             timeout=REQUEST_TIME_OUT,
         )
-        result_list = json.loads(response.text)["data"]["rows"]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["rows"]
         iids = [x["iid"] for x in result_list]
         return iids
 
@@ -560,7 +582,8 @@ class ResultList:
             verify=False,
             timeout=REQUEST_TIME_OUT,
         )
-        result_list = json.loads(response.text)["data"]["records"]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["records"]
         ids = [x["id"] for x in result_list]
         return ids
 
@@ -571,7 +594,8 @@ class ResultList:
             json=curl["jsonData"],
             timeout=REQUEST_TIME_OUT,
         )
-        result_list = json.loads(response.text)["data"]["rows"]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["rows"]
         iids = [x["iid"] for x in result_list]
         return iids
 
@@ -602,8 +626,9 @@ class ResultList:
             verify=False,
             timeout=REQUEST_TIME_OUT,
         )
-        resultList = json.loads(response.text)["data"]["rows"]
-        rids = [x["rid"] for x in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["rows"]
+        rids = [x["rid"] for x in result_list]
         return rids
 
     def result_list_anhui_hefei(self, curl, pages: "Wrapper"):
@@ -632,9 +657,10 @@ class ResultList:
         if response.status_code != requests.codes.ok:
             self.log_request_error(response.status_code, curl["url"])
             return dict()
-        resultList = json.loads(response.text)["data"]["result"]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["result"]
 
-        ids = [(str(x["id"]), x["zyId"]) for x in resultList]
+        ids = [(str(x["id"]), x["zyId"]) for x in result_list]
         return ids
 
     def result_list_anhui_wuhu(self, curl, pages: "Wrapper"):
@@ -648,7 +674,7 @@ class ResultList:
         if response.status_code != requests.codes.ok:
             self.log_request_error(response.status_code, curl["url"])
             return dict()
-        resultList = json.loads(response.text.replace('\\"', '"')[1:-1])[
+        result_list = json.loads(response.text.replace('\\"', '"')[1:-1])[
             "smcDataSetList"
         ]
         # 目前所有数据集中只出现了每日和每年
@@ -661,7 +687,7 @@ class ResultList:
             "6": "每年",
         }
         dataset_metadata = []
-        for result in resultList:
+        for result in result_list:
             dataset_id = result["id"]
             metadata_mapping = {
                 "标题": result["datasetName"],
@@ -715,8 +741,9 @@ class ResultList:
             headers=curl["headers"],
             timeout=REQUEST_TIME_OUT,
         )
-        resultList = json.loads(response.text)["rows"]
-        data_ids = [x["dataId"] for x in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["rows"]
+        data_ids = [x["dataId"] for x in result_list]
         return data_ids
 
     def result_list_anhui_huaibei(self, curl, pages: "Wrapper"):
@@ -730,8 +757,9 @@ class ResultList:
         if response.status_code != requests.codes.ok:
             self.log_request_error(response.status_code, curl["url"])
             return dict()
-        resultList = json.loads(response.text)["result"]["data"]
-        ids = [x["id"] for x in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["result"]["data"]
+        ids = [x["id"] for x in result_list]
         return ids
 
     def result_list_anhui_huangshan(self, curl, pages: "Wrapper"):
@@ -790,9 +818,10 @@ class ResultList:
         if response.status_code != requests.codes.ok:
             self.log_request_error(response.status_code, curl["url"])
             return dict()
-        resultList = json.loads(response.text)["content"]
+        response_json = json.loads(response.text)
+        result_list = response_json["content"]
         dataset_metadata = []
-        for result in resultList:
+        for result in result_list:
             metadata_mapping = {
                 "标题": result["name"],
                 "提供单位": result["companys"]["title"],
@@ -927,8 +956,8 @@ class ResultList:
             headers=curl["headers"],
             timeout=REQUEST_TIME_OUT,
         )
-        resultList = json.loads(json.loads(response.text)["dataList"])["list"]
-        res_ids = [x["resId"] for x in resultList]
+        result_list = json.loads(json.loads(response.text)["dataList"])["list"]
+        res_ids = [x["resId"] for x in result_list]
         return res_ids
 
     def result_list_fujian_xiamen(self, curl, pages: "Wrapper"):
@@ -938,8 +967,9 @@ class ResultList:
             headers=curl["headers"],
             timeout=REQUEST_TIME_OUT,
         )
-        resultList = json.loads(response.text)["data"]["list"]
-        catalog_ids = [x["catalogId"] for x in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["list"]
+        catalog_ids = [x["catalogId"] for x in result_list]
         return catalog_ids
 
     def result_list_jiangxi_jiangxi(self, curl, pages: "Wrapper"):
@@ -949,9 +979,10 @@ class ResultList:
             headers=curl["headers"],
             timeout=REQUEST_TIME_OUT,
         )
-        resultList = json.loads(response.text)["data"]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]
         data_ids = [
-            {"dataId": x["dataId"], "filesType": x["filesType"]} for x in resultList
+            {"dataId": x["dataId"], "filesType": x["filesType"]} for x in result_list
         ]
         return data_ids
 
@@ -1052,8 +1083,9 @@ class ResultList:
             verify=False,
             timeout=REQUEST_TIME_OUT,
         )
-        resultList = json.loads(response.text)["data"]
-        cataIds = list(map(lambda x: x["cataId"], resultList["records"]))
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]
+        cataIds = list(map(lambda x: x["cataId"], result_list["records"]))
         return cataIds
 
     def result_list_hubei_huangshi(self, curl, pages: "Wrapper"):
@@ -1073,8 +1105,9 @@ class ResultList:
                 verify=False,
                 timeout=REQUEST_TIME_OUT,
             )
-            resultList = json.loads(response.text)["data"]
-            cataIds = list(map(lambda x: x["iid"], resultList["rows"]))
+            response_json = json.loads(response.text)
+            result_list = response_json["data"]
+            cataIds = list(map(lambda x: x["iid"], result_list["rows"]))
             return cataIds
         else:
             response = requests.post(
@@ -1083,8 +1116,9 @@ class ResultList:
                 headers=curl["headers"],
                 timeout=REQUEST_TIME_OUT,
             )
-            resultList = json.loads(response.text)["data"]
-            cataIds = list(map(lambda x: x["iid"], resultList["list"]))
+            response_json = json.loads(response.text)
+            result_list = response_json["data"]
+            cataIds = list(map(lambda x: x["iid"], result_list["list"]))
             return cataIds
 
     def result_list_hubei_ezhou(self, curl, pages: "Wrapper"):
@@ -1713,8 +1747,9 @@ class ResultList:
             headers=curl["headers"],
             timeout=REQUEST_TIME_OUT,
         )
-        resultList = json.loads(response.text)["data"]["content"]
-        res_ids = [x["id"] for x in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["content"]
+        res_ids = [x["id"] for x in result_list]
         return res_ids
 
     def result_list_hainan_hainansjj(self, curl, pages: "Wrapper"):
@@ -1888,8 +1923,9 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
         )
 
-        resultList = json.loads(response.text)["data"]["rows"]
-        ids = [x["id"] for x in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["rows"]
+        ids = [x["id"] for x in result_list]
         return ids
 
     def result_list_sichuan_luzhou(self, curl, pages: "Wrapper"):
@@ -1900,10 +1936,11 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
         )
 
-        resultList = json.loads(response.text)["result"]["rows"]
+        response_json = json.loads(response.text)
+        result_list = response_json["result"]["rows"]
         ids = [
             (x["id"], x["openType"], x["publishTime"], x["updateTime"])
-            for x in resultList
+            for x in result_list
         ]
         return ids
 
@@ -1915,8 +1952,9 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
         )
 
-        resultList = json.loads(response.text)["data"]["rows"]
-        ids = [x["mlbh"] for x in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["rows"]
+        ids = [x["mlbh"] for x in result_list]
         return ids
 
     def result_list_sichuan_mianyang(self, curl, pages: "Wrapper"):
@@ -1928,8 +1966,9 @@ class ResultList:
         )
 
         try:
-            resultList = json.loads(response.text)["elementthing"]["listPage"]["list"]
-            ids = [x["id"] for x in resultList]
+            response_json = json.loads(response.text)
+            result_list = response_json["elementthing"]["listPage"]["list"]
+            ids = [x["id"] for x in result_list]
             return ids
         except:
             self.log_request_error(-1, curl["url"])
@@ -1946,8 +1985,9 @@ class ResultList:
         if response.status_code != requests.codes.ok:
             self.log_request_error(response.status_code, curl["url"])
             return dict()
-        resultList = json.loads(response.text)["data"]["rows"]
-        ids = [x["ID"] for x in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["rows"]
+        ids = [x["ID"] for x in result_list]
         return ids
 
     def result_list_sichuan_suining(self, curl, pages: "Wrapper"):
@@ -1961,8 +2001,9 @@ class ResultList:
         if response.status_code != requests.codes.ok:
             self.log_request_error(response.status_code, curl["url"])
             return dict()
-        resultList = json.loads(response.text)["data"]["rows"]
-        ids = [(x["mlbh"], x["wjlx"]) for x in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["rows"]
+        ids = [(x["mlbh"], x["wjlx"]) for x in result_list]
         return ids
 
     def result_list_sichuan_neijiang(self, curl, pages: "Wrapper"):
@@ -1977,8 +2018,9 @@ class ResultList:
         if response.status_code != requests.codes.ok:
             self.log_request_error(response.status_code, curl["url"])
             return dict()
-        resultList = json.loads(response.text)["data"]["content"]
-        ids = [str(x["id"]) for x in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["content"]
+        ids = [str(x["id"]) for x in result_list]
         return ids
 
     def result_list_sichuan_leshan(self, curl, pages: "Wrapper"):
@@ -1992,8 +2034,9 @@ class ResultList:
         if response.status_code != requests.codes.ok:
             self.log_request_error(response.status_code, curl["url"])
             return dict()
-        resultList = json.loads(response.text)["data"]["rows"]
-        ids = [str(x["resourceId"]) for x in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["rows"]
+        ids = [str(x["resourceId"]) for x in result_list]
         return ids
 
     def result_list_sichuan_nanchong(self, curl, pages: "Wrapper"):
@@ -2007,8 +2050,9 @@ class ResultList:
         if response.status_code != requests.codes.ok:
             self.log_request_error(response.status_code, curl["url"])
             return dict()
-        resultList = json.loads(response.text)["data"]
-        ids = [str(x["ID"]) for x in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]
+        ids = [str(x["ID"]) for x in result_list]
         return ids
 
     def result_list_sichuan_meishan(self, curl, pages: "Wrapper"):
@@ -2020,8 +2064,9 @@ class ResultList:
             stream=True,
             verify=False,
         )
-        resultList = json.loads(response.text)["result"]["rows"]
-        links = [link for link in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["result"]["rows"]
+        links = [link for link in result_list]
         # html = response.content
         # soup = BeautifulSoup(html, "html.parser")
         # links = []
@@ -2171,8 +2216,9 @@ class ResultList:
                 break
             except:
                 time.sleep(5)
-        resultList = json.loads(response.text)["data"]["data"]
-        links = [link["catalogInfo"]["id"] for link in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["data"]
+        links = [link["catalogInfo"]["id"] for link in result_list]
         return links
 
     def result_list_sichuan_aba(self, curl, pages: "Wrapper"):
@@ -2192,8 +2238,9 @@ class ResultList:
                 break
             except:
                 time.sleep(5)
-        resultList = json.loads(response.text)["data"]["resultMap"]["abaTableList"]
-        links = [link["tableId"] for link in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["resultMap"]["abaTableList"]
+        links = [link["tableId"] for link in result_list]
         return links
 
     def result_list_sichuan_ganzi(self, curl, pages: "Wrapper"):
@@ -2213,8 +2260,9 @@ class ResultList:
                 break
             except:
                 time.sleep(5)
-        resultList = json.loads(response.text)["data"]["rows"]
-        links = [link["mlbh"] for link in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]["rows"]
+        links = [link["mlbh"] for link in result_list]
         return links
 
     def result_list_guizhou_common(self, curl, pages: "Wrapper"):
@@ -2234,9 +2282,11 @@ class ResultList:
                 break
             except:
                 time.sleep(5)
-        resultList = json.loads(response.text)["data"]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]
         ids = [
-            {"id": x["id"], "resourceFormats": x["resourceFormats"]} for x in resultList
+            {"id": x["id"], "resourceFormats": x["resourceFormats"]}
+            for x in result_list
         ]
         return ids
 
@@ -2284,11 +2334,12 @@ class ResultList:
         if response.status_code != requests.codes.ok:
             self.log_request_error(response.status_code, curl["url"])
             return dict()
-        resultList = json.loads(response.text)[0]["result"]
+        response_json = json.loads(response.text)
+        result_list = response_json[0]["result"]
 
         metadata_list = []
 
-        for result in resultList:
+        for result in result_list:
             dataset_metadata = {}
 
             dataset_metadata["标题"] = result["sdataName"]
@@ -2352,8 +2403,9 @@ class ResultList:
         if response.status_code != requests.codes.ok:
             self.log_request_error(response.status_code, curl["url"])
             return dict()
-        resultList = json.loads(response.text)["data"]
-        ids = [(str(x["cata_id"]), x["conf_catalog_format"]) for x in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]
+        ids = [(str(x["cata_id"]), x["conf_catalog_format"]) for x in result_list]
         return ids
 
     def result_list_xinjiang_wulumuqi(self, curl, pages: "Wrapper"):
@@ -2368,8 +2420,9 @@ class ResultList:
         if response.status_code != requests.codes.ok:
             self.log_request_error(response.status_code, curl["url"])
             return dict()
-        resultList = json.loads(response.text)["data"]
-        ids = [(str(x["cata_id"]), x["conf_catalog_format"]) for x in resultList]
+        response_json = json.loads(response.text)
+        result_list = response_json["data"]
+        ids = [(str(x["cata_id"]), x["conf_catalog_format"]) for x in result_list]
         return ids
 
     def result_list_other(self):
