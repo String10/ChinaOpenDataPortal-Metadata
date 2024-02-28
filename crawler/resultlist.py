@@ -12,7 +12,7 @@ from requests.utils import add_dict_to_cookiejar
 from bs4 import BeautifulSoup
 
 from common.constants import REQUEST_MAX_TIME, REQUEST_TIME_OUT
-from common.utils import log_error, getCookie
+from common.utils import getTotalPagesByTopTitle, log_error, getCookie
 from common.wrapper import Wrapper
 
 
@@ -212,15 +212,7 @@ class ResultList:
         html = response.content
         soup = BeautifulSoup(html, "html.parser")
         if pages:
-            pages.obj = math.ceil(
-                int(
-                    soup.find("div", attrs={"class": "top-title"})
-                    .find("span")
-                    .get_text()
-                    .replace(",", "")
-                )
-                / 10  # TODO: items per page
-            )
+            pages.obj = getTotalPagesByTopTitle(soup, 10)  # TODO: items per page
         links = []
         for title in soup.find_all("div", attrs={"class": "cata-title"}):
             link = title.find("a", attrs={"href": re.compile("/oportal/catalog/*")})
@@ -314,6 +306,8 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
         )
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["data"]["pages"]
         result_list = response_json["data"]["records"]
         ids = [x["id"] for x in result_list]
         return ids
@@ -340,6 +334,10 @@ class ResultList:
         )
         html = response.content
         soup = BeautifulSoup(html, "html.parser")
+        if pages:
+            pages.obj = int(
+                soup.find("div", attrs={"class": "page-footer"}).find("span").get_text()
+            )
         result_list = soup.find(
             "div", attrs={"class": "mainz mt30 jQtabcontent"}
         ).find_all("li")
@@ -359,6 +357,10 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
         )
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = math.ceil(
+                response_json["data"]["total"] / int(curl["params"]["pageSize"])
+            )
         result_list = response_json["data"]["data"]
         ids = [x["id"] for x in result_list]
         return ids
@@ -371,6 +373,8 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
         )
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["resultData"]["pager"]["pageCount"]
         result_list = response_json["resultData"]["list"]
         catalogPks = [x["catalogPk"] for x in result_list]
         return catalogPks
@@ -383,6 +387,8 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
         )
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["data"]["totalPages"]
         result_list = response_json["data"]["content"]
         ids = [x["id"] for x in result_list]
         return ids
@@ -397,6 +403,8 @@ class ResultList:
         )
         html = response.content
         soup = BeautifulSoup(html, "html.parser")
+        if pages:
+            pages.obj = getTotalPagesByTopTitle(soup, 10)  # TODO: items per page
         result_list = (
             soup.find("div", attrs={"class": "right-content-catalog"})
             .find("div", attrs={"class": "bottom-content"})
@@ -422,6 +430,8 @@ class ResultList:
         )
         html = response.content
         soup = BeautifulSoup(html, "html.parser")
+        if pages:
+            pages.obj = getTotalPagesByTopTitle(soup, 10)  # TODO: items per page
         result_list = (
             soup.find("div", attrs={"class": "right-content-catalog"})
             .find("div", attrs={"class": "bottom-content"})
@@ -1749,8 +1759,8 @@ class ResultList:
         )
         response_json = json.loads(response.text)
         result_list = response_json["data"]["content"]
-        res_ids = [x["id"] for x in result_list]
-        return res_ids
+        ids = [x["id"] for x in result_list]
+        return ids
 
     def result_list_hainan_hainansjj(self, curl, pages: "Wrapper"):
         return self.result_list_hainan_hainan(curl)
