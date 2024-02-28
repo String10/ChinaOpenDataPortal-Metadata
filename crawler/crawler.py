@@ -413,7 +413,7 @@ class Crawler:
         while page < pages.obj:
             curl = self.result_list_curl.copy()
             curl["params"]["page"] = str(page)
-            ids = self.result_list.get_result_list(curl)
+            ids = self.result_list.get_result_list(curl, pages)
             for id in ids:
                 curl = self.detail_list_curl.copy()
                 curl["params"]["id"] = id
@@ -648,8 +648,6 @@ class Crawler:
         while page <= pages.obj:
             curl = self.result_list_curl.copy()
             curl["queries"]["currentPageNo"] = str(page)
-            # curl['queries']['_'] = str(int(round(time.time() * 1000)))
-            # curl['headers']['Referer'] = curl['headers']['Referer'].format(str(page))
             ids = self.result_list.get_result_list(curl, pages)
             if len(ids) == 0:
                 self.log_result_list_error(f"break at page {page}.")
@@ -684,7 +682,7 @@ class Crawler:
         while page < pages.obj:
             curl = self.result_list_curl.copy()
             curl["queries"]["pageIndex"] = str(page)
-            ids = self.result_list.get_result_list(curl)
+            ids = self.result_list.get_result_list(curl, pages)
             if len(ids) == 0:
                 break
             for iid in ids:
@@ -706,7 +704,7 @@ class Crawler:
             curl = self.result_list_curl.copy()
             curl["queries"]["pageIndex"] = str(page)
             curl["queries"]["resourceType"] = "api"
-            ids = self.result_list.get_result_list(curl)
+            ids = self.result_list.get_result_list(curl, pages)
             if len(ids) == 0:
                 break
             for iid in ids:
@@ -795,7 +793,7 @@ class Crawler:
             curl = self.result_list_curl.copy()
             curl["queries"]["page"] = str(page)
             time.sleep(1)
-            metadata_list = self.result_list.get_result_list(curl)
+            metadata_list = self.result_list.get_result_list(curl, pages)
             if len(metadata_list) == 0:
                 break
             for meta in metadata_list:
@@ -1565,7 +1563,7 @@ class Crawler:
         while page < pages.obj:
             curl = self.result_list_curl.copy()
             curl["data"]["curPage"] = page
-            ids = self.result_list.get_result_list(curl)
+            ids = self.result_list.get_result_list(curl, pages)
             if not (ids and len(ids)):
                 break
             for id in ids:
@@ -1852,7 +1850,7 @@ class Crawler:
             curl = self.result_list_curl.copy()
             curl["data"]["page"] = page
             curl["queries"]["page"] = str(page)
-            ids = self.result_list.get_result_list(curl)
+            ids = self.result_list.get_result_list(curl, pages)
             for id in ids:
                 curl = self.detail_list_curl.copy()
                 curl["data"]["id"] = id

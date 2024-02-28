@@ -576,24 +576,26 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
         )
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["data"]["pages"]
         result_list = response_json["data"]["rows"]
         rids = [x["rid"] for x in result_list]
         return rids
 
     def result_list_anhui_hefei(self, curl, pages: "Wrapper"):
-        # 使用session保持会话
+        # 使用 session 保持会话
         session = requests.session()
         res1 = session.get(curl["url"], headers=curl["headers"], params=curl["queries"])
         jsl_clearance_s = re.findall(r"cookie=(.*?);location", res1.text)[0]
-        # 执行js代码
+        # 执行 js 代码 # TODO: an available JavaScript runtime needed
         jsl_clearance_s = str(execjs.eval(jsl_clearance_s)).split("=")[1].split(";")[0]
-        # add_dict_to_cookiejar方法添加cookie
+        # add_dict_to_cookiejar 方法添加 cookie
         add_dict_to_cookiejar(session.cookies, {"__jsl_clearance_s": jsl_clearance_s})
         res2 = session.get(curl["url"], headers=curl["headers"], params=curl["queries"])
-        # 提取go方法中的参数
+        # 提取 go 方法中的参数
         data = json.loads(re.findall(r";go\((.*?)\)", res2.text)[0])
         jsl_clearance_s = getCookie(data)
-        # 修改cookie
+        # 修改 cookie
         add_dict_to_cookiejar(session.cookies, {"__jsl_clearance_s": jsl_clearance_s})
         try:
             response = session.get(
@@ -607,8 +609,9 @@ class ResultList:
             self.log_request_error(response.status_code, curl["url"])
             return dict()
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["data"]["totalPageCount"]
         result_list = response_json["data"]["result"]
-
         ids = [(str(x["id"]), x["zyId"]) for x in result_list]
         return ids
 
@@ -623,9 +626,10 @@ class ResultList:
         if response.status_code != requests.codes.ok:
             self.log_request_error(response.status_code, curl["url"])
             return dict()
-        result_list = json.loads(response.text.replace('\\"', '"')[1:-1])[
-            "smcDataSetList"
-        ]
+        response_json = json.loads(response.text.replace('\\"', '"')[1:-1])
+        if pages:
+            pages.obj = response_json["allPage"]
+        result_list = response_json["smcDataSetList"]
         # 目前所有数据集中只出现了每日和每年
         frequency_mapping = {
             "1": "实时",
@@ -667,11 +671,14 @@ class ResultList:
             headers=curl["headers"],
             timeout=REQUEST_TIME_OUT,
         )
-        html = response.content.decode("utf-8")
-        soup = BeautifulSoup(html, "html.parser")
-        # soup = BeautifulSoup(html, "lxml")
+        soup = BeautifulSoup(response.content, "html.parser")
+        if pages:
+            m = re.search(r"共\((\d+)\)条数据", soup.find("script").get_text())
+            if m:
+                pages.obj = math.ceil(
+                    int(m.group(1)) / int(curl["queries"]["pageSize"])
+                )
         links = []
-
         for dataset in (
             soup.find("div", attrs={"class": "sj_list"})
             .find("ul")
@@ -691,6 +698,8 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
         )
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = math.ceil(response_json["total"] / int(curl["queries"]["size"]))
         result_list = response_json["rows"]
         data_ids = [x["dataId"] for x in result_list]
         return data_ids
@@ -707,6 +716,10 @@ class ResultList:
             self.log_request_error(response.status_code, curl["url"])
             return dict()
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = math.ceil(
+                response_json["result"]["count"] / int(curl["queries"]["pageSize"])
+            )
         result_list = response_json["result"]["data"]
         ids = [x["id"] for x in result_list]
         return ids
@@ -718,11 +731,12 @@ class ResultList:
             headers=curl["headers"],
             timeout=REQUEST_TIME_OUT,
         )
-        html = response.content.decode("utf-8")
-        soup = BeautifulSoup(html, "html.parser")
-        # soup = BeautifulSoup(html, "lxml")
+        soup = BeautifulSoup(response.content, "html.parser")
+        if pages:
+            m = re.search(r"pageCount:(\d+),", soup.find("script").get_text())
+            if m:
+                pages.obj = int(m.group(1))
         links = []
-
         for dataset in soup.find("ul", attrs={"class": "clearfix"}).find_all(
             "li", recursive=False
         ):
@@ -768,6 +782,10 @@ class ResultList:
             self.log_request_error(response.status_code, curl["url"])
             return dict()
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = math.ceil(
+                response_json["totalElements"] / int(curl["queries"]["size"])
+            )
         result_list = response_json["content"]
         dataset_metadata = []
         for result in result_list:
@@ -787,17 +805,18 @@ class ResultList:
             dataset_metadata.append(metadata_mapping)
         return dataset_metadata
 
-    def result_list_anhui_suzhou(self, curl, pages: "Wrapper"):
+    def result_list_anhui_common(self, curl, pages: "Wrapper"):
+        # kind of like `dongbei_common`
         response = requests.get(
             curl["url"],
             params=curl["queries"],
             headers=curl["headers"],
             timeout=REQUEST_TIME_OUT,
         )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
+        soup = BeautifulSoup(response.content, "html.parser")
+        if pages:
+            pages.obj = getTotalPagesByTopTitle(soup, 10)  # TODO: items per page
         links = []
-
         for dataset in (
             soup.find("div", attrs={"class": "bottom-content"})
             .find("ul")
@@ -816,36 +835,12 @@ class ResultList:
                 data_formats.append(data_format_text.lower())
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
+
+    def result_list_anhui_suzhou(self, curl, pages: "Wrapper"):
+        return self.result_list_anhui_common(curl, pages)
 
     def result_list_anhui_luan(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/oportal/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_anhui_common(curl, pages)
 
     def result_list_anhui_chizhou(self, curl, pages: "Wrapper"):
         response = requests.get(
@@ -854,8 +849,9 @@ class ResultList:
             headers=curl["headers"],
             timeout=REQUEST_TIME_OUT,
         )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
+        soup = BeautifulSoup(response.content, "html.parser")
+        if pages:
+            pages.obj = int(soup.find("pagination").attrs["pagecount"])
         metadata_list = []
         for dataset in soup.find("div", attrs={"id": "listContent"}).find_all(
             "div", attrs={"class": "list-content-item"}
@@ -1234,6 +1230,36 @@ class ResultList:
             href = dd.find("h2").find("a")["href"]
             ids.append(href.split("'")[1])
         return ids
+    
+    def result_list_guangxi_common(self, curl, pages: "Wrapper"):
+        response = requests.get(
+            curl["url"],
+            params=curl["queries"],
+            headers=curl["headers"],
+            timeout=REQUEST_TIME_OUT,
+        )
+        html = response.content
+        soup = BeautifulSoup(html, "html.parser")
+        links = []
+
+        for dataset in (
+            soup.find("div", attrs={"class": "bottom-content"})
+            .find("ul")
+            .find_all("li", recursive=False)
+        ):
+            link = dataset.find("div", attrs={"class": "cata-title"}).find(
+                "a", attrs={"href": re.compile("/catalog/*")}
+            )
+            data_formats = []
+            for data_format in dataset.find(
+                "div", attrs={"class": "file-type"}
+            ).find_all("li"):
+                data_format_text = data_format.get_text()
+                if data_format_text == "接口":
+                    data_format_text = "api"
+                data_formats.append(data_format_text.lower())
+            links.append({"link": link["href"], "data_formats": str(data_formats)})
+        return links
 
     def result_list_guangxi_guangxi(self, curl, pages: "Wrapper"):
         response = requests.get(
@@ -1270,424 +1296,46 @@ class ResultList:
         return links
 
     def result_list_guangxi_nanning(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_guangxi_common(curl, pages)
 
     def result_list_guangxi_liuzhou(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_guangxi_common(curl, pages)
 
     def result_list_guangxi_guilin(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_guangxi_common(curl, pages)
 
     def result_list_guangxi_wuzhou(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_guangxi_common(curl, pages)
 
     def result_list_guangxi_beihai(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_guangxi_common(curl, pages)
 
     def result_list_guangxi_fangchenggang(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_guangxi_common(curl, pages)
 
     def result_list_guangxi_qinzhou(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_guangxi_common(curl, pages)
 
     def result_list_guangxi_guigang(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_guangxi_common(curl, pages)
 
     def result_list_guangxi_yulin(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_guangxi_common(curl, pages)
 
     def result_list_guangxi_baise(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_guangxi_common(curl, pages)
 
     def result_list_guangxi_hezhou(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_guangxi_common(curl, pages)
 
     def result_list_guangxi_hechi(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_guangxi_common(curl, pages)
 
     def result_list_guangxi_laibin(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_guangxi_common(curl, pages)
 
     def result_list_guangxi_chongzuo(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_guangxi_common(curl, pages)
 
     def result_list_hainan_hainan(self, curl, pages: "Wrapper"):
         response = requests.post(
