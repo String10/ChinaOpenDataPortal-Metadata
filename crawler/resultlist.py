@@ -882,17 +882,18 @@ class ResultList:
     def result_list_fujian_fujian(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
-            params=curl["queries"],
             headers=curl["headers"],
+            params=curl["params"],
             timeout=REQUEST_TIME_OUT,
         )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-        for title in soup.find_all("div", attrs={"class": "mrline1-title"}):
-            link = title.find("a", attrs={"href": re.compile("/oportal/catalog/*")})
-            links.append(link["href"])
-        return links
+        response_json = json.loads(response.text)
+        if pages:
+            pages.obj = math.ceil(
+                response_json["data"]["total"] / int(curl["params"]["pageSize"])
+            )
+        result_list = response_json["data"]["rows"]
+        ids = [x["catalogID"] for x in result_list]
+        return ids
 
     def result_list_fujian_fuzhou(self, curl, pages: "Wrapper"):
         response = requests.post(
@@ -901,7 +902,8 @@ class ResultList:
             headers=curl["headers"],
             timeout=REQUEST_TIME_OUT,
         )
-        result_list = json.loads(json.loads(response.text)["dataList"])["list"]
+        response_json = json.loads(response.text)
+        result_list = json.loads(response_json["dataList"])["list"]
         res_ids = [x["resId"] for x in result_list]
         return res_ids
 
@@ -913,6 +915,8 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
         )
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["data"]["page"]["totalPage"]
         result_list = response_json["data"]["list"]
         catalog_ids = [x["catalogId"] for x in result_list]
         return catalog_ids
@@ -1230,7 +1234,7 @@ class ResultList:
             href = dd.find("h2").find("a")["href"]
             ids.append(href.split("'")[1])
         return ids
-    
+
     def result_list_guangxi_common(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],

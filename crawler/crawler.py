@@ -859,17 +859,19 @@ class Crawler:
         page = 1
         while page <= pages.obj:
             curl = self.result_list_curl.copy()
-            curl["queries"]["page"] = str(page)
-            links = self.result_list.get_result_list(curl, pages)
-            for link in links:
+            curl["params"]["page"] = str(page)
+            catalog_ids = self.result_list.get_result_list(curl, pages)
+            for catalog_id in catalog_ids:
                 curl = self.detail_list_curl.copy()
-                curl["url"] += link
+                curl["params"]["cataId"] = catalog_id
                 metadata = self.detail.get_detail(curl)
-                metadata["url"] = curl["url"]
+                metadata["url"] = f'${curl["url"]}?catalogID=${catalog_id}'
                 self.metadata_list.append(metadata)
             page += 1
+            break
 
     def crawl_fujian_fuzhou(self):
+        # TODO: HTTP ERROR 502
         pages = Wrapper(116)
         page = 1
         while page <= pages.obj:

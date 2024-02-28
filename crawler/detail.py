@@ -1948,44 +1948,40 @@ class Detail:
         return dataset_metadata
 
     def detail_fujian_fujian(self, curl):
-        list_fields = ["来源部门", "重点领域", "发布时间", " 更新时间", "开放条件"]
-        table_fields = [
-            "数据量",
-            "所属行业",
-            "更新频率",
-            "部门电话",
-            "部门邮箱",
-            "描述",
-        ]
+        key_map = {
+            "catalogName": "title",
+            "catalogDes": "description",
+            "orgName": "department",
+            "themeName": "category",
+            "industryName": "industry",
+            "dataVol": "data_volume",
+            "updateTime": "update_time",
+            "openType": "is_open",
+            "organPhone": "telephone",
+            "organEmail": "email",
+            "tags": "tags",
+            "releasedTime": "publish_time",
+            "updateCycle": "update_frequency",
+        }
 
         response = requests.get(
-            curl["url"], headers=curl["headers"], timeout=REQUEST_TIME_OUT
+            curl["url"],
+            headers=curl["headers"],
+            params=curl["params"],
+            timeout=REQUEST_TIME_OUT,
         )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
         dataset_metadata = {}
-        title = soup.find("ul", attrs={"class": "d-title pull-left"})
-        title = title.find("h4").get_text()
-        dataset_metadata["标题"] = title
-        for li in soup.find("ul", attrs={"class": "list-inline"}).find_all(
-            "li", attrs={}
-        ):
-            li_name = li.get_text().split("：")[0].strip()
-            if li_name in list_fields:
-                li_text = (
-                    li.find("span", attrs={"class": "text-primary"}).get_text().strip()
-                )
-                if li_name == "开放条件":
-                    li_text = "有条件开放" if li_text == "依申请开放" else "无条件开放"
-                dataset_metadata[li_name] = li_text
-        table = soup.find("li", attrs={"name": "basicinfo"})
-        for td_name in table_fields:
-            td_text = table.find("td", text=td_name)
-            if td_text is None:
-                continue
-            td_text = td_text.find_next("td").get_text().strip()
-            td_text = ucd.normalize("NFKC", td_text).replace(" ", "")
-            dataset_metadata[td_name] = td_text
+        detail_json = json.loads(response.text)
+        if detail_json["code"] != 200:
+            return
+        detail_json = detail_json["data"]
+        for origin_key, mapped_key in key_map.items():
+            if origin_key == "openType":
+                if detail_json[origin_key] == "0":
+                    detail_json[origin_key] = "有条件开放"
+                else:
+                    detail_json[origin_key] = "无条件开放"
+            dataset_metadata[mapped_key] = detail_json[origin_key]
         return dataset_metadata
 
     def detail_fujian_fuzhou(self, curl):
