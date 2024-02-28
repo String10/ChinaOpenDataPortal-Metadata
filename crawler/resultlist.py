@@ -929,6 +929,8 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
         )
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["page"]["pages"]
         result_list = response_json["data"]
         data_ids = [
             {"dataId": x["dataId"], "filesType": x["filesType"]} for x in result_list
