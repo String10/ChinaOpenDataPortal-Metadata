@@ -856,7 +856,7 @@
           "size": "20",
           "current": "3"
         },
-        "json_data": {
+        "jsonData": {
           "resourceCode": "",
           "openAttribute": "",
           "resourceName": "",
@@ -1331,7 +1331,7 @@
           "Referer": "http://data.ningbo.gov.cn/",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
         },
-        "json_data": {
+        "jsonData": {
           "pageNo": "1",
           "pageSize": "10",
           "dataUnit": "",
@@ -1490,7 +1490,7 @@
           "sec-ch-ua-mobile": "?0",
           "sec-ch-ua-platform": "\"Windows\""
         },
-        "json_data": {
+        "jsonData": {
           "pageNum": 1,
           "pageSize": 10,
           "deptId": "",
@@ -1651,7 +1651,7 @@
           "Referer": "http://data.zhoushan.gov.cn/",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
         },
-        "json_data": {
+        "jsonData": {
           "pageNo": 1,
           "pageSize": 50,
           "param": {

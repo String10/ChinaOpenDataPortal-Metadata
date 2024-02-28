@@ -340,7 +340,7 @@ class Crawler:
         while page <= pages.obj:
             curl = self.result_list_curl.copy()
             curl["params"]["current"] = str(page)
-            curl["json_data"]["current"] = str(page)
+            curl["jsonData"]["current"] = str(page)
             ids = self.result_list.get_result_list(curl, pages)
             for id in ids:
                 curl = self.detail_list_curl.copy()
@@ -495,7 +495,7 @@ class Crawler:
         page = 1
         while page <= pages.obj:
             curl = self.result_list_curl.copy()
-            curl["json_data"]["pageNo"] = str(page)
+            curl["jsonData"]["pageNo"] = str(page)
             uuids = self.result_list.get_result_list(curl, pages)
             for uuid in uuids:
                 curl = self.detail_list_curl.copy()
@@ -505,6 +505,7 @@ class Crawler:
             page += 1
 
     def crawl_zhejiang_wenzhou(self):
+        # TODO: Unknown Error
         pages = Wrapper(51)
         page = 1
         while page <= pages.obj:
@@ -539,7 +540,7 @@ class Crawler:
             if page == 3:
                 continue
             curl = self.result_list_curl.copy()
-            curl["json_data"]["pageNum"] = page
+            curl["jsonData"]["pageNum"] = page
             iids = self.result_list.get_result_list(curl, pages)
             for iid in iids:
                 curl = self.detail_list_curl.copy()
@@ -563,6 +564,7 @@ class Crawler:
             page += 1
 
     def crawl_zhejiang_quzhou(self):
+        # TODO: 502 Bad Gateway
         pages = Wrapper(51)
         page = 1
         while page <= pages.obj:
@@ -581,7 +583,7 @@ class Crawler:
         page = 1
         while page <= pages.obj:
             curl = self.result_list_curl.copy()
-            curl["json_data"]["pageNo"] = page
+            curl["jsonData"]["pageNo"] = page
             ids = self.result_list.get_result_list(curl, pages)
             for id in ids:
                 curl = self.detail_list_curl.copy()

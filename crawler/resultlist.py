@@ -12,7 +12,11 @@ from requests.utils import add_dict_to_cookiejar
 from bs4 import BeautifulSoup
 
 from common.constants import REQUEST_MAX_TIME, REQUEST_TIME_OUT
-from common.utils import getTotalPagesByTopTitle, log_error, getCookie
+from common.utils import (
+    getTotalPagesByTopTitle,
+    log_error,
+    getCookie,
+)
 from common.wrapper import Wrapper
 
 
@@ -255,7 +259,7 @@ class ResultList:
         )
         response_json = json.loads(response.text)
         if pages:
-            # pageSize set in `curl.json` : 15
+            # TODO: pageSize set in `curl.json` : 15
             pages.obj = math.ceil(int(response_json["custom"]["total"]) / 15)
         result_list = response_json["custom"]["resultList"]
         rowGuid_tag_list = [
@@ -302,7 +306,7 @@ class ResultList:
             curl["url"],
             params=curl["params"],
             headers=curl["headers"],
-            json=curl["json_data"],
+            json=curl["jsonData"],
             timeout=REQUEST_TIME_OUT,
         )
         response_json = json.loads(response.text)
@@ -455,15 +459,20 @@ class ResultList:
             id_infos.append((id, update_time))
         return id_infos
 
-    def result_list_zhejiang_zhejiang(self, curl, pages: "Wrapper"):
+    def result_list_zhejiang_common(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
-            data=curl["data"],
             headers=curl["headers"],
+            data=curl["data"],
             timeout=REQUEST_TIME_OUT,
         )
         html = json.loads(response.text)["data"]
         soup = BeautifulSoup(html, "html.parser")
+        if pages:
+            # TODO: items per page
+            pages.obj = math.ceil(
+                int(soup.find("span", attrs={"class": "onColor"}).get_text()) / 10
+            )
         iids = []
         for title in soup.find_all("div", attrs={"class": "search_result"}):
             link = title.find("a", attrs={"href": re.compile("../detail/data.do*")})
@@ -472,6 +481,25 @@ class ResultList:
             querys = {k: v[0] for k, v in querys.items()}
             iids.append(querys)
         return iids
+
+    def result_list_zhejiang_common_2(self, curl, pages: "Wrapper"):
+        response = requests.post(
+            curl["url"],
+            headers=curl["headers"],
+            json=curl["jsonData"],
+            timeout=REQUEST_TIME_OUT,
+        )
+        response_json = json.loads(response.text)
+        if pages:
+            pages.obj = math.ceil(
+                response_json["data"]["total"] / int(curl["jsonData"]["pageSize"])
+            )
+        result_list = response_json["data"]["rows"]
+        iids = [x["iid"] for x in result_list]
+        return iids
+
+    def result_list_zhejiang_zhejiang(self, curl, pages: "Wrapper"):
+        return self.result_list_zhejiang_common(curl, pages)
 
     def result_list_zhejiang_hangzhou(self, curl, pages: "Wrapper"):
         response = requests.post(
@@ -481,6 +509,9 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
         )
         response_json = json.loads(response.text)
+        if pages:
+            # TODO: pageSize set in `curl.json` : 10
+            pages.obj = math.ceil(response_json["total"] / 10)
         result_list = response_json["rows"]
         id_formats = [(x["id"], x["source_type"].lower()) for x in result_list]
         return id_formats
@@ -489,144 +520,52 @@ class ResultList:
         response = requests.post(
             curl["url"],
             headers=curl["headers"],
-            json=curl["json_data"],
+            json=curl["jsonData"],
             verify=False,
             timeout=REQUEST_TIME_OUT,
         )
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["list"]["pages"]
         result_list = response_json["list"]["rows"]
         uuids = [x["uuid"] for x in result_list]
         return uuids
 
     def result_list_zhejiang_wenzhou(self, curl, pages: "Wrapper"):
-        response = requests.post(
-            curl["url"],
-            headers=curl["headers"],
-            data=curl["data"],
-            verify=False,
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = json.loads(response.text)["data"]
-        soup = BeautifulSoup(html, "html.parser")
-        iids = []
-        for title in soup.find_all("div", attrs={"class": "search_result"}):
-            link = title.find("a", attrs={"href": re.compile("../detail/data.do*")})
-            parsed_link = urllib.parse.urlparse(link["href"])
-            querys = urllib.parse.parse_qs(parsed_link.query)
-            querys = {k: v[0] for k, v in querys.items()}
-            iids.append(querys)
-        return iids
+        return self.result_list_zhejiang_common(curl, pages)
 
     def result_list_zhejiang_jiaxing(self, curl, pages: "Wrapper"):
-        response = requests.post(
-            curl["url"],
-            headers=curl["headers"],
-            data=curl["data"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = json.loads(response.text)["data"]
-        soup = BeautifulSoup(html, "html.parser")
-        iids = []
-        for title in soup.find_all("div", attrs={"class": "search_result"}):
-            link = title.find("a", attrs={"href": re.compile("../detail/data.do*")})
-            parsed_link = urllib.parse.urlparse(link["href"])
-            querys = urllib.parse.parse_qs(parsed_link.query)
-            querys = {k: v[0] for k, v in querys.items()}
-            iids.append(querys)
-        return iids
+        return self.result_list_zhejiang_common(curl, pages)
 
     def result_list_zhejiang_shaoxing(self, curl, pages: "Wrapper"):
-        response = requests.post(
-            curl["url"],
-            headers=curl["headers"],
-            json=curl["json_data"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        response_json = json.loads(response.text)
-        result_list = response_json["data"]["rows"]
-        iids = [x["iid"] for x in result_list]
-        return iids
+        return self.result_list_zhejiang_common_2(curl, pages)
 
     def result_list_zhejiang_jinhua(self, curl, pages: "Wrapper"):
-        response = requests.post(
-            curl["url"],
-            headers=curl["headers"],
-            data=curl["data"],
-            verify=False,
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = json.loads(response.text)["data"]
-        soup = BeautifulSoup(html, "html.parser")
-        iids = []
-        for title in soup.find_all("div", attrs={"class": "search_result"}):
-            link = title.find("a", attrs={"href": re.compile("../detail/data.do*")})
-            parsed_link = urllib.parse.urlparse(link["href"])
-            querys = urllib.parse.parse_qs(parsed_link.query)
-            querys = {k: v[0] for k, v in querys.items()}
-            iids.append(querys)
-        return iids
+        return self.result_list_zhejiang_common(curl, pages)
 
     def result_list_zhejiang_quzhou(self, curl, pages: "Wrapper"):
-        response = requests.post(
-            curl["url"],
-            headers=curl["headers"],
-            data=curl["data"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = json.loads(response.text)["data"]
-        soup = BeautifulSoup(html, "html.parser")
-        iids = []
-        for title in soup.find_all("div", attrs={"class": "search_result"}):
-            link = title.find("a", attrs={"href": re.compile("../detail/data.do*")})
-            parsed_link = urllib.parse.urlparse(link["href"])
-            querys = urllib.parse.parse_qs(parsed_link.query)
-            querys = {k: v[0] for k, v in querys.items()}
-            iids.append(querys)
-        return iids
+        return self.result_list_zhejiang_common(curl, pages)
 
     def result_list_zhejiang_zhoushan(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
             headers=curl["headers"],
-            json=curl["json_data"],
+            json=curl["jsonData"],
             verify=False,
             timeout=REQUEST_TIME_OUT,
         )
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["data"]["pages"]
         result_list = response_json["data"]["records"]
         ids = [x["id"] for x in result_list]
         return ids
 
     def result_list_zhejiang_taizhou(self, curl, pages: "Wrapper"):
-        response = requests.post(
-            curl["url"],
-            headers=curl["headers"],
-            json=curl["jsonData"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        response_json = json.loads(response.text)
-        result_list = response_json["data"]["rows"]
-        iids = [x["iid"] for x in result_list]
-        return iids
+        return self.result_list_zhejiang_common_2(curl, pages)
 
     def result_list_zhejiang_lishui(self, curl, pages: "Wrapper"):
-        response = requests.post(
-            curl["url"],
-            headers=curl["headers"],
-            data=curl["data"],
-            verify=False,
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = json.loads(response.text)["data"]
-        soup = BeautifulSoup(html, "html.parser")
-        iids = []
-        for title in soup.find_all("div", attrs={"class": "search_result"}):
-            link = title.find("a", attrs={"href": re.compile("../detail/data.do*")})
-            parsed_link = urllib.parse.urlparse(link["href"])
-            querys = urllib.parse.parse_qs(parsed_link.query)
-            querys = {k: v[0] for k, v in querys.items()}
-            iids.append(querys)
-        return iids
+        return self.result_list_zhejiang_common(curl, pages)
 
     def result_list_anhui_anhui(self, curl, pages: "Wrapper"):
         response = requests.post(
