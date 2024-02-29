@@ -1314,15 +1314,15 @@ class Crawler:
             curl = copy.deepcopy(self.result_list_curl)
             curl["dataset"]["data"]["pageNo"] = page
             curl["dataset"]["crawl_type"] = "dataset"
-            ids = self.result_list.get_result_list(curl["dataset"])
-            for id in ids:
-                if id in all_ids:
+            ids = self.result_list.get_result_list(curl["dataset"], pages)
+            for _id in ids:
+                if _id in all_ids:
                     continue
                 else:
-                    all_ids.append(id)
+                    all_ids.append(_id)
                 curl = copy.deepcopy(self.detail_list_curl)
                 curl["dataset"]["crawl_type"] = "dataset"
-                curl["dataset"]["data"]["resId"] = id
+                curl["dataset"]["data"]["resId"] = _id
                 metadata = self.detail.get_detail(curl["dataset"])
                 self.metadata_list.append(metadata)
             page += 1
@@ -1332,14 +1332,14 @@ class Crawler:
             curl = copy.deepcopy(self.result_list_curl)
             curl["api"]["data"]["pageNo"] = page
             curl["api"]["crawl_type"] = "api"
-            ids = self.result_list.get_result_list(curl["api"])
-            for id in ids:
-                if id in all_ids:
+            ids = self.result_list.get_result_list(curl["api"], pages)
+            for _id in ids:
+                if _id in all_ids:
                     continue
                 else:
-                    all_ids.append(id)
+                    all_ids.append(_id)
                 curl = copy.deepcopy(self.detail_list_curl)
-                curl["api"]["data"]["resId"] = id
+                curl["api"]["data"]["resId"] = _id
                 curl["api"]["crawl_type"] = "api"
                 metadata = self.detail.get_detail(curl["api"])
                 self.metadata_list.append(metadata)
@@ -1354,14 +1354,14 @@ class Crawler:
             curl["data"]["body"]["useType"] = None
             curl["data"]["page"] = page
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
-                if id in all_ids:
+            for _id in ids:
+                if _id in all_ids:
                     continue
                 else:
-                    all_ids.append(id)
+                    all_ids.append(_id)
                 curl = copy.deepcopy(self.detail_list_curl)
-                curl["detail"]["url"] = curl["detail"]["url"].format(id)
-                curl["doc"]["queries"]["sid"] = id
+                curl["detail"]["url"] = curl["detail"]["url"].format(_id)
+                curl["doc"]["queries"]["sid"] = _id
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
             page += 1
@@ -1374,14 +1374,14 @@ class Crawler:
             curl = copy.deepcopy(self.result_list_curl)
             curl["dataset"]["data"]["pageNo"] = page
             curl["dataset"]["crawl_type"] = "dataset"
-            ids = self.result_list.get_result_list(curl["dataset"])
-            for id in ids:
-                if id in all_ids:
+            ids = self.result_list.get_result_list(curl["dataset"], pages)
+            for _id in ids:
+                if _id in all_ids:
                     continue
                 else:
-                    all_ids.append(id)
+                    all_ids.append(_id)
                 curl = copy.deepcopy(self.detail_list_curl)
-                curl["data"]["resId"] = id
+                curl["data"]["resId"] = _id
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
                 time.sleep(1)
@@ -1393,13 +1393,13 @@ class Crawler:
             curl["api"]["data"]["pageNo"] = page
             curl["api"]["crawl_type"] = "api"
             ids = self.result_list.get_result_list(curl["api"])
-            for id in ids:
-                if id in all_ids:
+            for _id in ids:
+                if _id in all_ids:
                     continue
                 else:
-                    all_ids.append(id)
+                    all_ids.append(_id)
                 curl = copy.deepcopy(self.detail_list_curl)
-                curl["data"]["resId"] = id
+                curl["data"]["resId"] = _id
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
                 time.sleep(1)

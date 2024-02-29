@@ -39,6 +39,40 @@ class ResultList:
         func = getattr(self, func_name, self.result_list_other)
         return func(curl, pages)
 
+    def result_list_common(self, curl, pages: "Wrapper"):
+        response = requests.get(
+            curl["url"],
+            params=curl["queries"],
+            headers=curl["headers"],
+            timeout=REQUEST_TIME_OUT,
+        )
+        if response.status_code != requests.codes.ok:
+            self.log_request_error(response.status_code, curl["url"])
+            return []
+
+        soup = BeautifulSoup(response.content, "html.parser")
+        if pages:
+            pages.obj = getTotalPagesByTopTitle(soup, 10)  # TODO: items per page
+        links = []
+        for dataset in (
+            soup.find("div", attrs={"class": "bottom-content"})
+            .find("ul")
+            .find_all("li", recursive=False)
+        ):
+            link = dataset.find("div", attrs={"class": "cata-title"}).find(
+                "a", attrs={"href": re.compile(r"/catalog/.*")}
+            )
+            data_formats = []
+            for data_format in dataset.find(
+                "div", attrs={"class": "file-type"}
+            ).find_all("li"):
+                data_format_text = data_format.get_text()
+                if data_format_text == "接口":
+                    data_format_text = "api"
+                data_formats.append(data_format_text.lower())
+            links.append({"link": link["href"], "data_formats": str(data_formats)})
+        return links
+
     def result_list_beijing_beijing(self, curl, pages: "Wrapper"):
         response = requests.post(
             curl["url"],
@@ -805,42 +839,11 @@ class ResultList:
             dataset_metadata.append(metadata_mapping)
         return dataset_metadata
 
-    def result_list_anhui_common(self, curl, pages: "Wrapper"):
-        # kind of like `dongbei_common`
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        soup = BeautifulSoup(response.content, "html.parser")
-        if pages:
-            pages.obj = getTotalPagesByTopTitle(soup, 10)  # TODO: items per page
-        links = []
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/oportal/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
-
     def result_list_anhui_suzhou(self, curl, pages: "Wrapper"):
-        return self.result_list_anhui_common(curl, pages)
+        return self.result_list_common(curl, pages)
 
     def result_list_anhui_luan(self, curl, pages: "Wrapper"):
-        return self.result_list_anhui_common(curl, pages)
+        return self.result_list_common(curl, pages)
 
     def result_list_anhui_chizhou(self, curl, pages: "Wrapper"):
         response = requests.get(
@@ -1209,6 +1212,8 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
         )
         response_json = json.loads(response.text)["data"]
+        if pages:
+            pages.obj = response_json["page"]["pages"]
         ids = list(map(lambda x: x["resId"], response_json["page"]["list"]))
         return ids
 
@@ -1219,8 +1224,12 @@ class ResultList:
             headers=curl["headers"],
             timeout=REQUEST_TIME_OUT,
         )
-        data = json.loads(response.text)["body"]
-        ids = list(map(lambda x: x["sid"], data))
+        response_json = json.loads(response.text)
+        if pages:
+            pages.obj = math.ceil(
+                int(response_json["total"]) / int(response_json["pageSize"])
+            )
+        ids = list(map(lambda x: x["sid"], response_json["body"]))
         return ids
 
     def result_list_guangdong_shenzhen(self, curl, pages: "Wrapper"):
@@ -1230,12 +1239,20 @@ class ResultList:
             headers=curl["headers"],
             timeout=REQUEST_TIME_OUT,
         )
-        data = json.loads(response.text)
+        response_json = json.loads(response.text)
         if curl["crawl_type"] == "dataset":
-            data = json.loads(data["dataList"])["list"]
+            response_json = json.loads(response_json["dataList"])
         else:
-            data = json.loads(data["apiList"])["list"]
-        ids = list(map(lambda x: x["resId"], data))
+            response_json = json.loads(response_json["apiList"])
+        if pages:
+            pages.obj = math.ceil(
+                (
+                    response_json["otherData"]["cityCount"]
+                    + response_json["otherData"]["countyCount"]
+                )
+                / int(response_json["pageSize"])
+            )
+        ids = list(map(lambda x: x["resId"], response_json["list"]))
         return ids
 
     def result_list_guangdong_zhongshan(self, curl, pages: "Wrapper"):
@@ -1246,6 +1263,16 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
         )
         soup = bs4.BeautifulSoup(response.text, "html.parser")
+        if pages:
+            m = re.search(
+                r"javascript:toPage\((\d+)\);",
+                soup.find("div", class_="f-page")
+                .find("ul")
+                .find_all("li")[-1]
+                .find("a")["href"],
+            )
+            if m:
+                pages.obj = int(m.group(1))
         dl = soup.find("dl")
         ids = []
         for dd in dl.find_all("dd"):
@@ -1253,111 +1280,50 @@ class ResultList:
             ids.append(href.split("'")[1])
         return ids
 
-    def result_list_guangxi_common(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
-
     def result_list_guangxi_guangxi(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        if response.status_code != requests.codes.ok:
-            self.log_request_error(response.status_code, curl["url"])
-            return []
-
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/portal/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_common(curl, pages)
 
     def result_list_guangxi_nanning(self, curl, pages: "Wrapper"):
-        return self.result_list_guangxi_common(curl, pages)
+        return self.result_list_common(curl, pages)
 
     def result_list_guangxi_liuzhou(self, curl, pages: "Wrapper"):
-        return self.result_list_guangxi_common(curl, pages)
+        return self.result_list_common(curl, pages)
 
     def result_list_guangxi_guilin(self, curl, pages: "Wrapper"):
-        return self.result_list_guangxi_common(curl, pages)
+        return self.result_list_common(curl, pages)
 
     def result_list_guangxi_wuzhou(self, curl, pages: "Wrapper"):
-        return self.result_list_guangxi_common(curl, pages)
+        return self.result_list_common(curl, pages)
 
     def result_list_guangxi_beihai(self, curl, pages: "Wrapper"):
-        return self.result_list_guangxi_common(curl, pages)
+        return self.result_list_common(curl, pages)
 
     def result_list_guangxi_fangchenggang(self, curl, pages: "Wrapper"):
-        return self.result_list_guangxi_common(curl, pages)
+        return self.result_list_common(curl, pages)
 
     def result_list_guangxi_qinzhou(self, curl, pages: "Wrapper"):
-        return self.result_list_guangxi_common(curl, pages)
+        return self.result_list_common(curl, pages)
 
     def result_list_guangxi_guigang(self, curl, pages: "Wrapper"):
-        return self.result_list_guangxi_common(curl, pages)
+        return self.result_list_common(curl, pages)
 
     def result_list_guangxi_yulin(self, curl, pages: "Wrapper"):
-        return self.result_list_guangxi_common(curl, pages)
+        return self.result_list_common(curl, pages)
 
     def result_list_guangxi_baise(self, curl, pages: "Wrapper"):
-        return self.result_list_guangxi_common(curl, pages)
+        return self.result_list_common(curl, pages)
 
     def result_list_guangxi_hezhou(self, curl, pages: "Wrapper"):
-        return self.result_list_guangxi_common(curl, pages)
+        return self.result_list_common(curl, pages)
 
     def result_list_guangxi_hechi(self, curl, pages: "Wrapper"):
-        return self.result_list_guangxi_common(curl, pages)
+        return self.result_list_common(curl, pages)
 
     def result_list_guangxi_laibin(self, curl, pages: "Wrapper"):
-        return self.result_list_guangxi_common(curl, pages)
+        return self.result_list_common(curl, pages)
 
     def result_list_guangxi_chongzuo(self, curl, pages: "Wrapper"):
-        return self.result_list_guangxi_common(curl, pages)
+        return self.result_list_common(curl, pages)
 
     def result_list_hainan_hainan(self, curl, pages: "Wrapper"):
         response = requests.post(
