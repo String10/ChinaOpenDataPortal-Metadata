@@ -1144,8 +1144,13 @@ class ResultList:
             verify=False,
             timeout=REQUEST_TIME_OUT,
         )
-
         soup = bs4.BeautifulSoup(response.text, "html.parser")
+        if pages:
+            m = re.search(
+                r"\d+/(\d+)页", soup.find("span", class_="current").parent.get_text()
+            )
+            if m:
+                pages.obj = int(m.group(1))
         divs = soup.find_all("div", class_="szkf-box-list")
         ids = []
         for div in divs:
@@ -1161,11 +1166,13 @@ class ResultList:
             verify=False,
             timeout=REQUEST_TIME_OUT,
         )
-        data = json.loads(response.text)
-        cata_ids = list(map(lambda x: x["CATA_ID"], data["list"]))
+        response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["pages"]
+        cata_ids = list(map(lambda x: x["CATA_ID"], response_json["list"]))
         return cata_ids
 
-    def result_list_hunan_chenzhou(self, curl, pages: "Wrapper"):
+    def result_list_hunan_common(self, curl, pages: "Wrapper"):
         response = requests.get(
             curl["url"],
             params=curl["queries"],
@@ -1173,8 +1180,13 @@ class ResultList:
             verify=False,
             timeout=REQUEST_TIME_OUT,
         )
-
         soup = bs4.BeautifulSoup(response.text, "html.parser")
+        if pages:
+            m = re.search(
+                r"\d+/(\d+)页", soup.find("span", class_="current").parent.get_text()
+            )
+            if m:
+                pages.obj = int(m.group(1))
         tables = soup.find_all("table", class_="table-data")
         ids = []
         for table in tables:
@@ -1182,24 +1194,12 @@ class ResultList:
             a = tr.find_next("a")
             ids.append(a["href"].split("=")[1])
         return ids
+
+    def result_list_hunan_chenzhou(self, curl, pages: "Wrapper"):
+        return self.result_list_hunan_common(curl, pages)
 
     def result_list_hunan_yiyang(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            verify=False,
-            timeout=REQUEST_TIME_OUT,
-        )
-
-        soup = bs4.BeautifulSoup(response.text, "html.parser")
-        tables = soup.find_all("table", class_="table-data")
-        ids = []
-        for table in tables:
-            tr = table.find_all("tr")[-1]
-            a = tr.find_next("a")
-            ids.append(a["href"].split("=")[1])
-        return ids
+        return self.result_list_hunan_common(curl, pages)
 
     def result_list_guangdong_guangdong(self, curl, pages: "Wrapper"):
         response = requests.post(
@@ -1208,8 +1208,8 @@ class ResultList:
             headers=curl["headers"],
             timeout=REQUEST_TIME_OUT,
         )
-        data = json.loads(response.text)["data"]
-        ids = list(map(lambda x: x["resId"], data["page"]["list"]))
+        response_json = json.loads(response.text)["data"]
+        ids = list(map(lambda x: x["resId"], response_json["page"]["list"]))
         return ids
 
     def result_list_guangdong_guangzhou(self, curl, pages: "Wrapper"):

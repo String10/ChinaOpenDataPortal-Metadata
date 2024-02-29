@@ -3600,25 +3600,25 @@
     },
     "changde": {
       "resultList": {
-        "url": "http://dataopen.changde.gov.cn/catalogs",
+        "url": "https://www.changde.gov.cn/cdwebsite/dataopen/catalogs",
         "method": "get",
         "headers": {
           "Accept": "application/json, text/javascript, */*; q=0.01",
           "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
           "Connection": "keep-alive",
-          "Referer": "http://dataopen.changde.gov.cn/list?domain=ZYHJ",
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.43",
+          "Cookie": "pgv_pvi=3740267520; pgv_si=s6183884800; pgv_heid=1709175119150.1709175261132.1709175295951.5; wzws_sessionid=gWQ5NGEyN6Bl3/E+gDExMS40MS4yMzkuMTY4gjI3ZTM5YQ==; SESSION=a3e83968-f886-490d-92f3-3fbda34550c4",
+          "Referer": "https://www.changde.gov.cn/cdwebsite/dataopen/list",
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0",
           "X-Requested-With": "XMLHttpRequest"
         },
         "queries": {
-          "csrf": "c34dd8cd-27d7-43cc-859b-4da3b065ad8f",
+          "csrf": "e02a864b-c163-450d-b9e9-77ab2be88a7c",
           "size": "15",
-          "page": "1",
-          "all": "ZYHJ"
+          "page": "1"
         }
       },
       "detail": {
-        "url": "http://dataopen.changde.gov.cn/detail",
+        "url": "https://www.changde.gov.cn/cdwebsite/dataopen/detail",
         "method": "get",
         "headers": {
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -3723,7 +3723,8 @@
             "Referer": "http://www.yiyang.gov.cn/webapp/yiyang2019/dataPublic/index.jsp",
             "Upgrade-Insecure-Requests": "1",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.43"
-          }
+          },
+          "queries": {}
         },
         "frame": {
           "url": "http://www.yiyang.gov.cn/webapp/yiyang2019/dataPublic/dataListIframe.jsp",

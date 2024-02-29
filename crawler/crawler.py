@@ -1208,14 +1208,14 @@ class Crawler:
             curl["url"] = curl["url"].format("dataSet")
             curl["data"]["page"] = page
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
-                if id in all_ids:
+            for _id in ids:
+                if _id in all_ids:
                     continue
                 else:
-                    all_ids.append(id)
+                    all_ids.append(_id)
                 curl = copy.deepcopy(self.detail_list_curl)
                 curl["crawl_type"] = "dataset"
-                curl["url"] = curl["url"].format("dataSet/toDataDetails/" + str(id))
+                curl["url"] = curl["url"].format("dataSet/toDataDetails/" + str(_id))
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
             page += 1
@@ -1227,19 +1227,19 @@ class Crawler:
             curl["url"] = curl["url"].format("dataApi")
             curl["data"]["page"] = page
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
-                if id in all_ids:
+            for _id in ids:
+                if _id in all_ids:
                     continue
                 else:
-                    all_ids.append(id)
+                    all_ids.append(_id)
                 curl = copy.deepcopy(self.detail_list_curl)
                 curl["crawl_type"] = "api"
-                curl["url"] = curl["url"].format("dataApi/toDataDetails/" + str(id))
+                curl["url"] = curl["url"].format("dataApi/toDataDetails/" + str(_id))
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
             page += 1
 
-    def crawl_hunan_yueyang(self):
+    def crawl_hunan_common(self):
         curl = copy.deepcopy(self.result_list_curl)
         response = requests.get(
             curl["all_type"]["url"],
@@ -1249,21 +1249,24 @@ class Crawler:
             timeout=REQUEST_TIME_OUT,
         )
         soup = bs4.BeautifulSoup(response.text, "html.parser")
-        lis = soup.find_all("li", class_="list-group-item-action")
+        if self.city == "yueyang":
+            lis = soup.find_all("li", class_="list-group-item-action")
+        else:
+            lis = soup.find_all("li", class_="wb-tree-item")
         type_ids = []
         for li in lis:
             text = str(li.find_next("a")["onclick"])
             type_ids.append(text.split("(")[1].split(")")[0].split(","))
-        for type, id in type_ids:
-            all_links = []
+        all_links = []
+        for _type, _id in type_ids:
             pages = Wrapper(5)
             page = 0
             while page < pages.obj:
                 curl = copy.deepcopy(self.result_list_curl)
                 curl["frame"]["queries"]["dataInfo.offset"] = page * 6
-                curl["frame"]["queries"]["type"] = type
-                curl["frame"]["queries"]["id"] = id
-                links = self.result_list.get_result_list(curl["frame"])
+                curl["frame"]["queries"]["type"] = _type
+                curl["frame"]["queries"]["id"] = _id
+                links = self.result_list.get_result_list(curl["frame"], pages)
                 for link in links:
                     if link in all_links:
                         continue
@@ -1273,7 +1276,10 @@ class Crawler:
                     curl["queries"]["id"] = link
                     metadata = self.detail.get_detail(curl)
                     self.metadata_list.append(metadata)
-            page += 1
+                page += 1
+
+    def crawl_hunan_yueyang(self):
+        self.crawl_hunan_common()
 
     def crawl_hunan_changde(self):
         all_ids = []
@@ -1283,95 +1289,22 @@ class Crawler:
             curl = copy.deepcopy(self.result_list_curl)
             curl["queries"]["page"] = page
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
-                if id in all_ids:
+            for _id in ids:
+                if _id in all_ids:
                     continue
                 else:
-                    all_ids.append(id)
+                    all_ids.append(_id)
                 curl = copy.deepcopy(self.detail_list_curl)
-                curl["queries"]["cataId"] = id
+                curl["queries"]["cataId"] = _id
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
             page += 1
 
     def crawl_hunan_yiyang(self):
-        curl = copy.deepcopy(self.result_list_curl)
-        response = requests.get(
-            curl["all_type"]["url"],
-            headers=curl["all_type"]["headers"],
-            verify=False,
-            timeout=REQUEST_TIME_OUT,
-        )
-        soup = bs4.BeautifulSoup(response.text, "html.parser")
-        lis = soup.find_all("li", class_="wb-tree-item")
-        type_ids = []
-        for li in lis:
-            text = str(li.find_next("a")["onclick"])
-            type_ids.append(text.split("(")[1].split(")")[0].split(","))
-        all_links = []
-        for type, id in type_ids:
-            before_links = []
-            pages = Wrapper(10)
-            page = 0
-            while page < pages.obj:
-                curl = copy.deepcopy(self.result_list_curl)
-                curl["frame"]["queries"]["dataInfo.offset"] = page * 6
-                curl["frame"]["queries"]["type"] = type
-                curl["frame"]["queries"]["id"] = id
-                links = self.result_list.get_result_list(curl["frame"])
-                if before_links == links:
-                    break
-                before_links = links
-                for link in links:
-                    if link in all_links:
-                        continue
-                    else:
-                        all_links.append(link)
-                    curl = copy.deepcopy(self.detail_list_curl)
-                    curl["queries"]["id"] = link
-                    metadata = self.detail.get_detail(curl)
-                    self.metadata_list.append(metadata)
-            page += 1
+        self.crawl_hunan_common()
 
     def crawl_hunan_chenzhou(self):
-        curl = copy.deepcopy(self.result_list_curl)
-        response = requests.get(
-            curl["all_type"]["url"],
-            params=curl["all_type"]["queries"],
-            headers=curl["all_type"]["headers"],
-            verify=False,
-            timeout=REQUEST_TIME_OUT,
-        )
-        soup = bs4.BeautifulSoup(response.text, "html.parser")
-        lis = soup.find_all("li", class_="wb-tree-item")
-        type_ids = []
-        for li in lis:
-            text = str(li.find_next("a")["onclick"])
-            type_ids.append(text.split("(")[1].split(")")[0].split(","))
-        all_links = []
-        for type, id in type_ids:
-            before_links = []
-            pages = Wrapper(32)
-            page = 0
-            while page < pages.obj:
-                curl = copy.deepcopy(self.result_list_curl)
-                curl["frame"]["queries"]["dataInfo.offset"] = page * 6
-                curl["frame"]["queries"]["type"] = type
-                curl["frame"]["queries"]["id"] = id
-                links = self.result_list.get_result_list(curl["frame"])
-                if before_links == links:
-                    break
-                before_links = links
-                for link in links:
-                    if link in all_links:
-                        continue
-                    else:
-                        all_links.append(link)
-                    curl = copy.deepcopy(self.detail_list_curl)
-                    curl["queries"]["id"] = link
-                    metadata = self.detail.get_detail(curl)
-                    self.metadata_list.append(metadata)
-            page += 1
+        self.crawl_hunan_common()
 
     def crawl_guangdong_guangdong(self):
         all_ids = []
