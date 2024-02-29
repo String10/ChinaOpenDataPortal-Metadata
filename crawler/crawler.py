@@ -1959,14 +1959,14 @@ class Crawler:
             curl = self.result_list_curl.copy()
             curl["data"]["pageIndex"] = page
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
+            for _id in ids:
                 curl = self.detail_list_curl.copy()
-                curl["data"]["id"] = id["id"]
+                curl["data"]["id"] = _id["id"]
                 metadata = self.detail.get_detail(curl)
                 metadata["详情页网址"] = (
-                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                    "http://data.guizhou.gov.cn/open-data/" + _id["id"]
                 )
-                metadata["数据格式"] = id["resourceFormats"]
+                metadata["数据格式"] = _id["resourceFormats"]
                 self.metadata_list.append(metadata)
             page += 1
 

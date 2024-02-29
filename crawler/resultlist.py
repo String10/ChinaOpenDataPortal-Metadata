@@ -1700,6 +1700,8 @@ class ResultList:
             except:
                 time.sleep(5)
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = math.ceil(response_json["total"] / curl["data"]["pageSize"])
         result_list = response_json["data"]
         ids = [
             {"id": x["id"], "resourceFormats": x["resourceFormats"]}
@@ -1708,37 +1710,37 @@ class ResultList:
         return ids
 
     def result_list_guizhou_guizhou(self, curl, pages: "Wrapper"):
-        return self.result_list_guizhou_common(curl)
+        return self.result_list_guizhou_common(curl, pages)
 
     def result_list_guizhou_guiyang(self, curl, pages: "Wrapper"):
-        return self.result_list_guizhou_common(curl)
+        return self.result_list_guizhou_common(curl, pages)
 
     def result_list_guizhou_liupanshui(self, curl, pages: "Wrapper"):
-        return self.result_list_guizhou_common(curl)
+        return self.result_list_guizhou_common(curl, pages)
 
     def result_list_guizhou_zunyi(self, curl, pages: "Wrapper"):
-        return self.result_list_guizhou_common(curl)
+        return self.result_list_guizhou_common(curl, pages)
 
     def result_list_guizhou_anshun(self, curl, pages: "Wrapper"):
-        return self.result_list_guizhou_common(curl)
+        return self.result_list_guizhou_common(curl, pages)
 
     def result_list_guizhou_bijie(self, curl, pages: "Wrapper"):
-        return self.result_list_guizhou_common(curl)
+        return self.result_list_guizhou_common(curl, pages)
 
     def result_list_guizhou_tongren(self, curl, pages: "Wrapper"):
-        return self.result_list_guizhou_common(curl)
+        return self.result_list_guizhou_common(curl, pages)
 
     def result_list_guizhou_qianxinan(self, curl, pages: "Wrapper"):
-        return self.result_list_guizhou_common(curl)
+        return self.result_list_guizhou_common(curl, pages)
 
     def result_list_guizhou_qiandongnan(self, curl, pages: "Wrapper"):
-        return self.result_list_guizhou_common(curl)
+        return self.result_list_guizhou_common(curl, pages)
 
     def result_list_guizhou_qiannan(self, curl, pages: "Wrapper"):
-        return self.result_list_guizhou_common(curl)
+        return self.result_list_guizhou_common(curl, pages)
 
     def result_list_guizhou_guianxinqu(self, curl, pages: "Wrapper"):
-        return self.result_list_guizhou_common(curl)
+        return self.result_list_guizhou_common(curl, pages)
 
     def result_list_shaanxi_shaanxi(self, curl, pages: "Wrapper"):
         response = requests.get(
