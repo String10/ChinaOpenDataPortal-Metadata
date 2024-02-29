@@ -1035,6 +1035,8 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
         )
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["data"]["pages"]
         result_list = response_json["data"]
         cataIds = list(map(lambda x: x["cataId"], result_list["records"]))
         return cataIds
@@ -1057,6 +1059,10 @@ class ResultList:
                 timeout=REQUEST_TIME_OUT,
             )
             response_json = json.loads(response.text)
+            if pages:
+                pages.obj = math.ceil(
+                    response_json["data"]["total"] / int(curl["data"]["pageSize"])
+                )
             result_list = response_json["data"]
             cataIds = list(map(lambda x: x["iid"], result_list["rows"]))
             return cataIds
@@ -1068,6 +1074,10 @@ class ResultList:
                 timeout=REQUEST_TIME_OUT,
             )
             response_json = json.loads(response.text)
+            if pages:
+                pages.obj = math.ceil(
+                    response_json["data"]["total"] / int(curl["data"]["pageSize"])
+                )
             result_list = response_json["data"]
             cataIds = list(map(lambda x: x["iid"], result_list["list"]))
             return cataIds
@@ -1077,6 +1087,8 @@ class ResultList:
             curl["url"], headers=curl["headers"], verify=False, timeout=REQUEST_TIME_OUT
         )
         soup = bs4.BeautifulSoup(response.text, "html.parser")
+        if pages:
+            pages.obj = int(soup.find("span", attrs={"class": "num"}).get_text())
         ul = soup.find("ul", class_="sjj_right_list")
         links = []
         if not ul:
@@ -1100,6 +1112,8 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
         )
         soup = bs4.BeautifulSoup(response.text, "html.parser")
+        if pages:
+            pages.obj = getTotalPagesByTopTitle(soup, 10)  # TODO: items per page
         divs = soup.find_all("div", class_="cata-title")
         ids = []
         for div in divs:
@@ -1116,8 +1130,10 @@ class ResultList:
             verify=False,
             timeout=REQUEST_TIME_OUT,
         )
-        data = json.loads(response.text)
-        ids = list(map(lambda x: x["id"], data["list"]))
+        response_json = json.loads(response.text)
+        if pages:
+            pages.obj = math.ceil(response_json["count"] / int(curl["data"]["limit"]))
+        ids = list(map(lambda x: x["id"], response_json["list"]))
         return ids
 
     def result_list_hunan_yueyang(self, curl, pages: "Wrapper"):

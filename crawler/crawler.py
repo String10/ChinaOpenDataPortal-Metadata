@@ -1117,7 +1117,7 @@ class Crawler:
             curl["hangye"]["url"] = curl["hangye"]["url"].format(
                 "index{}.html".format(f"_{page}" if page else "")
             )
-            urls = self.result_list.get_result_list(curl["hangye"])
+            urls = self.result_list.get_result_list(curl["hangye"], pages)
             for url in urls:
                 if url in all_ids:
                     continue
@@ -1137,7 +1137,7 @@ class Crawler:
             curl["shiji"]["url"] = curl["shiji"]["url"].format(
                 "index{}.html".format(f"_{page}" if page else "")
             )
-            urls = self.result_list.get_result_list(curl["shiji"])
+            urls = self.result_list.get_result_list(curl["shiji"], pages)
             for url in urls:
                 if url in all_ids:
                     continue
