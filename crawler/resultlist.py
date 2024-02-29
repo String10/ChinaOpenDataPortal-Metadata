@@ -70,6 +70,8 @@ class ResultList:
                 data_format_text = data_format.get_text()
                 if data_format_text == "接口":
                     data_format_text = "api"
+                elif data_format_text == "链接":
+                    data_format_text = "link"
                 data_formats.append(data_format_text.lower())
             links.append({"link": link["href"], "data_formats": str(data_formats)})
         return links
@@ -1777,72 +1779,34 @@ class ResultList:
         return metadata_list
 
     def result_list_ningxia_ningxia(self, curl, pages: "Wrapper"):
-        response = requests.get(
+        return self.result_list_common(curl, pages)
+
+    def result_list_common_2(self, curl, pages: "Wrapper"):
+        response = requests.post(
             curl["url"],
             params=curl["queries"],
+            data=curl["data"],
             headers=curl["headers"],
             timeout=REQUEST_TIME_OUT,
-            verify=False,
         )
-        html = response.content.decode("utf-8")
-        soup = BeautifulSoup(html, "html.parser")
-        # soup = BeautifulSoup(html, "lxml")
-        links = []
 
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/portal/catalog/*")}
+        if response.status_code != requests.codes.ok:
+            self.log_request_error(response.status_code, curl["url"])
+            return dict()
+        response_json = json.loads(response.text)
+        if pages:
+            pages.obj = math.ceil(
+                response_json["recordsTotal"] / int(curl["data"]["length"])
             )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                if data_format_text == "链接":
-                    data_format_text = "link"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        result_list = response_json["data"]
+        ids = [(str(x["cata_id"]), x["conf_catalog_format"]) for x in result_list]
+        return ids
 
     def result_list_ningxia_yinchuan(self, curl, pages: "Wrapper"):
-        response = requests.post(
-            curl["url"],
-            params=curl["queries"],
-            data=curl["data"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-
-        if response.status_code != requests.codes.ok:
-            self.log_request_error(response.status_code, curl["url"])
-            return dict()
-        response_json = json.loads(response.text)
-        result_list = response_json["data"]
-        ids = [(str(x["cata_id"]), x["conf_catalog_format"]) for x in result_list]
-        return ids
+        return self.result_list_common_2(curl, pages)
 
     def result_list_xinjiang_wulumuqi(self, curl, pages: "Wrapper"):
-        response = requests.post(
-            curl["url"],
-            params=curl["queries"],
-            data=curl["data"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-
-        if response.status_code != requests.codes.ok:
-            self.log_request_error(response.status_code, curl["url"])
-            return dict()
-        response_json = json.loads(response.text)
-        result_list = response_json["data"]
-        ids = [(str(x["cata_id"]), x["conf_catalog_format"]) for x in result_list]
-        return ids
+        return self.result_list_common_2(curl, pages)
 
     def result_list_other(self):
         log_error("result list: 暂无该地 - %s - %s", self.province, self.city)

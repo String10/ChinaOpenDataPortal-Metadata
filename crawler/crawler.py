@@ -2152,6 +2152,7 @@ class Crawler:
             page += 1
 
     def crawl_shaanxi_shaanxi(self):
+        # TODO: HTTP ERROR 502
         pages = Wrapper(16)
         page = 1
         while page <= pages.obj:
