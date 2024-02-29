@@ -3356,6 +3356,7 @@ class Detail:
                 curl["url"],
                 params=curl["queries"],
                 headers=curl["headers"],
+                verify=False,
                 timeout=REQUEST_TIME_OUT,
             )
             if response.status_code != requests.codes.ok:

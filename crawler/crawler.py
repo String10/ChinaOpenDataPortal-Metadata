@@ -1524,8 +1524,8 @@ class Crawler:
         for metadata in metadatas:
             self.metadata_list.append(metadata)
 
-    def crawl_sichuan_sichuan(self):
-        pages = Wrapper(1249)
+    def crawl_sichuan_common(self):
+        pages = Wrapper(100000)
         page = 1
         while page <= pages.obj:
             curl = self.result_list_curl.copy()
@@ -1554,29 +1554,11 @@ class Crawler:
                     self.logs_detail_error(curl["url"], f"continue")
             page += 1
 
+    def crawl_sichuan_sichuan(self):
+        self.crawl_sichuan_common()
+
     def crawl_sichuan_chengdu(self):
-        pages = Wrapper(704)
-        page = 1
-        while page <= pages.obj:
-            curl = self.result_list_curl.copy()
-            curl["queries"]["page"] = str(page)
-            time.sleep(5)
-            links = self.result_list.get_result_list(curl, pages)
-            if len(links) == 0:
-                break
-            for link in links:
-                curl = self.detail_list_curl.copy()
-                curl["url"] += link["link"]
-                metadata = self.detail.get_detail(curl)
-                if bool(metadata):
-                    metadata["数据格式"] = (
-                        link["data_formats"]
-                        if link["data_formats"] != "[]"
-                        else "['file']"
-                    )
-                    metadata["详情页网址"] = curl["url"]
-                    self.metadata_list.append(metadata)
-            page += 1
+        self.crawl_sichuan_common()
 
     def crawl_sichuan_zigong(self):
         pages = Wrapper(870)
@@ -1623,34 +1605,8 @@ class Crawler:
             page += 1
 
     def crawl_sichuan_panzhihua(self):
-        pages = Wrapper(700)
-        page = 1
-        while page <= pages.obj:
-            curl = self.result_list_curl.copy()
-            curl["queries"]["page"] = str(page)
-            try:
-                links = self.result_list.get_result_list(curl, pages)
-                if len(links) == 0:
-                    break
-            except:
-                self.log_result_list_error(f"break at page {page}")
-                break
-            for link in links:
-                curl = self.detail_list_curl.copy()
-                curl["url"] += link["link"]
-                try:
-                    metadata = self.detail.get_detail(curl)
-                    if bool(metadata):
-                        metadata["数据格式"] = (
-                            link["data_formats"]
-                            if link["data_formats"] != "[]"
-                            else "['file']"
-                        )
-                        metadata["详情页网址"] = curl["url"]
-                        self.metadata_list.append(metadata)
-                except:
-                    self.logs_detail_error(curl["url"], "continue")
-            page += 1
+        # TODO: HTTP ERROR 502
+        self.crawl_sichuan_common()
 
     def crawl_sichuan_luzhou(self):
         pages = Wrapper(701)
@@ -1660,9 +1616,9 @@ class Crawler:
             time.sleep(5)
             curl["data"]["page"] = str(page)
             ids = self.result_list.get_result_list(curl, pages)
-            for id, opens, publisht, updatet in ids:
+            for _id, opens, publisht, updatet in ids:
                 curl = self.detail_list_curl.copy()
-                curl["queries"]["id"] = id
+                curl["queries"]["id"] = _id
                 curl["queries"]["type"] = "opendata"
                 metadata = self.detail.get_detail(curl)
                 if bool(metadata):
@@ -1671,7 +1627,7 @@ class Crawler:
                     )
                     metadata["详情页网址"] = (
                         "https://data.luzhou.cn/portal/service_detail?id="
-                        + id
+                        + _id
                         + "&type=opendata"
                     )
                     metadata["发布时间"] = publisht
@@ -1688,13 +1644,13 @@ class Crawler:
             time.sleep(5)
             curl["data"]["pageNo"] = page
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
+            for _id in ids:
                 curl = self.detail_list_curl.copy()
-                curl["queries"]["mlbh"] = id
+                curl["queries"]["mlbh"] = _id
                 metadata = self.detail.get_detail(curl)
                 if bool(metadata):
                     metadata["详情页网址"] = (
-                        "https://www.dysdsj.cn/#/DataSet/" + id.replace("/", "%2F")
+                        "https://www.dysdsj.cn/#/DataSet/" + _id.replace("/", "%2F")
                     )
                     self.metadata_list.append(metadata)
             page += 1
@@ -1707,13 +1663,13 @@ class Crawler:
             # time.sleep(5)
             curl["queries"]["startNum"] = str((page - 1) * 8)
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
+            for _id in ids:
                 curl = self.detail_list_curl.copy()
-                curl["queries"]["id"] = id
+                curl["queries"]["id"] = _id
                 metadata = self.detail.get_detail(curl)
                 if bool(metadata):
                     metadata["详情页网址"] = (
-                        "https://data.mianyang.cn/zwztzlm/index.jhtml?caseid=" + id
+                        "https://data.mianyang.cn/zwztzlm/index.jhtml?caseid=" + _id
                     )
                     metadata["数据格式"] = (
                         "['api']"  # 只有数据库和接口类型，实际全是接口
@@ -1731,14 +1687,14 @@ class Crawler:
             # time.sleep(3)
             curl["data"]["currentPage"] = page
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
+            for _id in ids:
                 curl = self.detail_list_curl.copy()
-                curl["data"]["id"] = str(id)
+                curl["data"]["id"] = str(_id)
                 metadata = self.detail.get_detail(curl)
                 if bool(metadata):
                     metadata["详情页网址"] = (
                         "http://data.cngy.gov.cn/open/index.html?id=user&messid="
-                        + str(id)
+                        + str(_id)
                     )
                     metadata["领域名称"] = "生活服务"
                     metadata["行业名称"] = "公共管理、社会保障和社会组织"
@@ -1748,20 +1704,21 @@ class Crawler:
             page += 1
 
     def crawl_sichuan_suining(self):
+        # TODO: cookies generated by JavaScript (`appCode` in headers)
         pages = Wrapper(910)
         page = 1
         while page <= pages.obj:
             curl = self.result_list_curl.copy()
             curl["data"]["pageNo"] = page
             ids = self.result_list.get_result_list(curl, pages)
-            for id, typeList in ids:
+            for _id, typeList in ids:
                 curl = self.detail_list_curl.copy()
-                curl["queries"]["mlbh"] = id
+                curl["queries"]["mlbh"] = _id
                 metadata = self.detail.get_detail(curl)
                 if bool(metadata):
                     metadata["详情页网址"] = (
                         "https://www.suining.gov.cn/data#/DataSet/"
-                        + id.replace("/", "%2F")
+                        + _id.replace("/", "%2F")
                     )
                     type_mapping = {
                         "10": "csv",
@@ -1786,14 +1743,14 @@ class Crawler:
             curl["data"]["page"] = page
             curl["queries"]["page"] = str(page)
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
+            for _id in ids:
                 curl = self.detail_list_curl.copy()
-                curl["data"]["id"] = id
+                curl["data"]["id"] = _id
                 metadata = self.detail.get_detail(curl)
                 if bool(metadata):
                     metadata["详情页网址"] = (
                         "https://www.neijiang.gov.cn/neiJiangPublicData/resourceCatalog/detail?id="
-                        + id
+                        + _id
                     )
                     self.metadata_list.append(metadata)
             if page % 100 == 0:
@@ -1812,22 +1769,22 @@ class Crawler:
             except:
                 self.log_result_list_error(f"continue at page {page}")
                 continue
-            for id in ids:
+            for _id in ids:
                 time.sleep(5)
                 curl = self.detail_list_curl.copy()
-                curl["queries"]["resourceId"] = id
+                curl["queries"]["resourceId"] = _id
                 try:
                     metadata = self.detail.get_detail(curl)
                     if bool(metadata):
                         metadata["详情页网址"] = (
                             "https://www.leshan.gov.cn/data/#/source_catalog_detail/"
-                            + id
+                            + _id
                             + "/0"
                         )
                         self.metadata_list.append(metadata)
                 except:
                     self.logs_detail_error(
-                        curl["url"], f"continue at page {page} id {id}"
+                        curl["url"], f"continue at page {page} id {_id}"
                     )
                     continue
             if page % 100 == 0:
@@ -1845,20 +1802,20 @@ class Crawler:
             except:
                 self.log_result_list_error(f"continue at page {page}")
                 continue
-            for id in ids:
+            for _id in ids:
                 curl = self.detail_list_curl.copy()
-                curl["queries"]["id"] = id
+                curl["queries"]["id"] = _id
                 try:
                     metadata = self.detail.get_detail(curl)
                     if bool(metadata):
                         metadata["详情页网址"] = (
                             "https://www.nanchong.gov.cn/data/catalog/details.html?id="
-                            + id
+                            + _id
                         )
                         self.metadata_list.append(metadata)
                 except:
                     self.logs_detail_error(
-                        curl["url"], f"continue at page {page} id {id}"
+                        curl["url"], f"continue at page {page} id {_id}"
                     )
             # 响应太慢了，每次都写入吧
             self.save_metadata_as_json(self.output)
@@ -1977,6 +1934,7 @@ class Crawler:
             page += 1
 
     def crawl_sichuan_ganzi(self):
+        # TODO: HTTP ERROR 502
         pages = Wrapper(1192)
         page = 1
         while page <= pages.obj:

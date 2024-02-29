@@ -44,6 +44,7 @@ class ResultList:
             curl["url"],
             params=curl["queries"],
             headers=curl["headers"],
+            verify=False,
             timeout=REQUEST_TIME_OUT,
         )
         if response.status_code != requests.codes.ok:
@@ -1333,15 +1334,17 @@ class ResultList:
             timeout=REQUEST_TIME_OUT,
         )
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["data"]["totalPages"]
         result_list = response_json["data"]["content"]
         ids = [x["id"] for x in result_list]
         return ids
 
     def result_list_hainan_hainansjj(self, curl, pages: "Wrapper"):
-        return self.result_list_hainan_hainan(curl)
+        return self.result_list_hainan_hainan(curl, pages)
 
     def result_list_hainan_hainansjjk(self, curl, pages: "Wrapper"):
-        return self.result_list_hainan_hainan(curl)
+        return self.result_list_hainan_hainan(curl, pages)
 
     def result_list_chongqing_chongqing(self, curl, pages: "Wrapper"):
         key_map = {
@@ -1353,7 +1356,6 @@ class ResultList:
             "fileTypes": "资源格式",
             "renewCycle": "更新周期",
         }
-
         openAttr_map = {"CONDITIONAL": "有条件开放", "UNCONDITIONAL": "无条件开放"}
         renewCycle_map = {
             "REAL_TIME": "实时",
@@ -1408,97 +1410,13 @@ class ResultList:
         return metadatas
 
     def result_list_sichuan_sichuan(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = response.content.decode("utf-8")
-        soup = BeautifulSoup(html, "html.parser")
-        # soup = BeautifulSoup(html, "lxml")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/oportal/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_common(curl, pages)
 
     def result_list_sichuan_chengdu(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = response.content.decode("utf-8")
-        soup = BeautifulSoup(html, "html.parser")
-        # soup = BeautifulSoup(html, "lxml")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/oportal/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_common(curl, pages)
 
     def result_list_sichuan_panzhihua(self, curl, pages: "Wrapper"):
-        response = requests.get(
-            curl["url"],
-            params=curl["queries"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT,
-        )
-        html = response.content.decode("utf-8")
-        soup = BeautifulSoup(html, "html.parser")
-        # soup = BeautifulSoup(html, "lxml")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/oportal/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                if data_format_text == "接口":
-                    data_format_text = "api"
-                data_formats.append(data_format_text.lower())
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_common(curl, pages)
 
     def result_list_sichuan_zigong(self, curl, pages: "Wrapper"):
         response = requests.get(
@@ -1509,6 +1427,10 @@ class ResultList:
         )
 
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = math.ceil(
+                response_json["data"]["total"] / int(curl["queries"]["limit"])
+            )
         result_list = response_json["data"]["rows"]
         ids = [x["id"] for x in result_list]
         return ids
@@ -1522,6 +1444,8 @@ class ResultList:
         )
 
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["result"]["pages"]
         result_list = response_json["result"]["rows"]
         ids = [
             (x["id"], x["openType"], x["publishTime"], x["updateTime"])
@@ -1538,6 +1462,8 @@ class ResultList:
         )
 
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["data"]["totalPage"]
         result_list = response_json["data"]["rows"]
         ids = [x["mlbh"] for x in result_list]
         return ids
@@ -1552,6 +1478,11 @@ class ResultList:
 
         try:
             response_json = json.loads(response.text)
+            if pages:
+                pages.obj = math.ceil(
+                    response_json["elementthing"]["listPage"]["total"]
+                    / int(curl["queries"]["limitNum"])
+                )
             result_list = response_json["elementthing"]["listPage"]["list"]
             ids = [x["id"] for x in result_list]
             return ids
@@ -1571,6 +1502,8 @@ class ResultList:
             self.log_request_error(response.status_code, curl["url"])
             return dict()
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["data"]["totalPage"]
         result_list = response_json["data"]["rows"]
         ids = [x["ID"] for x in result_list]
         return ids
@@ -1604,6 +1537,8 @@ class ResultList:
             self.log_request_error(response.status_code, curl["url"])
             return dict()
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["data"]["totalPages"]
         result_list = response_json["data"]["content"]
         ids = [str(x["id"]) for x in result_list]
         return ids
@@ -1620,6 +1555,10 @@ class ResultList:
             self.log_request_error(response.status_code, curl["url"])
             return dict()
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = math.ceil(
+                response_json["data"]["recordCount"] / int(curl["queries"]["pageSize"])
+            )
         result_list = response_json["data"]["rows"]
         ids = [str(x["resourceId"]) for x in result_list]
         return ids
@@ -1636,6 +1575,8 @@ class ResultList:
             self.log_request_error(response.status_code, curl["url"])
             return dict()
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = math.ceil(response_json["count"] / int(curl["queries"]["rows"]))
         result_list = response_json["data"]
         ids = [str(x["ID"]) for x in result_list]
         return ids
@@ -1650,138 +1591,20 @@ class ResultList:
             verify=False,
         )
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = response_json["result"]["pages"]
         result_list = response_json["result"]["rows"]
         links = [link for link in result_list]
-        # html = response.content
-        # soup = BeautifulSoup(html, "html.parser")
-        # links = []
-        # for dataset_test in soup.find('div', attrs={'class': 'dire-list-main'}).find_all('ul',attrs={}):#.find_all('li',attrs={}):#find_all('div', attrs={'class': 'tit'}):
-        #     print(len(dataset_test))
-        #     print('Find a dataset')
-        # for dataset in soup.find('div', attrs={'class': 'dire-list-main'}).find('ul', attrs={'class': 'dlm-box'}).find_all('li'):
-        #     link = dataset.find('div', attrs={'class': 'tit'}).find('h3').find('a', attrs={'href': re.compile("/portal/service_detail?id=*")})
-        #     data_formats = []
-        #     for data_format in dataset.find('div', attrs={'class': 'tit'}).find('h3').find_all('span'):
-        #         data_format_text = data_format.get_text()
-        #         if data_format_text == '接口':
-        #             data_format_text = 'api'
-        #         data_formats.append(data_format_text.lower())
-        #     links.append({'link': link['href'], 'data_formats': str(data_formats)})
         return links
 
     def result_list_sichuan_yibin(self, curl, pages: "Wrapper"):
-        try_cnt = 0
-        while True:
-            try_cnt += 1
-            if try_cnt >= REQUEST_MAX_TIME:
-                return []
-            try:
-                response = requests.get(
-                    curl["url"],
-                    params=curl["queries"],
-                    headers=curl["headers"],
-                    timeout=REQUEST_TIME_OUT,
-                    verify=False,
-                )
-                break
-            except:
-                time.sleep(5)
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/oportal/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                data_formats.append(data_format_text)
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_common(curl, pages)
 
     def result_list_sichuan_dazhou(self, curl, pages: "Wrapper"):
-        try_cnt = 0
-        while True:
-            try_cnt += 1
-            if try_cnt >= REQUEST_MAX_TIME:
-                return []
-            try:
-                response = requests.get(
-                    curl["url"],
-                    params=curl["queries"],
-                    headers=curl["headers"],
-                    timeout=REQUEST_TIME_OUT,
-                    verify=False,
-                )
-                break
-            except:
-                time.sleep(5)
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/oportal/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                data_formats.append(data_format_text)
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_common(curl, pages)
 
     def result_list_sichuan_yaan(self, curl, pages: "Wrapper"):
-        try_cnt = 0
-        while True:
-            try_cnt += 1
-            if try_cnt >= REQUEST_MAX_TIME:
-                return []
-            try:
-                response = requests.get(
-                    curl["url"],
-                    params=curl["queries"],
-                    headers=curl["headers"],
-                    timeout=REQUEST_TIME_OUT,
-                    verify=False,
-                )
-                break
-            except:
-                time.sleep(5)
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
-        links = []
-
-        for dataset in (
-            soup.find("div", attrs={"class": "bottom-content"})
-            .find("ul")
-            .find_all("li", recursive=False)
-        ):
-            link = dataset.find("div", attrs={"class": "cata-title"}).find(
-                "a", attrs={"href": re.compile("/oportal/catalog/*")}
-            )
-            data_formats = []
-            for data_format in dataset.find(
-                "div", attrs={"class": "file-type"}
-            ).find_all("li"):
-                data_format_text = data_format.get_text()
-                data_formats.append(data_format_text)
-            links.append({"link": link["href"], "data_formats": str(data_formats)})
-        return links
+        return self.result_list_common(curl, pages)
 
     def result_list_sichuan_bazhong(self, curl, pages: "Wrapper"):
         try_cnt = 0
@@ -1802,6 +1625,10 @@ class ResultList:
             except:
                 time.sleep(5)
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = math.ceil(
+                response_json["data"]["total"] / int(curl["queries"]["pageSize"])
+            )
         result_list = response_json["data"]["data"]
         links = [link["catalogInfo"]["id"] for link in result_list]
         return links
@@ -1824,6 +1651,11 @@ class ResultList:
             except:
                 time.sleep(5)
         response_json = json.loads(response.text)
+        if pages:
+            pages.obj = math.ceil(
+                response_json["data"]["resultMap"]["total"]
+                / int(curl["queries"]["count"])
+            )
         result_list = response_json["data"]["resultMap"]["abaTableList"]
         links = [link["tableId"] for link in result_list]
         return links
