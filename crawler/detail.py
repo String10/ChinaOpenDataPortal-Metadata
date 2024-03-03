@@ -1563,7 +1563,7 @@ class Detail:
             "updateTime": "更新日期",
             "providerDept": "提供单位",
             "belongFieldName": "所属领域",
-            "shareTypeName": "开放属性",
+            "openTypeName": "开放属性",
             "summary": "摘要信息",
             "updateCycleTxt": "更新频率",
             "formats": "数据格式",
