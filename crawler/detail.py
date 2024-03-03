@@ -2343,17 +2343,19 @@ class Detail:
                     metadata[name] = time.strftime(
                         "%Y-%m-%d", time.localtime(metadata[name])
                     )
-                if name in ["数据领域"]:
+                elif name in ["数据领域"]:
                     item = list(
                         filter(lambda x: x["id"] == int(metadata[name]), lylist)
                     )
-                    metadata[name] = item[0]["name"]
-                if name in ["行业分类"]:
+                    if len(item) > 0:
+                        metadata[name] = item[0]["name"]
+                elif name in ["行业分类"]:
                     item = list(
                         filter(lambda x: x["id"] == int(metadata[name]), hylist)
                     )
-                    metadata[name] = item[0]["name"]
-                if name in ["开放条件"]:
+                    if len(item) > 0:
+                        metadata[name] = item[0]["name"]
+                elif name in ["开放条件"]:
                     metadata[name] = (
                         "无条件开放" if int(metadata[name]) == 1 else "申请公开"
                     )
