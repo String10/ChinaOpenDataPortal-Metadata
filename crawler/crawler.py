@@ -2017,6 +2017,7 @@ class Crawler:
             page += 1
 
     def crawl_ningxia_ningxia(self):
+        # TODO: ERR_CONNECTION_RESET
         pages = Wrapper(202)
         page = 1
         while page <= pages.obj:
