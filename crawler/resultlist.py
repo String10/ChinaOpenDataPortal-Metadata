@@ -141,7 +141,7 @@ class ResultList:
         html = response.content
         soup = BeautifulSoup(html, "html.parser")
         if pages:
-            pages.obj = (
+            pages.obj = int(
                 soup.find("select", attrs={"class": "page-select"})
                 .find_all("option")[-1]
                 .get_text()
