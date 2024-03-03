@@ -1373,12 +1373,21 @@ class ResultList:
             "OTHER": "其他",
         }
         metadatas = []
-        response = requests.post(
-            curl["url"],
-            json=curl["data"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT * 1000,
-        )
+        try_cnt = 0
+        while True:
+            try_cnt += 1
+            if try_cnt >= REQUEST_MAX_TIME:
+                return []
+            try:
+                response = requests.post(
+                    curl["url"],
+                    json=curl["data"],
+                    headers=curl["headers"],
+                    timeout=REQUEST_TIME_OUT * 1000,
+                )
+                break
+            except:
+                time.sleep(5)
         result_list_json = json.loads(response.text)["data"]["result"]["data"]
         for detail_json in result_list_json:
             dataset_metadata = {}
