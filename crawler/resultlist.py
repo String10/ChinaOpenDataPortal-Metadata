@@ -1092,9 +1092,15 @@ class ResultList:
         response = requests.get(
             curl["url"], headers=curl["headers"], verify=False, timeout=REQUEST_TIME_OUT
         )
+        if response.status_code != requests.codes.ok:
+            self.log_request_error(response.status_code, curl["url"])
+            return dict()
         soup = bs4.BeautifulSoup(response.text, "html.parser")
         if pages:
-            pages.obj = int(soup.find("span", attrs={"class": "num"}).get_text())
+            pages.obj = math.ceil(
+                int(soup.find("span", attrs={"class": "num"}).get_text())
+                / 7  # TODO: items per page
+            )
         ul = soup.find("ul", class_="sjj_right_list")
         links = []
         if not ul:
