@@ -6,7 +6,7 @@ import pymysql
 from hashlib import sha256
 
 from common.constants import METADATA_SAVE_PATH
-from common.util import log_error
+from common.utils import log_error
 
 FIELD_MAPPING_JSON_PATH = os.path.join(
     os.path.dirname(__file__), "data/field_mapping.json"
