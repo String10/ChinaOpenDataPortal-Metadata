@@ -250,8 +250,10 @@ class ResultList:
             headers=curl["headers"],
             timeout=REQUEST_TIME_OUT,
         )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
+        if response.status_code != requests.codes.ok:
+            self.log_request_error(response.status_code, curl["url"])
+            return []
+        soup = BeautifulSoup(response.content, "html.parser")
         if pages:
             pages.obj = getTotalPagesByTopTitle(soup, 10)  # TODO: items per page
         links = []
