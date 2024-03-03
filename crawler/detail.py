@@ -1860,6 +1860,9 @@ class Detail:
             for file in file_list:
                 format_list.append(file["name"].split(".")[-1].strip().lower())
 
+        if "phone" not in detail_json:
+            detail_json["phone"] = ""
+
         metadata_mapping = {
             "联系电话": detail_json["phone"],
             "资源格式": format_list,
