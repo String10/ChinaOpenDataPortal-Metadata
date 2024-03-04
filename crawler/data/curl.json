@@ -336,8 +336,8 @@
           "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
           "Connection": "keep-alive",
           "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-          "Origin": "http://www.nmgdata.gov.cn",
-          "Referer": "http://www.nmgdata.gov.cn/data/dataSet",
+          "Origin": "http://open.nmgdata.org.cn",
+          "Referer": "http://open.nmgdata.org.cn/data/dataSet",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "X-Requested-With": "XMLHttpRequest"
         },
@@ -350,7 +350,7 @@
           "searchValue": "",
           "page": "{}"
         },
-        "url": "http://www.nmgdata.gov.cn/data/dataSet/list"
+        "url": "http://open.nmgdata.org.cn/data/dataSet/list"
       },
       "detail": {
         "method": "post",
@@ -359,16 +359,16 @@
           "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
           "Connection": "keep-alive",
           "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-          "Origin": "http://www.nmgdata.gov.cn",
-          "Referer": "http://www.nmgdata.gov.cn/data/dataSet/detail/5482990672852830721",
+          "Origin": "http://open.nmgdata.org.cn",
+          "Referer": "http://open.nmgdata.org.cn/data/dataSet/detail/5482990672852830721",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "X-Requested-With": "XMLHttpRequest"
         },
         "data": {
           "id": "{}"
         },
-        "url": "http://www.nmgdata.gov.cn/data/dataSet/dataInfo",
-        "detail_url": "http://www.nmgdata.gov.cn/data/dataSet/detail/"
+        "url": "http://open.nmgdata.org.cn/data/dataSet/dataInfo",
+        "detail_url": "http://open.nmgdata.org.cn/data/dataSet/detail/"
       }
     },
     "xinganmeng": {
@@ -856,7 +856,7 @@
           "size": "20",
           "current": "3"
         },
-        "json_data": {
+        "jsonData": {
           "resourceCode": "",
           "openAttribute": "",
           "resourceName": "",
@@ -1331,7 +1331,7 @@
           "Referer": "http://data.ningbo.gov.cn/",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
         },
-        "json_data": {
+        "jsonData": {
           "pageNo": "1",
           "pageSize": "10",
           "dataUnit": "",
@@ -1490,7 +1490,7 @@
           "sec-ch-ua-mobile": "?0",
           "sec-ch-ua-platform": "\"Windows\""
         },
-        "json_data": {
+        "jsonData": {
           "pageNum": 1,
           "pageSize": 10,
           "deptId": "",
@@ -1651,7 +1651,7 @@
           "Referer": "http://data.zhoushan.gov.cn/",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
         },
-        "json_data": {
+        "jsonData": {
           "pageNo": 1,
           "pageSize": 50,
           "param": {
@@ -2421,42 +2421,53 @@
       "resultList": {
         "method": "get",
         "headers": {
-          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-          "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
-          "Connection": "keep-alive",
-          "Sec-Fetch-Dest": "document",
-          "Sec-Fetch-Mode": "navigate",
-          "Sec-Fetch-Site": "same-origin",
-          "Sec-Fetch-User": "?1",
-          "Upgrade-Insecure-Requests": "1",
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
-          "sec-ch-ua": "\"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"114\", \"Google Chrome\";v=\"114\"",
+          "authority": "data.fujian.gov.cn",
+          "accept": "application/json, text/plain, */*",
+          "accept-language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
+          "cache-control": "no-cache",
+          "cookie": "wza-assist={%22show%22:false%2C%22audio%22:false%2C%22speed%22:%22middle%22%2C%22zomm%22:1%2C%22cursor%22:false%2C%22pointer%22:false%2C%22bigtext%22:false%2C%22overead%22:false}; oportal-x-access=0479357c-6b4c-44d8-a7cb-52c1fac6e79f",
+          "pragma": "no-cache",
+          "referer": "https://data.fujian.gov.cn/",
+          "sec-ch-ua": "\"Chromium\";v=\"122\", \"Not(A:Brand\";v=\"24\", \"Microsoft Edge\";v=\"122\"",
           "sec-ch-ua-mobile": "?0",
-          "sec-ch-ua-platform": "\"Windows\""
+          "sec-ch-ua-platform": "\"Windows\"",
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-origin",
+          "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0",
+          "x-open-portal-access": "0479357c-6b4c-44d8-a7cb-52c1fac6e79f"
         },
-        "queries": {
-          "page": "{}"
+        "params": {
+          "pageNum": "1",
+          "pageSize": "10",
+          "type": "1",
+          "currentTab": "all"
         },
-        "url": "https://data.fujian.gov.cn/oportal/catalog/index"
+        "url": "https://data.fujian.gov.cn/datadevelop/prod-api/open-portal/catalog/list"
       },
       "detail": {
         "method": "get",
         "headers": {
-          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-          "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
-          "Cache-Control": "max-age=0",
-          "Connection": "keep-alive",
-          "Sec-Fetch-Dest": "document",
-          "Sec-Fetch-Mode": "navigate",
-          "Sec-Fetch-Site": "same-origin",
-          "Sec-Fetch-User": "?1",
-          "Upgrade-Insecure-Requests": "1",
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
-          "sec-ch-ua": "\"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"114\", \"Google Chrome\";v=\"114\"",
+          "authority": "data.fujian.gov.cn",
+          "accept": "application/json, text/plain, */*",
+          "accept-language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
+          "cache-control": "no-cache",
+          "cookie": "wza-assist={%22show%22:false%2C%22audio%22:false%2C%22speed%22:%22middle%22%2C%22zomm%22:1%2C%22cursor%22:false%2C%22pointer%22:false%2C%22bigtext%22:false%2C%22overead%22:false}; oportal-x-access=0479357c-6b4c-44d8-a7cb-52c1fac6e79f",
+          "pragma": "no-cache",
+          "referer": "https://data.fujian.gov.cn/",
+          "sec-ch-ua": "\"Chromium\";v=\"122\", \"Not(A:Brand\";v=\"24\", \"Microsoft Edge\";v=\"122\"",
           "sec-ch-ua-mobile": "?0",
-          "sec-ch-ua-platform": "\"Windows\""
+          "sec-ch-ua-platform": "\"Windows\"",
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-origin",
+          "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0",
+          "x-open-portal-access": "0479357c-6b4c-44d8-a7cb-52c1fac6e79f"
         },
-        "url": "https://data.fujian.gov.cn"
+        "params": {
+          "cataId": "{}"
+        },
+        "url": "https://data.fujian.gov.cn/datadevelop/prod-api/open-portal/catalog/getCataInfo"
       }
     },
     "fuzhou": {
@@ -3456,8 +3467,6 @@
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.43"
         },
         "queries": {
-          "filterParam": "org_code",
-          "filterParamCode": "szbm",
           "page": ""
         }
       },
@@ -3591,25 +3600,25 @@
     },
     "changde": {
       "resultList": {
-        "url": "http://dataopen.changde.gov.cn/catalogs",
+        "url": "https://www.changde.gov.cn/cdwebsite/dataopen/catalogs",
         "method": "get",
         "headers": {
           "Accept": "application/json, text/javascript, */*; q=0.01",
           "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
           "Connection": "keep-alive",
-          "Referer": "http://dataopen.changde.gov.cn/list?domain=ZYHJ",
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.43",
+          "Cookie": "pgv_pvi=3740267520; pgv_si=s6183884800; pgv_heid=1709175119150.1709175261132.1709175295951.5; wzws_sessionid=gWQ5NGEyN6Bl3/E+gDExMS40MS4yMzkuMTY4gjI3ZTM5YQ==; SESSION=a3e83968-f886-490d-92f3-3fbda34550c4",
+          "Referer": "https://www.changde.gov.cn/cdwebsite/dataopen/list",
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0",
           "X-Requested-With": "XMLHttpRequest"
         },
         "queries": {
-          "csrf": "c34dd8cd-27d7-43cc-859b-4da3b065ad8f",
+          "csrf": "e02a864b-c163-450d-b9e9-77ab2be88a7c",
           "size": "15",
-          "page": "1",
-          "all": "ZYHJ"
+          "page": "1"
         }
       },
       "detail": {
-        "url": "http://dataopen.changde.gov.cn/detail",
+        "url": "https://www.changde.gov.cn/cdwebsite/dataopen/detail",
         "method": "get",
         "headers": {
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -3714,7 +3723,8 @@
             "Referer": "http://www.yiyang.gov.cn/webapp/yiyang2019/dataPublic/index.jsp",
             "Upgrade-Insecure-Requests": "1",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.43"
-          }
+          },
+          "queries": {}
         },
         "frame": {
           "url": "http://www.yiyang.gov.cn/webapp/yiyang2019/dataPublic/dataListIframe.jsp",
@@ -6096,10 +6106,10 @@
         "method": "post",
         "headers": {
           "Accept": "application/json, text/plain, */*",
-          "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+          "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
           "Connection": "keep-alive",
           "Content-Type": "application/json;charset=UTF-8",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "role": "0"
         },
@@ -6114,7 +6124,7 @@
           "searchText": [],
           "pageIndex": 1
         },
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams"
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams"
       },
       "detail": {
         "method": "post",
@@ -6123,19 +6133,19 @@
           "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
           "Connection": "keep-alive",
           "Content-Type": "application/json;charset=UTF-8",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "role": "0"
         },
         "data": {
           "id": "{}"
         },
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId"
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId"
       }
     },
     "guiyang": {
       "resultList": {
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams",
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams",
         "method": "post",
         "headers": {
           "Accept": "application/json, text/plain, */*",
@@ -6143,7 +6153,7 @@
           "Connection": "keep-alive",
           "Content-Type": "application/json;charset=UTF-8",
           "Cookie": "SECKEY_ABVK=v65AGrOtP0eIaCYeyQ3YANyZjH8iUSCnvTySo3ZvWJ4%3D",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "role": "0"
         },
@@ -6163,7 +6173,7 @@
         "insecure": false
       },
       "detail": {
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
         "method": "post",
         "cookies": {
           "SECKEY_ABVK": "v65AGrOtP0eIaCYeyQ3YAOUaI3z7P1KApP1QI7LvsvI%3D"
@@ -6174,7 +6184,7 @@
           "Connection": "keep-alive",
           "Content-Type": "application/json;charset=UTF-8",
           "Cookie": "SECKEY_ABVK=v65AGrOtP0eIaCYeyQ3YAOUaI3z7P1KApP1QI7LvsvI%3D",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "role": "0"
         },
@@ -6187,7 +6197,7 @@
     },
     "liupanshui": {
       "resultList": {
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams",
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams",
         "method": "post",
         "cookies": {
           "SECKEY_ABVK": "v65AGrOtP0eIaCYeyQ3YANyZjH8iUSCnvTySo3ZvWJ4%3D"
@@ -6198,7 +6208,7 @@
           "Connection": "keep-alive",
           "Content-Type": "application/json;charset=UTF-8",
           "Cookie": "SECKEY_ABVK=v65AGrOtP0eIaCYeyQ3YANyZjH8iUSCnvTySo3ZvWJ4%3D",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "role": "0"
         },
@@ -6218,7 +6228,7 @@
         "insecure": false
       },
       "detail": {
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
         "method": "post",
         "headers": {
           "Accept": "application/json, text/plain, */*",
@@ -6226,7 +6236,7 @@
           "Connection": "keep-alive",
           "Content-Type": "application/json;charset=UTF-8",
           "Cookie": "SECKEY_ABVK=v65AGrOtP0eIaCYeyQ3YANyZjH8iUSCnvTySo3ZvWJ4%3D",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "role": "0"
         },
@@ -6239,7 +6249,7 @@
     },
     "zunyi": {
       "resultList": {
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams",
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams",
         "method": "post",
         "headers": {
           "Accept": "application/json, text/plain, */*",
@@ -6247,7 +6257,7 @@
           "Connection": "keep-alive",
           "Content-Type": "application/json;charset=UTF-8",
           "Cookie": "SECKEY_ABVK=v65AGrOtP0eIaCYeyQ3YANyZjH8iUSCnvTySo3ZvWJ4%3D",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "role": "0"
         },
@@ -6267,7 +6277,7 @@
         "insecure": false
       },
       "detail": {
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
         "method": "post",
         "headers": {
           "Accept": "application/json, text/plain, */*",
@@ -6275,7 +6285,7 @@
           "Connection": "keep-alive",
           "Content-Type": "application/json;charset=UTF-8",
           "Cookie": "SECKEY_ABVK=v65AGrOtP0eIaCYeyQ3YANyZjH8iUSCnvTySo3ZvWJ4%3D",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "role": "0"
         },
@@ -6288,7 +6298,7 @@
     },
     "anshun": {
       "resultList": {
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams",
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams",
         "method": "post",
         "headers": {
           "Accept": "application/json, text/plain, */*",
@@ -6296,7 +6306,7 @@
           "Connection": "keep-alive",
           "Content-Type": "application/json;charset=UTF-8",
           "Cookie": "SECKEY_ABVK=v65AGrOtP0eIaCYeyQ3YANyZjH8iUSCnvTySo3ZvWJ4%3D",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "role": "0"
         },
@@ -6316,7 +6326,7 @@
         "insecure": false
       },
       "detail": {
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
         "method": "post",
         "headers": {
           "Accept": "application/json, text/plain, */*",
@@ -6324,7 +6334,7 @@
           "Connection": "keep-alive",
           "Content-Type": "application/json;charset=UTF-8",
           "Cookie": "SECKEY_ABVK=v65AGrOtP0eIaCYeyQ3YANyZjH8iUSCnvTySo3ZvWJ4%3D",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "role": "0"
         },
@@ -6337,7 +6347,7 @@
     },
     "bijie": {
       "resultList": {
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams",
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams",
         "method": "post",
         "headers": {
           "Accept": "application/json, text/plain, */*",
@@ -6345,7 +6355,7 @@
           "Connection": "keep-alive",
           "Content-Type": "application/json;charset=UTF-8",
           "Cookie": "SECKEY_ABVK=v65AGrOtP0eIaCYeyQ3YANyZjH8iUSCnvTySo3ZvWJ4%3D",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "role": "0"
         },
@@ -6365,8 +6375,8 @@
         "insecure": false
       },
       "detail": {
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
-        "raw_url": "http://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
+        "raw_url": "https://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
         "method": "post",
         "cookies": {
           "SECKEY_ABVK": "v65AGrOtP0eIaCYeyQ3YANyZjH8iUSCnvTySo3ZvWJ4%3D"
@@ -6377,7 +6387,7 @@
           "Connection": "keep-alive",
           "Content-Type": "application/json;charset=UTF-8",
           "Cookie": "SECKEY_ABVK=v65AGrOtP0eIaCYeyQ3YANyZjH8iUSCnvTySo3ZvWJ4%3D",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "role": "0"
         },
@@ -6390,7 +6400,7 @@
     },
     "tongren": {
       "resultList": {
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams",
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams",
         "method": "post",
         "headers": {
           "Accept": "application/json, text/plain, */*",
@@ -6398,7 +6408,7 @@
           "Connection": "keep-alive",
           "Content-Type": "application/json;charset=UTF-8",
           "Cookie": "SECKEY_ABVK=v65AGrOtP0eIaCYeyQ3YANyZjH8iUSCnvTySo3ZvWJ4%3D",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "role": "0"
         },
@@ -6418,7 +6428,7 @@
         "insecure": false
       },
       "detail": {
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
         "method": "post",
         "headers": {
           "Accept": "application/json, text/plain, */*",
@@ -6426,7 +6436,7 @@
           "Connection": "keep-alive",
           "Content-Type": "application/json;charset=UTF-8",
           "Cookie": "SECKEY_ABVK=v65AGrOtP0eIaCYeyQ3YANyZjH8iUSCnvTySo3ZvWJ4%3D",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "role": "0"
         },
@@ -6439,7 +6449,7 @@
     },
     "qianxinan": {
       "resultList": {
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams",
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams",
         "method": "post",
         "headers": {
           "Accept": "application/json, text/plain, */*",
@@ -6447,7 +6457,7 @@
           "Connection": "keep-alive",
           "Content-Type": "application/json;charset=UTF-8",
           "Cookie": "SECKEY_ABVK=v65AGrOtP0eIaCYeyQ3YAGwhmXFFrbXslwkHw4PKp04%3D",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "role": "0"
         },
@@ -6467,7 +6477,7 @@
         "insecure": false
       },
       "detail": {
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
         "method": "post",
         "headers": {
           "Accept": "application/json, text/plain, */*",
@@ -6475,7 +6485,7 @@
           "Connection": "keep-alive",
           "Content-Type": "application/json;charset=UTF-8",
           "Cookie": "SECKEY_ABVK=v65AGrOtP0eIaCYeyQ3YAGwhmXFFrbXslwkHw4PKp04%3D",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "role": "0"
         },
@@ -6488,7 +6498,7 @@
     },
     "qiandongnan": {
       "resultList": {
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams",
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams",
         "method": "post",
         "headers": {
           "Accept": "application/json, text/plain, */*",
@@ -6496,7 +6506,7 @@
           "Connection": "keep-alive",
           "Content-Type": "application/json;charset=UTF-8",
           "Cookie": "SECKEY_ABVK=v65AGrOtP0eIaCYeyQ3YAGwhmXFFrbXslwkHw4PKp04%3D",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "role": "0"
         },
@@ -6516,7 +6526,7 @@
         "insecure": false
       },
       "detail": {
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
         "method": "post",
         "headers": {
           "Accept": "application/json, text/plain, */*",
@@ -6524,7 +6534,7 @@
           "Connection": "keep-alive",
           "Content-Type": "application/json;charset=UTF-8",
           "Cookie": "SECKEY_ABVK=v65AGrOtP0eIaCYeyQ3YAGwhmXFFrbXslwkHw4PKp04%3D",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "role": "0"
         },
@@ -6537,7 +6547,7 @@
     },
     "qiannan": {
       "resultList": {
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams",
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams",
         "method": "post",
         "headers": {
           "Accept": "application/json, text/plain, */*",
@@ -6545,7 +6555,7 @@
           "Connection": "keep-alive",
           "Content-Type": "application/json;charset=UTF-8",
           "Cookie": "SECKEY_ABVK=v65AGrOtP0eIaCYeyQ3YAGwhmXFFrbXslwkHw4PKp04%3D",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "role": "0"
         },
@@ -6565,7 +6575,7 @@
         "insecure": false
       },
       "detail": {
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
         "method": "post",
         "headers": {
           "Accept": "application/json, text/plain, */*",
@@ -6573,7 +6583,7 @@
           "Connection": "keep-alive",
           "Content-Type": "application/json;charset=UTF-8",
           "Cookie": "SECKEY_ABVK=v65AGrOtP0eIaCYeyQ3YAGwhmXFFrbXslwkHw4PKp04%3D",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "role": "0"
         },
@@ -6586,13 +6596,13 @@
     },
     "guianxinqu": {
       "resultList": {
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams",
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDirectoryListByParams",
         "method": "post",
         "headers": {
           "Accept": "application/json, text/plain, */*",
           "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
           "Cache-Control": "no-cache",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "Pragma": "no-cache",
           "Proxy-Connection": "keep-alive",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.76",
@@ -6614,7 +6624,7 @@
         "insecure": false
       },
       "detail": {
-        "url": "http://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
+        "url": "https://data.guizhou.gov.cn/api/search/data/getDataDetailByDataId",
         "method": "post",
         "headers": {
           "Accept": "application/json, text/plain, */*",
@@ -6622,7 +6632,7 @@
           "Connection": "keep-alive",
           "Content-Type": "application/json;charset=UTF-8",
           "Cookie": "SECKEY_ABVK=v65AGrOtP0eIaCYeyQ3YAGwhmXFFrbXslwkHw4PKp04%3D",
-          "Origin": "http://data.guizhou.gov.cn",
+          "Origin": "https://data.guizhou.gov.cn",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
           "role": "0"
         },

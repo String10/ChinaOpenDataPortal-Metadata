@@ -11,7 +11,7 @@ from common.constants import (
     METADATA_SAVE_PATH,
     REQUEST_MAX_TIME,
 )
-from common.util import log_error
+from common.utils import log_error
 from crawler.crawler import Crawler
 from crawler.downloader import Downloader
 

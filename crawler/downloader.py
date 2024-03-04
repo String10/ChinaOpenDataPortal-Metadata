@@ -2,7 +2,7 @@ import os
 import time
 import requests
 
-from common.util import log_error
+from common.utils import log_error
 from common.constants import REQUEST_MAX_TIME
 
 

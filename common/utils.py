@@ -1,4 +1,5 @@
 import hashlib
+import math
 import sys
 
 
@@ -29,3 +30,15 @@ def getCookie(data):
             result = encrypt.hexdigest()
             if result == data["ct"]:
                 return clearance
+
+
+def getTotalPagesByTopTitle(soup, pageSize=10):
+    return math.ceil(
+        int(
+            soup.find("div", attrs={"class": "top-title"})
+            .find("span")
+            .get_text()
+            .replace(",", "")
+        )
+        / pageSize
+    )
