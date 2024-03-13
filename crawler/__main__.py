@@ -50,8 +50,7 @@ def crawl_then_save(province, city):
         except Exception as e:
             log_error("global: error at %s - %s", province, city)
             if DEBUG:
-                log_error("%s", str(e.args))
-                break
+                raise e
             time.sleep(50)
     crawler.save_metadata_as_json(args.metadata_output)
 

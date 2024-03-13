@@ -250,8 +250,10 @@ class ResultList:
             headers=curl["headers"],
             timeout=REQUEST_TIME_OUT,
         )
-        html = response.content
-        soup = BeautifulSoup(html, "html.parser")
+        if response.status_code != requests.codes.ok:
+            self.log_request_error(response.status_code, curl["url"])
+            return []
+        soup = BeautifulSoup(response.content, "html.parser")
         if pages:
             pages.obj = getTotalPagesByTopTitle(soup, 10)  # TODO: items per page
         links = []
@@ -1377,12 +1379,21 @@ class ResultList:
             "OTHER": "其他",
         }
         metadatas = []
-        response = requests.post(
-            curl["url"],
-            json=curl["data"],
-            headers=curl["headers"],
-            timeout=REQUEST_TIME_OUT * 1000,
-        )
+        try_cnt = 0
+        while True:
+            try_cnt += 1
+            if try_cnt >= REQUEST_MAX_TIME:
+                return []
+            try:
+                response = requests.post(
+                    curl["url"],
+                    json=curl["data"],
+                    headers=curl["headers"],
+                    timeout=REQUEST_TIME_OUT * 1000,
+                )
+                break
+            except:
+                time.sleep(5)
         result_list_json = json.loads(response.text)["data"]["result"]["data"]
         for detail_json in result_list_json:
             dataset_metadata = {}

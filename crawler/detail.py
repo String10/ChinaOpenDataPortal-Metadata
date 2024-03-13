@@ -1559,7 +1559,7 @@ class Detail:
             "updateTime": "更新日期",
             "providerDept": "提供单位",
             "belongFieldName": "所属领域",
-            "shareTypeName": "开放属性",
+            "openTypeName": "开放属性",
             "summary": "摘要信息",
             "updateCycleTxt": "更新频率",
             "formats": "数据格式",
@@ -1859,6 +1859,9 @@ class Detail:
             file_list = json.loads(detail_json["fileUrl"])
             for file in file_list:
                 format_list.append(file["name"].split(".")[-1].strip().lower())
+
+        if "phone" not in detail_json:
+            detail_json["phone"] = ""
 
         metadata_mapping = {
             "联系电话": detail_json["phone"],
@@ -2343,17 +2346,19 @@ class Detail:
                     metadata[name] = time.strftime(
                         "%Y-%m-%d", time.localtime(metadata[name])
                     )
-                if name in ["数据领域"]:
+                elif name in ["数据领域"]:
                     item = list(
                         filter(lambda x: x["id"] == int(metadata[name]), lylist)
                     )
-                    metadata[name] = item[0]["name"]
-                if name in ["行业分类"]:
+                    if len(item) > 0:
+                        metadata[name] = item[0]["name"]
+                elif name in ["行业分类"]:
                     item = list(
                         filter(lambda x: x["id"] == int(metadata[name]), hylist)
                     )
-                    metadata[name] = item[0]["name"]
-                if name in ["开放条件"]:
+                    if len(item) > 0:
+                        metadata[name] = item[0]["name"]
+                elif name in ["开放条件"]:
                     metadata[name] = (
                         "无条件开放" if int(metadata[name]) == 1 else "申请公开"
                     )
@@ -4060,6 +4065,7 @@ class Detail:
             4: "每天",
             5: "实时",
             6: "每半年",
+            7: "每年",
             None: "实时",
         }
         try_cnt = 0

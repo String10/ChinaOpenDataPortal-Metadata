@@ -178,8 +178,8 @@ class Crawler:
                 self.metadata_list.append(metadata)
             page += 1
 
-    # Dead Portal
     def crawl_shanxi_yuncheng(self):
+        # TODO: ERR_EMPTY_RESPONSE
         pages = Wrapper(5)
         page = 1
         while page <= pages.obj:
@@ -1952,204 +1952,56 @@ class Crawler:
                 self.metadata_list.append(metadata)
             page += 1
 
-    def crawl_guizhou_guizhou(self):
-        pages = Wrapper(1368)
+    def crawl_guizhou_common(self):
+        pages = Wrapper(100000)
         page = 1
         while page <= pages.obj:
             curl = self.result_list_curl.copy()
             curl["data"]["pageIndex"] = page
             ids = self.result_list.get_result_list(curl, pages)
-            for _id in ids:
+            for id in ids:
                 curl = self.detail_list_curl.copy()
-                curl["data"]["id"] = _id["id"]
+                curl["data"]["id"] = id["id"]
                 metadata = self.detail.get_detail(curl)
                 metadata["详情页网址"] = (
-                    "http://data.guizhou.gov.cn/open-data/" + _id["id"]
+                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
                 )
-                metadata["数据格式"] = _id["resourceFormats"]
+                metadata["数据格式"] = id["resourceFormats"]
                 self.metadata_list.append(metadata)
             page += 1
+
+    def crawl_guizhou_guizhou(self):
+        self.crawl_guizhou_common()
 
     def crawl_guizhou_guiyang(self):
-        pages = Wrapper(207)
-        page = 1
-        while page <= pages.obj:
-            curl = self.result_list_curl.copy()
-            curl["data"]["pageIndex"] = page
-            ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
-                curl = self.detail_list_curl.copy()
-                curl["data"]["id"] = id["id"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = (
-                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
-                )
-                metadata["数据格式"] = id["resourceFormats"]
-                self.metadata_list.append(metadata)
-            page += 1
+        self.crawl_guizhou_common()
 
     def crawl_guizhou_liupanshui(self):
-        pages = Wrapper(84)
-        page = 1
-        while page <= pages.obj:
-            curl = self.result_list_curl.copy()
-            curl["data"]["pageIndex"] = page
-            ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
-                curl = self.detail_list_curl.copy()
-                curl["data"]["id"] = id["id"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = (
-                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
-                )
-                metadata["数据格式"] = id["resourceFormats"]
-                self.metadata_list.append(metadata)
-            page += 1
+        self.crawl_guizhou_common()
 
     def crawl_guizhou_zunyi(self):
-        pages = Wrapper(122)
-        page = 1
-        while page <= pages.obj:
-            curl = self.result_list_curl.copy()
-            curl["data"]["pageIndex"] = page
-            ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
-                curl = self.detail_list_curl.copy()
-                curl["data"]["id"] = id["id"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = (
-                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
-                )
-                metadata["数据格式"] = id["resourceFormats"]
-                self.metadata_list.append(metadata)
-            page += 1
+        self.crawl_guizhou_common()
 
     def crawl_guizhou_anshun(self):
-        pages = Wrapper(108)
-        page = 1
-        while page <= pages.obj:
-            curl = self.result_list_curl.copy()
-            curl["data"]["pageIndex"] = page
-            ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
-                curl = self.detail_list_curl.copy()
-                curl["data"]["id"] = id["id"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = (
-                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
-                )
-                metadata["数据格式"] = id["resourceFormats"]
-                self.metadata_list.append(metadata)
-            page += 1
+        self.crawl_guizhou_common()
 
     def crawl_guizhou_bijie(self):
-        pages = Wrapper(123)
-        page = 1
-        while page <= pages.obj:
-            curl = self.result_list_curl.copy()
-            curl["data"]["pageIndex"] = page
-            ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
-                curl = self.detail_list_curl.copy()
-                curl["data"]["id"] = id["id"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = (
-                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
-                )
-                metadata["数据格式"] = id["resourceFormats"]
-                self.metadata_list.append(metadata)
-            page += 1
+        self.crawl_guizhou_common()
 
     def crawl_guizhou_tongren(self):
-        pages = Wrapper(86)
-        page = 1
-        while page <= pages.obj:
-            curl = self.result_list_curl.copy()
-            curl["data"]["pageIndex"] = page
-            ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
-                curl = self.detail_list_curl.copy()
-                curl["data"]["id"] = id["id"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = (
-                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
-                )
-                metadata["数据格式"] = id["resourceFormats"]
-                self.metadata_list.append(metadata)
-            page += 1
+        self.crawl_guizhou_common()
 
     def crawl_guizhou_qianxinan(self):
-        pages = Wrapper(54)
-        page = 1
-        while page <= pages.obj:
-            curl = self.result_list_curl.copy()
-            curl["data"]["pageIndex"] = page
-            ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
-                curl = self.detail_list_curl.copy()
-                curl["data"]["id"] = id["id"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = (
-                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
-                )
-                metadata["数据格式"] = id["resourceFormats"]
-                self.metadata_list.append(metadata)
-            page += 1
+        self.crawl_guizhou_common()
 
     def crawl_guizhou_qiandongnan(self):
-        pages = Wrapper(132)
-        page = 1
-        while page <= pages.obj:
-            curl = self.result_list_curl.copy()
-            curl["data"]["pageIndex"] = page
-            ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
-                curl = self.detail_list_curl.copy()
-                curl["data"]["id"] = id["id"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = (
-                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
-                )
-                metadata["数据格式"] = id["resourceFormats"]
-                self.metadata_list.append(metadata)
-            page += 1
+        self.crawl_guizhou_common()
 
     def crawl_guizhou_qiannan(self):
-        pages = Wrapper(131)
-        page = 1
-        while page <= pages.obj:
-            curl = self.result_list_curl.copy()
-            curl["data"]["pageIndex"] = page
-            ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
-                curl = self.detail_list_curl.copy()
-                curl["data"]["id"] = id["id"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = (
-                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
-                )
-                metadata["数据格式"] = id["resourceFormats"]
-                self.metadata_list.append(metadata)
-            page += 1
+        self.crawl_guizhou_common()
 
     def crawl_guizhou_guianxinqu(self):
-        pages = Wrapper(7)
-        page = 1
-        while page <= pages.obj:
-            curl = self.result_list_curl.copy()
-            curl["data"]["pageIndex"] = page
-            ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
-                curl = self.detail_list_curl.copy()
-                curl["data"]["id"] = id["id"]
-                metadata = self.detail.get_detail(curl)
-                metadata["详情页网址"] = (
-                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
-                )
-                metadata["数据格式"] = id["resourceFormats"]
-                self.metadata_list.append(metadata)
-                return
-            page += 1
+        self.crawl_guizhou_common()
 
     def crawl_shaanxi_shaanxi(self):
         # TODO: HTTP ERROR 502
@@ -2165,6 +2017,7 @@ class Crawler:
             page += 1
 
     def crawl_ningxia_ningxia(self):
+        # TODO: ERR_CONNECTION_RESET
         pages = Wrapper(202)
         page = 1
         while page <= pages.obj:
