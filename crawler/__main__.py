@@ -76,7 +76,8 @@ if args.all:
             for city in curls[province]:
                 crawler_worker_pool.submit(crawl_then_save, province, city)
         crawler_worker_pool.shutdown()
-        download_worker_pool.shutdown()
+        if args.download_files:
+            download_worker_pool.shutdown()
     else:
         for province in curls:
             for city in curls[province]:
