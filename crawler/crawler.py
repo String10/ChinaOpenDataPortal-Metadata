@@ -157,9 +157,9 @@ class Crawler:
             curl = self.result_list_curl.copy()
             curl["data"]["start"] = str((page - 1) * int(curl["data"]["pageLength"]))
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
+            for _id in ids:
                 curl = self.detail_list_curl.copy()
-                curl["queries"]["cata_id"] = id
+                curl["queries"]["cata_id"] = _id
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
             page += 1
@@ -171,9 +171,9 @@ class Crawler:
             curl = self.result_list_curl.copy()
             curl["data"]["curPage"] = str(page)
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
+            for _id in ids:
                 curl = self.detail_list_curl.copy()
-                curl["url"] = curl["url"].format(id)
+                curl["url"] = curl["url"].format(_id)
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
             page += 1
@@ -200,9 +200,9 @@ class Crawler:
             curl = self.result_list_curl.copy()
             curl["data"]["page"] = str(page)
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
+            for _id in ids:
                 curl = self.detail_list_curl.copy()
-                curl["data"]["id"] = id
+                curl["data"]["id"] = _id
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
             page += 1
@@ -214,11 +214,11 @@ class Crawler:
             curl = self.result_list_curl.copy()
             curl["data"]["pageNum"] = page
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
+            for _id in ids:
                 curl = self.detail_list_curl.copy()
-                curl["url"] = curl["url"].format(id)
+                curl["url"] = curl["url"].format(_id)
                 metadata = self.detail.get_detail(curl)
-                metadata["url"] = curl["detail_url"].format(id)
+                metadata["url"] = curl["detail_url"].format(_id)
                 self.metadata_list.append(metadata)
             page += 1
 
@@ -308,6 +308,7 @@ class Crawler:
                 cata_ids = self.result_list.get_result_list(curl, pages)
             except:
                 self.log_result_list_error(f"continue at page {page}")
+                page += 1
                 continue
             for cata_id in cata_ids:
                 curl = self.detail_list_curl.copy()
@@ -342,9 +343,9 @@ class Crawler:
             curl["params"]["current"] = str(page)
             curl["jsonData"]["current"] = str(page)
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
+            for _id in ids:
                 curl = self.detail_list_curl.copy()
-                curl["params"]["id"] = id
+                curl["params"]["id"] = _id
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
             page += 1
@@ -357,9 +358,9 @@ class Crawler:
             curl = self.result_list_curl.copy()
             curl["params"]["page"] = str(page)
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
+            for _id in ids:
                 curl = self.detail_list_curl.copy()
-                curl["params"]["id"] = id
+                curl["params"]["id"] = _id
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
             page += 1
@@ -414,9 +415,9 @@ class Crawler:
             curl = self.result_list_curl.copy()
             curl["params"]["page"] = str(page)
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
+            for _id in ids:
                 curl = self.detail_list_curl.copy()
-                curl["params"]["id"] = id
+                curl["params"]["id"] = _id
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
             page += 1
@@ -428,9 +429,9 @@ class Crawler:
             curl = self.result_list_curl.copy()
             curl["params"]["page"] = str(page)
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
+            for _id in ids:
                 curl = self.detail_list_curl.copy()
-                curl["url"] = curl["url"].format(id)
+                curl["url"] = curl["url"].format(_id)
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
             page += 1
@@ -442,9 +443,9 @@ class Crawler:
             curl = self.result_list_curl.copy()
             curl["params"]["page"] = str(page)
             id_infos = self.result_list.get_result_list(curl, pages)
-            for id, update_time in id_infos:
+            for _id, update_time in id_infos:
                 curl = self.detail_list_curl.copy()
-                curl["url"] = curl["url"].format(id)
+                curl["url"] = curl["url"].format(_id)
                 metadata = self.detail.get_detail(curl)
                 metadata["更新时间"] = update_time
                 self.metadata_list.append(metadata)
@@ -473,15 +474,15 @@ class Crawler:
             post_data_json["pageSplit"]["pageNumber"] = page
             curl["data"]["postData"] = json.dumps(post_data_json)
             id_formats = self.result_list.get_result_list(curl, pages)
-            for id, mformat in id_formats:
+            for _id, mformat in id_formats:
                 curl = copy.deepcopy(self.detail_list_curl)
                 curl["format"] = mformat
                 curl["url"] = curl["url"].format(mformat)
                 curl["headers"]["Referer"] = curl["headers"]["Referer"].format(
-                    mformat, id
+                    mformat, _id
                 )
                 post_data_json = json.loads(curl["data"]["postData"])
-                post_data_json["source_id"] = id
+                post_data_json["source_id"] = _id
                 curl["data"]["postData"] = json.dumps(post_data_json)
                 metadata = self.detail.get_detail(curl)
                 if metadata is None:
@@ -585,9 +586,9 @@ class Crawler:
             curl = self.result_list_curl.copy()
             curl["jsonData"]["pageNo"] = page
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
+            for _id in ids:
                 curl = self.detail_list_curl.copy()
-                curl["params"]["id"] = id
+                curl["params"]["id"] = _id
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
             page += 1
@@ -934,9 +935,9 @@ class Crawler:
     #         curl = self.result_list_curl.copy()
     #         curl['url'] = curl['url'].format(page)
     #         ids = self.result_list.get_result_list(curl)
-    #         for id in ids:
+    #         for _id in ids:
     #             curl = self.detail_list_curl.copy()
-    #             curl['url'] = curl['url'].format(id)
+    #             curl['url'] = curl['url'].format(_id)
     #             metadata = self.detail.get_detail(curl)
     #             if metadata == {}:
     #                 continue
@@ -1029,13 +1030,13 @@ class Crawler:
             curl["data"]["current"] = page
             curl["data"]["size"] = 6
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
-                if id in all_ids:
+            for _id in ids:
+                if _id in all_ids:
                     continue
                 else:
-                    all_ids.append(id)
+                    all_ids.append(_id)
                 curl = copy.deepcopy(self.detail_list_curl)
-                curl["queries"]["cataId"] = id
+                curl["queries"]["cataId"] = _id
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
             page += 1
@@ -1045,26 +1046,26 @@ class Crawler:
         curl = copy.deepcopy(self.result_list_curl)
         curl["url"] = curl["url"].format("1")
         ids = self.result_list.get_result_list(curl)
-        for id in ids:
-            if id in all_ids:
+        for _id in ids:
+            if _id in all_ids:
                 continue
             else:
-                all_ids.append(id)
+                all_ids.append(_id)
             curl = copy.deepcopy(self.detail_list_curl)
-            curl["queries"]["infoid"] = id
+            curl["queries"]["infoid"] = _id
             metadata = self.detail.get_detail(curl)
             self.metadata_list.append(metadata)
 
         curl = copy.deepcopy(self.result_list_curl)
         curl["url"] = curl["url"].format("0")
         ids = self.result_list.get_result_list(curl)
-        for id in ids:
-            if id in all_ids:
+        for _id in ids:
+            if _id in all_ids:
                 continue
             else:
-                all_ids.append(id)
+                all_ids.append(_id)
             curl = copy.deepcopy(self.detail_list_curl)
-            curl["queries"]["infoid"] = id
+            curl["queries"]["infoid"] = _id
             metadata = self.detail.get_detail(curl)
             self.metadata_list.append(metadata)
 
@@ -1077,14 +1078,14 @@ class Crawler:
             curl["dataset"]["crawl_type"] = "dataset"
             curl["dataset"]["data"]["pageNum"] = page
             ids = self.result_list.get_result_list(curl["dataset"], pages)
-            for id in ids:
-                if id in all_ids:
+            for _id in ids:
+                if _id in all_ids:
                     continue
                 else:
-                    all_ids.append(id)
+                    all_ids.append(_id)
                 curl = copy.deepcopy(self.detail_list_curl)
                 curl["dataset"]["crawl_type"] = "dataset"
-                curl["dataset"]["queries"]["dataId"] = id
+                curl["dataset"]["queries"]["dataId"] = _id
                 metadata = self.detail.get_detail(curl["dataset"])
                 self.metadata_list.append(metadata)
             page += 1
@@ -1095,14 +1096,14 @@ class Crawler:
             curl["interface"]["crawl_type"] = "interface"
             curl["interface"]["data"]["pageNum"] = page
             ids = self.result_list.get_result_list(curl["interface"], pages)
-            for id in ids:
-                if id in all_ids:
+            for _id in ids:
+                if _id in all_ids:
                     continue
                 else:
-                    all_ids.append(id)
+                    all_ids.append(_id)
                 curl = copy.deepcopy(self.detail_list_curl)
                 curl["interface"]["crawl_type"] = "interface"
-                curl["interface"]["data"]["baseDataId"] = id
+                curl["interface"]["data"]["baseDataId"] = _id
                 metadata = self.detail.get_detail(curl["interface"])
                 self.metadata_list.append(metadata)
             page += 1
@@ -1158,13 +1159,13 @@ class Crawler:
             curl = copy.deepcopy(self.result_list_curl)
             curl["queries"]["page"] = page
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
-                if id in all_ids:
+            for _id in ids:
+                if _id in all_ids:
                     continue
                 else:
-                    all_ids.append(id)
+                    all_ids.append(_id)
                 curl = copy.deepcopy(self.detail_list_curl)
-                curl["url"] = curl["url"].format(id)
+                curl["url"] = curl["url"].format(_id)
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
             page += 1
@@ -1413,13 +1414,13 @@ class Crawler:
             curl = copy.deepcopy(self.result_list_curl)
             curl["data"]["page"] = page
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
-                if id in all_ids:
+            for _id in ids:
+                if _id in all_ids:
                     continue
                 else:
-                    all_ids.append(id)
+                    all_ids.append(_id)
                 curl = copy.deepcopy(self.detail_list_curl)
-                curl["queries"]["id"] = id
+                curl["queries"]["id"] = _id
                 metadata = self.detail.get_detail(curl)
                 self.metadata_list.append(metadata)
                 time.sleep(1)
@@ -1501,9 +1502,9 @@ class Crawler:
             ids = self.result_list.get_result_list(curl, pages)
             if not (ids and len(ids)):
                 break
-            for id in ids:
+            for _id in ids:
                 curl = self.detail_list_curl.copy()
-                curl["url"] = curl["url"].format(id)
+                curl["url"] = curl["url"].format(_id)
                 metadata = self.detail.get_detail(curl)
                 metadata["详情页网址"] = curl["url"]
                 self.metadata_list.append(metadata)
@@ -1568,17 +1569,17 @@ class Crawler:
             time.sleep(5)
             curl["queries"]["offset"] = str((page - 1) * 10)
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
+            for _id in ids:
                 curl = self.detail_list_curl.copy()
-                curl["queries"]["id"] = id
+                curl["queries"]["id"] = _id
                 metadata = self.detail.get_detail(curl)
                 if bool(metadata):
                     metadata["详情页网址"] = (
-                        "https://data.zg.cn/snww/sjzy/detail.html?" + id
+                        "https://data.zg.cn/snww/sjzy/detail.html?" + _id
                     )
                     # 根据可下载类型获取type
                     turl = self.curls[self.province][self.city]["typeList"].copy()
-                    turl["queries"]["id"] = id
+                    turl["queries"]["id"] = _id
                     response = requests.get(
                         turl["url"],
                         params=turl["queries"],
@@ -1768,6 +1769,7 @@ class Crawler:
                 ids = self.result_list.get_result_list(curl, pages)
             except:
                 self.log_result_list_error(f"continue at page {page}")
+                pages += 1
                 continue
             for _id in ids:
                 time.sleep(5)
@@ -1801,6 +1803,7 @@ class Crawler:
                 ids = self.result_list.get_result_list(curl, pages)
             except:
                 self.log_result_list_error(f"continue at page {page}")
+                pages += 1
                 continue
             for _id in ids:
                 curl = self.detail_list_curl.copy()
@@ -1959,14 +1962,14 @@ class Crawler:
             curl = self.result_list_curl.copy()
             curl["data"]["pageIndex"] = page
             ids = self.result_list.get_result_list(curl, pages)
-            for id in ids:
+            for _id in ids:
                 curl = self.detail_list_curl.copy()
-                curl["data"]["id"] = id["id"]
+                curl["data"]["id"] = _id["id"]
                 metadata = self.detail.get_detail(curl)
                 metadata["详情页网址"] = (
-                    "http://data.guizhou.gov.cn/open-data/" + id["id"]
+                    "http://data.guizhou.gov.cn/open-data/" + _id["id"]
                 )
-                metadata["数据格式"] = id["resourceFormats"]
+                metadata["数据格式"] = _id["resourceFormats"]
                 self.metadata_list.append(metadata)
             page += 1
 
