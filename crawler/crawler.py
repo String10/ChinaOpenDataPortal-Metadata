@@ -1769,7 +1769,7 @@ class Crawler:
                 ids = self.result_list.get_result_list(curl, pages)
             except:
                 self.log_result_list_error(f"continue at page {page}")
-                pages += 1
+                page += 1
                 continue
             for _id in ids:
                 time.sleep(5)
@@ -1803,7 +1803,7 @@ class Crawler:
                 ids = self.result_list.get_result_list(curl, pages)
             except:
                 self.log_result_list_error(f"continue at page {page}")
-                pages += 1
+                page += 1
                 continue
             for _id in ids:
                 curl = self.detail_list_curl.copy()
@@ -1938,6 +1938,7 @@ class Crawler:
 
     def crawl_sichuan_ganzi(self):
         # TODO: HTTP ERROR 502
+        return
         pages = Wrapper(1192)
         page = 1
         while page <= pages.obj:
