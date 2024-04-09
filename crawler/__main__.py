@@ -11,7 +11,7 @@ from common.constants import (
     METADATA_SAVE_PATH,
     REQUEST_MAX_TIME,
 )
-from common.util import log_error
+from common.utils import log_error
 from crawler.crawler import Crawler
 from crawler.downloader import Downloader
 
@@ -50,8 +50,7 @@ def crawl_then_save(province, city):
         except Exception as e:
             log_error("global: error at %s - %s", province, city)
             if DEBUG:
-                log_error("%s", str(e.args))
-                break
+                raise e
             time.sleep(50)
     crawler.save_metadata_as_json(args.metadata_output)
 
@@ -76,7 +75,8 @@ if args.all:
             for city in curls[province]:
                 crawler_worker_pool.submit(crawl_then_save, province, city)
         crawler_worker_pool.shutdown()
-        download_worker_pool.shutdown()
+        if args.download_files:
+            download_worker_pool.shutdown()
     else:
         for province in curls:
             for city in curls[province]:
