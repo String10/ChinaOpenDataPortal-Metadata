@@ -539,6 +539,7 @@ class Crawler:
         page = 1
         while page <= pages.obj:
             if page == 3:
+                page += 1
                 continue
             curl = self.result_list_curl.copy()
             curl["jsonData"]["pageNum"] = page
