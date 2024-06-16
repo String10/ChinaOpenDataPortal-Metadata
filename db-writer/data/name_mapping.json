@@ -81,7 +81,8 @@
         "jiangsu": "江苏省",
         "suzhou": "苏州市",
         "yancheng": "盐城市",
-        "taizhou": "泰州市"
+        "taizhou": "泰州市",
+        "wuxi": "无锡市"
     },
     "hubei": {
         "huangshi": "黄石市",
@@ -136,7 +137,8 @@
         "qiannan": "黔南布依族苗族自治州",
         "guizhou": "贵州省",
         "bijie": "毕节市",
-        "liupanshui": "六盘水市"
+        "liupanshui": "六盘水市",
+        "guianxinqu": "贵安新区"
     },
     "fujian": {
         "fujian": "福建省",
